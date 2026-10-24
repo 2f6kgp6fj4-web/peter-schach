@@ -1175,7 +1175,7 @@ function save(){Store.save()}
 
 /* ---------- Töne ---------- */
 let ac=null;
-function audioUnlock(){try{if(!ac){const C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C()}if(ac&&ac.state!=='running')ac.resume()}catch(e){}}
+function audioUnlock(){try{if(navigator.audioSession&&navigator.audioSession.type!=='playback')navigator.audioSession.type='playback'}catch(e){}try{if(!ac){const C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C()}if(ac&&ac.state!=='running')ac.resume()}catch(e){}}
 function tone(f,d,type,when,g){if(!ac||(P()&&!P().settings.sound))return;try{const t=ac.currentTime+(when||0),o=ac.createOscillator(),v=ac.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,t);v.gain.setValueAtTime(0.0001,t);v.gain.exponentialRampToValueAtTime(g||.25,t+.01);v.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(v);v.connect(ac.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
 const sfx={
   tap(){tone(660,.04,'sine',0,.12)},
@@ -1201,6 +1201,42 @@ const Native={
 };
 window.PeterNative={receive(msg){try{(Native.handlers[msg.type]||[]).forEach(f=>f(msg))}catch(e){}}};
 function haptic(style){if(Native.ok)Native.post({type:'haptic',style});else if(navigator.vibrate&&style==='error')try{navigator.vibrate(30)}catch(e){}}
+
+
+/* ---------- Natürliche Stimme: Piper (Thorsten) läuft direkt im Browser ---------- */
+const Piper={
+  VOICE:'de_DE-thorsten-medium',LIB:'https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/+esm',SIZE_MB:63,
+  mod:null,state:'off',progress:0,cache:new Map(),listeners:[],
+  allowed(){return !Native.ok&&!window.claude&&/^https?:$/.test(location.protocol)&&!!(navigator.storage&&navigator.storage.getDirectory)},
+  emit(){this.listeners.forEach(f=>{try{f()}catch(e){}})},
+  async lib(){if(!this.mod)this.mod=await import(this.LIB);return this.mod},
+  async init(){
+    if(!this.allowed())return;
+    try{const t=await this.lib();const s=await t.stored();if(s&&s.includes(this.VOICE)){this.state='ready';this.emit()}}catch(e){this.mod=null}
+  },
+  async download(){
+    if(!this.allowed()||this.state==='loading'||this.state==='ready')return;
+    this.state='loading';this.progress=0;this.emit();
+    try{
+      const t=await this.lib();
+      await t.download(this.VOICE,p=>{if(p&&p.total){this.progress=Math.round(p.loaded/p.total*100);this.emit()}});
+      this.state='ready';P().settings.natural=true;save();this.emit();
+      try{await this.synth('Hallo!')}catch(e){}
+    }catch(e){this.state='error';this.emit()}
+  },
+  async synth(text){
+    if(this.cache.has(text))return this.cache.get(text);
+    audioUnlock();if(!ac)throw new Error('kein Audio');
+    const t=await this.lib();
+    const blob=await t.predict({text,voiceId:this.VOICE});
+    const buf=await ac.decodeAudioData(await blob.arrayBuffer());
+    this.cache.set(text,buf);if(this.cache.size>120)this.cache.delete(this.cache.keys().next().value);
+    return buf;
+  },
+  /* einzelne Sätze, damit Peter schon spricht, während der nächste Satz entsteht */
+  sentences(t){return (t.match(/[^.!?…]+[.!?…]*/g)||[t]).map(x=>x.trim()).filter(Boolean)},
+  usable(){return this.state==='ready'&&P().settings.natural!==false&&P().settings.sound}
+};
 
 /* ---------- Peters Stimme ---------- */
 const Voice={
@@ -1228,7 +1264,7 @@ const Voice={
   list(){return Native.ok?this.nativeVoices.map(v=>({id:v.id,name:v.name,good:v.quality>=2})):this.voices.map(v=>({id:v.name,name:v.name,good:this.score(v)>=20}))},
   pickVoice(){const want=P()&&P().settings.voice;this.voice=this.voices.find(v=>v.name===want)||this.voices[0]||null},
   spoken(t){return upSq(t).replace(/\b([A-H])([1-8])\b/g,'$1 $2').replace(/\bO-O-O\b/g,'lange Rochade').replace(/\bO-O\b/g,'kurze Rochade')},
-  stop(){if(Native.ok){Native.post({type:'stop'});Object.values(this.pending).forEach(r=>r());this.pending={}}else try{speechSynthesis.cancel()}catch(e){}Peter.talking(false)},
+  stop(){this.pseq=(this.pseq||0)+1;if(this.src){try{this.src.stop()}catch(e){}this.src=null}if(this.pdone){const d=this.pdone;this.pdone=null;d()}if(Native.ok){Native.post({type:'stop'});Object.values(this.pending).forEach(r=>r());this.pending={}}else try{speechSynthesis.cancel()}catch(e){}Peter.talking(false)},
   speak(text){
     const s=P().settings;
     if(!s.sound)return sleep(Math.min(2200,400+text.length*28));
@@ -1236,6 +1272,31 @@ const Voice={
       const id=++this.seq;
       return new Promise(res=>{this.pending[id]=res;Native.post({type:'speak',id,text:this.spoken(text),voice:s.voice||'',rate:s.speechRate||1});setTimeout(()=>{if(this.pending[id]){delete this.pending[id];res()}},Math.max(4000,text.length*120))});
     }
+    if(Piper.usable())return this.speakNatural(text).then(()=>{Piper.fails=0},()=>{Piper.fails=(Piper.fails||0)+1;if(Piper.fails>=3){Piper.state='broken';Piper.emit()}return this.speakWeb(text)});
+    return this.speakWeb(text);
+  },
+  async speakNatural(text){
+    const s=P().settings;
+    this.stop();const my=this.pseq;
+    const parts=Piper.sentences(this.spoken(text));
+    let next=Piper.synth(parts[0]);
+    const first=await Promise.race([next,sleep(9000).then(()=>{throw new Error('zu langsam')})]);
+    for(let i=0;i<parts.length;i++){
+      if(my!==this.pseq)return;
+      const buf=i===0?first:await next;
+      if(my!==this.pseq)return;
+      if(i+1<parts.length)next=Piper.synth(parts[i+1]);
+      await new Promise(res=>{
+        const src=ac.createBufferSource();src.buffer=buf;src.playbackRate.value=s.speechRate||1;src.connect(ac.destination);
+        this.src=src;this.pdone=res;
+        src.onended=()=>{if(this.src===src)this.src=null;this.pdone=null;res()};
+        this.ok=true;this.failed=false;Peter.talking(true);src.start();
+      });
+    }
+    if(my===this.pseq)Peter.talking(false);
+  },
+  speakWeb(text){
+    const s=P().settings;
     return new Promise(res=>{
       let finished=false;const done=()=>{if(finished)return;finished=true;Peter.talking(false);res()};
       const synth=window.speechSynthesis;
@@ -2739,6 +2800,17 @@ const UI={
   }
 };
 
+
+/* ---------- Karte: natürliche Stimme laden ---------- */
+function voiceCardHTML(){
+  const st=Piper.state;
+  if(st==='ready')return `<div class="card" id="pdl" style="border-color:var(--good)"><b>Peters neue Stimme ist da!</b><p class="small muted" style="margin:4px 0 0">Ab jetzt klingt Peter natürlicher.</p></div>`;
+  if(st==='loading')return `<div class="card" id="pdl"><b>Peters neue Stimme wird geladen …</b><div class="xpbar" style="margin-top:10px;height:14px"><i style="width:${Piper.progress}%"></i></div><p class="small muted" style="margin:6px 0 0">${Piper.progress} % · Bitte die App offen lassen.</p></div>`;
+  return `<div class="card" id="pdl" style="border:2.5px solid var(--sun)"><div style="display:flex;gap:12px;align-items:center"><span style="flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:var(--sun);color:var(--sun-ink);display:flex;align-items:center;justify-content:center">${ICON.speaker}</span><div style="flex:1;min-width:0"><b>${st==='error'?'Das Laden hat nicht geklappt':'Neue Stimme für Peter'}</b><p class="small muted" style="margin:2px 0 0">${st==='error'?'Prüfe die Internetverbindung und versuch es nochmal.':`Peter klingt damit viel natürlicher. Einmalig ca. ${Piper.SIZE_MB} MB, am besten im WLAN.`}</p></div></div>
+    <div class="row" style="margin-top:10px"><button class="big sunbtn" data-act="piperload">${st==='error'?'Nochmal versuchen':'Jetzt laden'}</button>${st==='error'?'':'<button class="big ghost" data-act="piperlater">Später</button>'}</div></div>`;
+}
+Piper.listeners.push(()=>{const el=$('#pdl');if(el)el.outerHTML=voiceCardHTML();const ps=$('#psetting');if(ps)ps.outerHTML=Parents.naturalRow();if(Piper.state==='ready'&&UI.current==='home')setTimeout(()=>Peter.say('Hallo '+P().name+'! So klinge ich jetzt. Gefällt dir meine neue Stimme?','wow'),300)});
+
 /* ---------- Kopfzeile ---------- */
 function hudHTML(){
   const p=P(),rk=rankInfo(p.xp);
@@ -2767,6 +2839,7 @@ UI.screens.home={
         <span class="eyebrow">${esc(nl.world.name)} · Abenteuer</span><h2>${esc(nl.name)}</h2>
         <span class="cta">${ICON.play} Weiterspielen</span><span class="glyph">${friendSVG(nl.world.fig,'w')}</span></button>`:
         `<button class="hero" data-act="play" style="--wc:#4F46E5"><span class="eyebrow">Alle Welten geschafft</span><h2>Fordere Peter heraus!</h2><span class="cta">${ICON.play} Partie starten</span></button>`}
+      ${Piper.allowed()&&!['ready','broken'].includes(Piper.state)&&!(p.settings.naturalLater===today())?voiceCardHTML():''}
       <div class="grid2">
         <button class="tile" data-act="play" style="--tc:#D3EFE9"><span class="ti">${ICON.board}</span><b>Am Brett spielen</b><span>Partie gegen Peter am echten Brett</span></button>
         <button class="tile" data-act="train" style="--tc:#FBEFCF;--tci:#A87400"><span class="ti">${ICON.target}</span><b>Training</b><span>${weak?'Heute: '+esc(SKILLS[weak].name):'Rätsel und Spiele'}</span></button>
@@ -2791,6 +2864,8 @@ UI.screens.home={
       if(act==='repeat')Peter.repeat();
       if(act==='peter'){Peter.bounce();sfx.boing();Peter.say(pick(['Hihi, das kitzelt!','Weißt du was? Der Springer ist die einzige Figur, die springen kann!','Ich freu mich so, dass du da bist!','Der Turm fährt gerade wie ein Zug auf Schienen.','Die Dame steht am Anfang immer auf ihrer Farbe.']),'wow')}
       if(act==='chest')Album.claimDaily();
+      if(act==='piperload'){sfx.tap();Piper.download()}
+      if(act==='piperlater'){P().settings.naturalLater=today();save();const c=$('#pdl');if(c)c.remove()}
     });
     const nl=nextLesson(),p=P();
     if(!UI.greeted){UI.greeted=true;const h=new Date().getHours();
@@ -2955,6 +3030,14 @@ const Profiles={
    Peter-Schach · Elternbereich: Auswertung, Schwächen, Partien, Einstellungen
    =================================================================== */
 const Parents={
+  naturalRow(){
+    if(!Piper.allowed())return '<div id="psetting" hidden></div>';
+    const st=Piper.state;
+    if(st==='ready')return `<div class="setting" id="psetting"><div><label for="sNatural">Natürliche Stimme (Thorsten)</label><small>Aus: Peter nutzt die Stimme des iPhones.</small></div><input type="checkbox" class="toggle" id="sNatural" ${P().settings.natural!==false?'checked':''}></div>`;
+    if(st==='broken')return `<div class="setting" id="psetting"><div><label>Natürliche Stimme (Thorsten)</label><small>Funktioniert auf diesem Gerät leider nicht. Peter nutzt die Stimme des iPhones.</small></div></div>`;
+    if(st==='loading')return `<div class="setting" id="psetting"><div style="flex:1"><label>Natürliche Stimme wird geladen</label><div class="xpbar" style="margin-top:6px"><i style="width:${Piper.progress}%"></i></div></div><span class="small muted">${Piper.progress} %</span></div>`;
+    return `<div class="setting" id="psetting"><div><label>Natürliche Stimme (Thorsten)</label><small>Einmalig ca. ${Piper.SIZE_MB} MB laden. Klingt viel weniger nach Roboter.</small></div><button class="big sunbtn" style="min-height:44px;font-size:1rem" data-act="piperload">Laden</button></div>`;
+  },
   gate(){
     const a=6+Math.floor(Math.random()*4),b=6+Math.floor(Math.random()*4);
     UI.sheet(`<h2>Für Eltern</h2><p class="muted" style="margin:0">Bitte rechne kurz, damit nur Erwachsene hier reinkommen.</p>
@@ -3035,6 +3118,7 @@ const Parents={
         <div class="setting"><div><label>Profil</label><small>${esc(p.name)}</small></div><button class="big ghost" style="min-height:44px;font-size:1rem" data-act="editprofile">Ändern</button></div>
         <div class="setting" style="flex-wrap:wrap"><div><label for="voiceSel">Peters Stimme</label><small>Stimmen mit ★ klingen am natürlichsten.</small></div>
           <div class="voice-row" style="width:100%"><select class="field" id="voiceSel">${voices.length?voices.map(v=>`<option value="${esc(v.id)}" ${v.id===p.settings.voice?'selected':''}>${esc(v.name)}${v.good?' ★':''}</option>`).join(''):'<option value="">Standardstimme</option>'}</select><button class="big go" style="min-height:50px" data-act="testvoice">Probe</button></div></div>
+        ${Parents.naturalRow()}
         <div class="setting"><div><label for="rate">Sprechtempo</label><small>${p.settings.speechRate<0.95?'langsam':p.settings.speechRate>1.05?'schnell':'normal'}</small></div><input type="range" id="rate" min="0.8" max="1.2" step="0.05" value="${p.settings.speechRate||1}" style="width:140px"></div>
         <div class="setting"><div><label for="sHands">Zuhören nach jedem Zug</label><small>${Ears.available()?'Peter hört automatisch zu, wenn das Kind dran ist.':'Auf diesem Gerät nur mit der iPhone-App möglich.'}</small></div><input type="checkbox" class="toggle" id="sHands" ${p.settings.handsFree?'checked':''}></div>
         ${Brain.fn?`<div class="setting"><div><label for="sAi">Peter plaudert frei</label><small>Claude formuliert Peters Sätze in Partien und beantwortet Fragen.</small></div><input type="checkbox" class="toggle" id="sAi" ${p.settings.ai?'checked':''}></div>`:''}
@@ -3057,6 +3141,7 @@ const Parents={
       if(!a)return;const act=a.dataset.act;
       if(act==='back')UI.go('home');
       if(act==='editprofile')Profiles.create(true);
+      if(act==='piperload')Piper.download();
       if(act==='newprofile')Profiles.create(false);
       if(act==='testvoice'){Voice.speak(`Hallo ${p.name}! Ich bin Peter. Wollen wir eine Runde Schach spielen?`)}
       if(act==='reset')UI.confirm('Wirklich zurücksetzen?',`Alle Sterne, Lektionen und Partien von ${p.name} werden gelöscht.`,'Abbrechen','Ja, löschen').then(keep=>{if(keep)return;const np=newProfile(p.name,p.avatar);np.id=p.id;Store.data.profiles[p.id]=np;save();UI.go('parents')});
@@ -3065,6 +3150,7 @@ const Parents={
     bind('voiceSel',e=>{P().settings.voice=e.target.value;save();Voice.pickVoice();Voice.speak('So klinge ich jetzt.')});
     bind('rate',e=>{P().settings.speechRate=+e.target.value;save();Voice.speak('So schnell spreche ich jetzt.')});
     bind('sHands',e=>{P().settings.handsFree=e.target.checked;save()});
+    el.addEventListener('change',e=>{if(e.target.id==='sNatural'){P().settings.natural=e.target.checked;save();Voice.speak(e.target.checked?'Das ist meine neue Stimme.':'Das ist die Stimme des iPhones.')}});
     bind('sAi',e=>{P().settings.ai=e.target.checked;save()});
     bind('sSound',e=>{P().settings.sound=e.target.checked;save()});
     bind('sNames',e=>{P().settings.names=e.target.checked;save()});
@@ -3144,7 +3230,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 
 (function init(){
   Store.load();
-  Voice.init();Ears.init();Brain.init();
+  Voice.init();Ears.init();Brain.init();Piper.init();
   UI.tabs();
   trackTime();
   document.addEventListener('pointerdown',()=>{audioUnlock();keepAwake()},{once:true});
