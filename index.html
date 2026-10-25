@@ -27,7 +27,9 @@ img{max-width:100%}[hidden]{display:none!important}
   --peter-soft:#D3EFE9;
   --sun:#F6B91F;
   --sun-ink:#3A2A00;
-  --good:#2E9E4F;
+  --good:#278442;
+  --on-good:#FFFFFF;
+  --on-danger:#FFFFFF;
   --good-soft:#DDF3E3;
   --danger:#D6402F;
   --danger-soft:#FBE3DF;
@@ -43,13 +45,13 @@ img{max-width:100%}[hidden]{display:none!important}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0F1A20;--bg2:#15232A;--surface:#1B2A32;--ink:#E8F1F4;--muted:#9DB4BE;--line:#2D414B;
   --peter:#3CC6B3;--on-peter:#062420;--peter-soft:#173C37;--sun:#F7C64A;--sun-ink:#2A1E00;
-  --good:#53C978;--good-soft:#173826;--danger:#F2705E;--danger-soft:#3D1E1A;
+  --good:#53C978;--good-soft:#173826;--danger:#F2705E;--on-good:#0B2A14;--on-danger:#2A0A05;--danger-soft:#3D1E1A;
   --light-sq:#E6CFA8;--dark-sq:#A57A55;--coord-light:#7E5C3F;--coord-dark:#FBEBD3;--last:rgba(246,205,60,.5);
   --shadow:0 4px 0 rgba(0,0,0,.35);color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0F1A20;--bg2:#15232A;--surface:#1B2A32;--ink:#E8F1F4;--muted:#9DB4BE;--line:#2D414B;
   --peter:#3CC6B3;--on-peter:#062420;--peter-soft:#173C37;--sun:#F7C64A;--sun-ink:#2A1E00;
-  --good:#53C978;--good-soft:#173826;--danger:#F2705E;--danger-soft:#3D1E1A;
+  --good:#53C978;--good-soft:#173826;--danger:#F2705E;--on-good:#0B2A14;--on-danger:#2A0A05;--danger-soft:#3D1E1A;
   --light-sq:#E6CFA8;--dark-sq:#A57A55;--coord-light:#7E5C3F;--coord-dark:#FBEBD3;--last:rgba(246,205,60,.5);
   --shadow:0 4px 0 rgba(0,0,0,.35);color-scheme:dark}
 
@@ -107,7 +109,7 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 .say{flex:1;min-width:0;margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(1.08rem,4.4vw,1.32rem);line-height:1.25;text-wrap:pretty}
 .speak{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:0;background:var(--peter-soft);color:var(--peter);display:flex;align-items:center;justify-content:center;padding:0}
 .speak svg{width:22px;height:22px}
-.speak.listening{background:var(--danger);color:#fff;animation:pulse .7s ease-in-out infinite alternate}
+.speak.listening{background:var(--danger);color:var(--on-danger);animation:pulse .7s ease-in-out infinite alternate}
 
 /* ---------- Karten & Knöpfe ---------- */
 .card{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
@@ -121,7 +123,7 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 .go{background:var(--peter);color:var(--on-peter)}
 .sunbtn{background:var(--sun);color:var(--sun-ink)}
 .ghost{background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
-.dangerbtn{background:var(--danger);color:#fff}
+.dangerbtn{background:var(--danger);color:var(--on-danger)}
 .wide{width:100%}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row>.big{flex:1 1 140px}
@@ -129,11 +131,11 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 
 /* ---------- Startseite ---------- */
-.hero{display:flex;flex-direction:column;gap:12px;border-radius:22px;padding:16px;color:#fff;background:var(--wc,#0E8C7E);box-shadow:0 5px 0 rgba(0,0,0,.18);position:relative;overflow:hidden;border:0;text-align:left}
+.hero{display:flex;flex-direction:column;gap:12px;border-radius:22px;padding:16px;color:#fff;background:var(--wc,var(--peter));box-shadow:0 5px 0 rgba(0,0,0,.18);position:relative;overflow:hidden;border:0;text-align:left}
 .hero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.12)}
 .hero .eyebrow{font-family:var(--font-display);font-weight:600;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
 .hero h2{font-size:1.6rem;line-height:1.1}
-.hero .cta{align-self:flex-start;background:#fff;color:var(--wc,#0E8C7E);border-radius:14px;padding:10px 18px;font-family:var(--font-display);font-weight:700;font-size:1.1rem;display:inline-flex;gap:8px;align-items:center;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.hero .cta{align-self:flex-start;background:#fff;color:var(--wc,var(--peter));border-radius:14px;padding:10px 18px;font-family:var(--font-display);font-weight:700;font-size:1.1rem;display:inline-flex;gap:8px;align-items:center;box-shadow:0 3px 0 rgba(0,0,0,.2)}
 .hero .cta svg{width:22px;height:22px}
 .hero .glyph{position:absolute;right:14px;bottom:8px;width:84px;height:84px;opacity:.95}
 .tile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:18px;padding:14px;box-shadow:var(--shadow);min-height:132px}
@@ -146,7 +148,7 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 .mission ul{list-style:none;margin:8px 0 0;padding:0}
 .mission .ck{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--line);flex:0 0 auto;display:flex;align-items:center;justify-content:center}
 .mission .ck svg{width:18px;height:18px}
-.mission li.done .ck{background:var(--good);border-color:var(--good);color:#fff}
+.mission li.done .ck{background:var(--good);border-color:var(--good);color:var(--on-good)}
 .mission li.done .t{text-decoration:line-through;color:var(--muted)}
 .mission .t{flex:1;min-width:0;font-weight:700}
 .mission .n{font-family:var(--font-display);font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -196,7 +198,7 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 .sq.goal::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1.1cqw var(--sun);z-index:3;animation:pulse .8s ease-in-out infinite alternate}
 .sq.which::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1.1cqw var(--peter);z-index:3;animation:pulse .7s ease-in-out infinite alternate}
 .sq.ok{background:var(--good)!important}
-.sq.ok .nm{color:#fff!important;opacity:1}
+.sq.ok .nm{color:var(--on-good)!important;opacity:1;text-shadow:none}
 .sq.bad{animation:shake .4s ease}
 .sq.bad::before{content:"";position:absolute;inset:0;background:rgba(214,64,47,.55);z-index:1}
 .sq.found::before{content:"";position:absolute;inset:8%;border-radius:22%;background:var(--good);opacity:.85;z-index:1;animation:popin .3s ease}
@@ -205,7 +207,7 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7%)}75%{transform:translateX(7%)}}
 @keyframes popin{from{transform:scale(.6);opacity:.2}to{transform:scale(1);opacity:1}}
 .sq .nm{position:absolute;left:0;right:0;bottom:2%;text-align:center;font-family:var(--font-display);font-weight:700;font-size:3.4cqw;color:var(--coord-light);opacity:.85;z-index:1;pointer-events:none}
-.sq.dk .nm{color:var(--coord-dark)}
+.sq.dk .nm{color:var(--coord-dark);text-shadow:0 1px 1px rgba(60,35,15,.55)}
 .sq:not(.has) .nm{top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:4.6cqw;opacity:.75}
 .board.nonames .nm{display:none}
 .board.edge .nm{display:none}
@@ -258,7 +260,7 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 .voice-row input,.field{flex:1;min-width:0;font:inherit;font-size:1.12rem;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
 .voice-row input:focus,.field:focus{border-color:var(--peter);outline:none}
 .mic{background:var(--sun);color:var(--sun-ink);width:58px;padding:0}
-.mic.on{background:var(--danger);color:#fff;animation:pulse .6s ease-in-out infinite alternate}
+.mic.on{background:var(--danger);color:var(--on-danger);animation:pulse .6s ease-in-out infinite alternate}
 .actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .act{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:var(--font-display);font-weight:600;font-size:.92rem;box-shadow:0 3px 0 var(--line)}
 .act svg{width:28px;height:28px;color:var(--peter)}
@@ -335,7 +337,7 @@ h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
 .gamelist{list-style:none;margin:8px 0 0;padding:0}
 .gamelist li{border-bottom:1px solid var(--line)}
 .gamelist button{width:100%;display:flex;align-items:center;gap:10px;padding:10px 2px;border:0;background:none;text-align:left}
-.gamelist .res{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:#fff;flex:0 0 auto}
+.gamelist .res{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:var(--surface);flex:0 0 auto}
 .gamelist .meta{flex:1;min-width:0}
 .gamelist .meta b{display:block}
 .gamelist .meta span{font-size:.82rem;color:var(--muted)}
@@ -400,6 +402,39 @@ svg.i{width:22px;height:22px;flex:0 0 auto}
 .fcard.locked .art svg.i{width:60%;height:60%;opacity:.35}
 
 .node.shake .disc{animation:shake .4s ease}
+
+/* ---------- Lesefrei: Bildzeichen, Vorlesen, Bild-Antworten ---------- */
+.taskline{display:flex;align-items:center;gap:10px;width:100%;border:0;background:var(--surface);border-radius:18px;padding:10px 12px;box-shadow:var(--shadow);text-align:left}
+.taskline .tpic{flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:color-mix(in srgb,var(--wc,var(--peter)) 16%,var(--surface));color:var(--wc,var(--peter));display:flex;align-items:center;justify-content:center}
+.taskline .tpic svg{width:32px;height:32px}
+.taskline .task{flex:1;min-width:0;text-align:left;font-size:1.2rem}
+.taskline .tspk{flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:var(--peter-soft);color:var(--peter);display:flex;align-items:center;justify-content:center}
+.taskline .tspk svg{width:20px;height:20px}
+.dots{display:flex;gap:6px;justify-content:center}
+.dots i{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--wc,var(--peter))}
+.cnt{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-display);font-weight:700;font-size:1.25rem;color:var(--ink);background:var(--surface);border-radius:99px;padding:4px 14px;border:2px solid var(--line)}
+.cnt svg{width:24px;height:24px;color:var(--good)}
+.cnt.over{border-color:var(--sun)}
+.options.pics{grid-template-columns:repeat(auto-fit,minmax(96px,1fr))}
+.opt.pic{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;min-height:120px}
+.opt.pic>span:last-child{font-size:1rem;color:var(--muted)}
+.opt:disabled{opacity:1}
+.qp{display:flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%}
+.qp svg{width:40px;height:40px}
+.qp.yes{background:var(--good);color:var(--on-good)}
+.qp.no{background:var(--danger);color:var(--on-danger)}
+.qp.sqsw{border-radius:10px;border:3px solid var(--ink)}
+.qp.sqsw.light{background:var(--light-sq)}
+.qp.sqsw.dark{background:var(--dark-sq)}
+.qp.mini{width:100%;max-width:120px;height:auto;aspect-ratio:3/2;border-radius:8px;overflow:hidden;border:3px solid var(--dark-sq)}
+.nextbtn{min-height:64px;font-size:1.3rem;justify-content:space-between;padding:0 10px 0 22px}
+.nextbtn .nexticon{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center}
+.nextbtn .nexticon svg{width:30px;height:30px}
+.mission .mi{width:30px;height:30px;flex:0 0 auto;color:var(--peter)}
+.mission .mi svg{width:30px;height:30px}
+.seg button{display:flex;flex-direction:column;align-items:center;gap:2px}
+.seg button svg{width:24px;height:24px}
 
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="g-k" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M848 967Q849 970 851 973Q816 1016 765 1044Q691 1085 613.0 1085.0Q535 1085 461.5 1044.5Q388 1004 346.0 929.5Q304 855 304 775Q304 694 345.0 621.0Q386 548 460 508Q482 494 505 486H848ZM989 486H1331Q1355 494 1377 508Q1451 548 1491.5 621.0Q1532 694 1532 775Q1532 855 1490.5 929.5Q1449 1004 1375.5 1044.5Q1302 1085 1223 1085Q1146 1085 1072 1044Q1020 1016 986 973Q988 970 989 967ZM540 383V80H1297V383ZM458 0V383Q416 396 378 418Q309 472 255.0 570.0Q201 668 201 775Q201 883 256.0 981.5Q311 1080 410.0 1133.0Q509 1186 613 1186Q693 1186 769 1155V1157Q769 1193 787.0 1224.5Q805 1256 837 1274Q850 1281 866 1285V1339H758V1409H866V1496H971V1409H1079V1339H971V1285Q987 1281 1000 1274Q1031 1256 1049.5 1224.5Q1068 1193 1068 1157V1155Q1144 1186 1223 1186Q1327 1186 1426.0 1133.0Q1525 1080 1580.0 981.5Q1635 883 1635 775Q1635 668 1581.0 570.0Q1527 472 1459 418Q1420 396 1379 383V0ZM825 1149Q825 1124 837.5 1102.5Q850 1081 872.5 1068.5Q895 1056 918 1056Q942 1056 964.5 1068.5Q987 1081 999.0 1102.5Q1011 1124 1011 1149Q1011 1173 999.0 1195.5Q987 1218 964.5 1229.5Q942 1241 918 1241Q895 1241 872.5 1229.5Q850 1218 837.5 1195.5Q825 1173 825 1149ZM1245 331V131H592V331ZM798 537H518Q500 544 483 556Q422 589 389.0 649.5Q356 710 356 777Q356 843 390.0 904.5Q424 966 483.5 999.5Q543 1033 607 1033Q669 1033 730 1000Q771 977 800 941Q798 938 798 936ZM1039 936Q1039 938 1037 941Q1066 977 1107 1000Q1168 1033 1229 1033Q1294 1033 1353.5 999.5Q1413 966 1447.0 904.5Q1481 843 1481 777Q1481 710 1448.0 649.5Q1415 589 1354 556Q1336 544 1318 537H1039Z"/></symbol><symbol id="w-k" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M848 967Q849 970 851 973Q816 1016 765 1044Q691 1085 613.0 1085.0Q535 1085 461.5 1044.5Q388 1004 346.0 929.5Q304 855 304 775Q304 694 345.0 621.0Q386 548 460 508Q482 494 505 486H848ZM989 486H1331Q1355 494 1377 508Q1451 548 1491.5 621.0Q1532 694 1532 775Q1532 855 1490.5 929.5Q1449 1004 1375.5 1044.5Q1302 1085 1223 1085Q1146 1085 1072 1044Q1020 1016 986 973Q988 970 989 967ZM540 383V80H1297V383ZM458 0V383Q416 396 378 418Q309 472 255.0 570.0Q201 668 201 775Q201 883 256.0 981.5Q311 1080 410.0 1133.0Q509 1186 613 1186Q693 1186 769 1155V1157Q769 1193 787.0 1224.5Q805 1256 837 1274Q850 1281 866 1285V1339H758V1409H866V1496H971V1409H1079V1339H971V1285Q987 1281 1000 1274Q1031 1256 1049.5 1224.5Q1068 1193 1068 1157V1155Q1144 1186 1223 1186Q1327 1186 1426.0 1133.0Q1525 1080 1580.0 981.5Q1635 883 1635 775Q1635 668 1581.0 570.0Q1527 472 1459 418Q1420 396 1379 383V0ZM825 1149Q825 1124 837.5 1102.5Q850 1081 872.5 1068.5Q895 1056 918 1056Q942 1056 964.5 1068.5Q987 1081 999.0 1102.5Q1011 1124 1011 1149Q1011 1173 999.0 1195.5Q987 1218 964.5 1229.5Q942 1241 918 1241Q895 1241 872.5 1229.5Q850 1218 837.5 1195.5Q825 1173 825 1149Z"/></symbol><symbol id="s-k" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M458 0V383Q416 396 378 418Q309 472 255.0 570.0Q201 668 201 775Q201 883 256.0 981.5Q311 1080 410.0 1133.0Q509 1186 613 1186Q693 1186 769 1155V1157Q769 1193 787.0 1224.5Q805 1256 837 1274Q850 1281 866 1285V1339H758V1409H866V1496H971V1409H1079V1339H971V1285Q987 1281 1000 1274Q1031 1256 1049.5 1224.5Q1068 1193 1068 1157V1155Q1144 1186 1223 1186Q1327 1186 1426.0 1133.0Q1525 1080 1580.0 981.5Q1635 883 1635 775Q1635 668 1581.0 570.0Q1527 472 1459 418Q1420 396 1379 383V0ZM1245 331V131H592V331ZM798 537H518Q500 544 483 556Q422 589 389.0 649.5Q356 710 356 777Q356 843 390.0 904.5Q424 966 483.5 999.5Q543 1033 607 1033Q669 1033 730 1000Q771 977 800 941Q798 938 798 936ZM1039 936Q1039 938 1037 941Q1066 977 1107 1000Q1168 1033 1229 1033Q1294 1033 1353.5 999.5Q1413 966 1447.0 904.5Q1481 843 1481 777Q1481 710 1448.0 649.5Q1415 589 1354 556Q1336 544 1318 537H1039Z"/></symbol><symbol id="g-q" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M333 1019Q238 1021 226 1116Q226 1144 240.5 1169.5Q255 1195 282.0 1209.0Q309 1223 338 1223Q366 1223 393.0 1209.0Q420 1195 434.0 1169.5Q448 1144 448 1116Q444 1052 387 1030L626 524L574 1226Q491 1226 473 1319Q473 1347 487.5 1372.0Q502 1397 528.5 1411.0Q555 1425 586 1425Q614 1425 640.5 1411.0Q667 1397 681.5 1372.0Q696 1347 696 1319Q694 1274 648 1240L837 492L880 1312Q813 1342 811 1390Q811 1418 826.0 1444.0Q841 1470 867.5 1483.0Q894 1496 921 1496Q950 1496 976.5 1483.0Q1003 1470 1018.0 1444.0Q1033 1418 1033 1390Q1030 1336 963 1312L1001 490L1186 1230Q1140 1277 1140 1319Q1140 1346 1154.5 1371.5Q1169 1397 1196.0 1411.0Q1223 1425 1250 1425Q1280 1425 1307.0 1411.0Q1334 1397 1348.5 1371.5Q1363 1346 1363 1319Q1352 1234 1266 1218L1174 524L1431 1039Q1388 1073 1388 1116Q1388 1144 1402.5 1169.5Q1417 1195 1443.5 1208.5Q1470 1222 1498 1222Q1528 1222 1554.5 1208.5Q1581 1195 1595.5 1169.5Q1610 1144 1610 1116Q1597 1022 1498 1022L1338 559V0H477V559ZM1281 356V434H554V356ZM1281 58V137H554V58Z"/></symbol><symbol id="w-q" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M333 1019Q238 1021 226 1116Q226 1144 240.5 1169.5Q255 1195 282.0 1209.0Q309 1223 338 1223Q366 1223 393.0 1209.0Q420 1195 434.0 1169.5Q448 1144 448 1116Q444 1052 387 1030L626 524L574 1226Q491 1226 473 1319Q473 1347 487.5 1372.0Q502 1397 528.5 1411.0Q555 1425 586 1425Q614 1425 640.5 1411.0Q667 1397 681.5 1372.0Q696 1347 696 1319Q694 1274 648 1240L837 492L880 1312Q813 1342 811 1390Q811 1418 826.0 1444.0Q841 1470 867.5 1483.0Q894 1496 921 1496Q950 1496 976.5 1483.0Q1003 1470 1018.0 1444.0Q1033 1418 1033 1390Q1030 1336 963 1312L1001 490L1186 1230Q1140 1277 1140 1319Q1140 1346 1154.5 1371.5Q1169 1397 1196.0 1411.0Q1223 1425 1250 1425Q1280 1425 1307.0 1411.0Q1334 1397 1348.5 1371.5Q1363 1346 1363 1319Q1352 1234 1266 1218L1174 524L1431 1039Q1388 1073 1388 1116Q1388 1144 1402.5 1169.5Q1417 1195 1443.5 1208.5Q1470 1222 1498 1222Q1528 1222 1554.5 1208.5Q1581 1195 1595.5 1169.5Q1610 1144 1610 1116Q1597 1022 1498 1022L1338 559V0H477V559ZM1281 270V495L1100 420H737L554 481V270ZM554 222V58H1281V222ZM512 562 589 520 358 1046Q365 1049 372 1053Q390 1063 400.0 1080.5Q410 1098 410 1117Q410 1137 400.0 1154.5Q390 1172 372.5 1182.0Q355 1192 335 1192Q317 1192 299.5 1182.0Q282 1172 271.5 1154.5Q261 1137 261 1117Q261 1098 271.0 1080.5Q281 1063 299.0 1053.0Q317 1043 335 1043Q342 1043 351 1044ZM661 524 797 492 610 1253Q616 1255 621 1258Q638 1268 647.5 1285.5Q657 1303 657.0 1322.0Q657 1341 647.5 1359.0Q638 1377 620.0 1386.5Q602 1396 584 1396Q565 1396 547.5 1386.5Q530 1377 520.0 1359.0Q510 1341 510.0 1322.0Q510 1303 519.5 1285.5Q529 1268 547.0 1258.0Q565 1248 584 1248Q591 1248 599 1249ZM1028 500 1143 527 1239 1248Q1244 1247 1249 1247Q1268 1247 1286.5 1257.0Q1305 1267 1314.5 1284.5Q1324 1302 1324.0 1321.0Q1324 1340 1313.5 1358.0Q1303 1376 1285.5 1385.5Q1268 1395 1249 1395Q1231 1395 1213.0 1385.5Q1195 1376 1185.0 1358.0Q1175 1340 1175.0 1321.0Q1175 1302 1185.0 1284.5Q1195 1267 1213 1257Q1221 1252 1228 1250ZM870 492H970L922 1326Q941 1326 957 1336Q974 1346 984.5 1363.5Q995 1381 995 1401Q995 1420 984.0 1437.5Q973 1455 956.0 1465.0Q939 1475 920 1475Q902 1475 883.5 1465.0Q865 1455 855.5 1437.5Q846 1420 846 1401Q846 1381 855.5 1363.5Q865 1346 884 1336Q898 1328 913 1326ZM1210 520 1314 562 1480 1052Q1491 1049 1502 1049Q1521 1049 1538.5 1059.5Q1556 1070 1566.0 1087.0Q1576 1104 1576 1124Q1576 1143 1565.5 1161.0Q1555 1179 1538.0 1188.5Q1521 1198 1502 1198Q1482 1198 1464.5 1188.5Q1447 1179 1437.5 1161.0Q1428 1143 1428 1124Q1428 1104 1437.5 1087.0Q1447 1070 1465 1059Q1469 1057 1472 1055Z"/></symbol><symbol id="s-q" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M333 1019Q238 1021 226 1116Q226 1144 240.5 1169.5Q255 1195 282.0 1209.0Q309 1223 338 1223Q366 1223 393.0 1209.0Q420 1195 434.0 1169.5Q448 1144 448 1116Q444 1052 387 1030L626 524L574 1226Q491 1226 473 1319Q473 1347 487.5 1372.0Q502 1397 528.5 1411.0Q555 1425 586 1425Q614 1425 640.5 1411.0Q667 1397 681.5 1372.0Q696 1347 696 1319Q694 1274 648 1240L837 492L880 1312Q813 1342 811 1390Q811 1418 826.0 1444.0Q841 1470 867.5 1483.0Q894 1496 921 1496Q950 1496 976.5 1483.0Q1003 1470 1018.0 1444.0Q1033 1418 1033 1390Q1030 1336 963 1312L1001 490L1186 1230Q1140 1277 1140 1319Q1140 1346 1154.5 1371.5Q1169 1397 1196.0 1411.0Q1223 1425 1250 1425Q1280 1425 1307.0 1411.0Q1334 1397 1348.5 1371.5Q1363 1346 1363 1319Q1352 1234 1266 1218L1174 524L1431 1039Q1388 1073 1388 1116Q1388 1144 1402.5 1169.5Q1417 1195 1443.5 1208.5Q1470 1222 1498 1222Q1528 1222 1554.5 1208.5Q1581 1195 1595.5 1169.5Q1610 1144 1610 1116Q1597 1022 1498 1022L1338 559V0H477V559Z"/></symbol><symbol id="g-r" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M1238 1156V1250H598V1156ZM1312 179V290H524V179ZM776 1494H1053V1339H1224V1494H1494V1332H1379V1188L1287 1038V453L1379 304V161H1494V-2H341V161H456V304L549 456H550V1037H549L456 1188V1332H341V1494H606V1339H776ZM1439 54V109H397V54Z"/></symbol><symbol id="w-r" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M776 1494H1053V1339H1224V1494H1494V1332H1379V1188L1287 1038V453L1379 304V161H1494V-2H341V161H456V304L549 456H550V1037H549L456 1188V1332H341V1494H606V1339H776ZM1439 54V109H397V54ZM1239 1056 1321 1187V1282H515V1187L597 1056ZM597 406 524 290V162H1312V290L1238 406ZM1238 458V1003L1239 1005H597V458Z"/></symbol><symbol id="s-r" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M776 1494H1053V1339H1224V1494H1494V1332H1379V1188L1287 1038V453L1379 304V161H1494V-2H341V161H456V304L549 456H550V1037H549L456 1188V1332H341V1494H606V1339H776Z"/></symbol><symbol id="g-b" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M684 514Q684 574 716 627Q724 644 735 658Q675 696 639 759Q598 831 597 911V915Q598 995 639 1068Q682 1143 760 1185Q788 1199 818 1209Q792 1227 775 1256Q753 1295 753 1336Q753 1379 775.5 1416.5Q798 1454 837.0 1475.0Q876 1496 918 1496Q959 1496 998.0 1475.0Q1037 1454 1059.5 1416.5Q1082 1379 1082 1336Q1082 1295 1061 1256Q1045 1227 1019 1208Q1047 1199 1076 1185Q1153 1143 1197 1068Q1239 995 1240 915V911Q1239 831 1197 759Q1160 697 1102 659Q1113 644 1121 627Q1152 574 1152 514Q1152 456 1120 402L1398 0H438L709 404Q684 457 684 514ZM977 738V862H1149V970H977V1094H859V970H687V862H859V738Z"/></symbol><symbol id="w-b" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M715 404Q684 457 684 514Q684 574 716 627Q724 644 735 658Q675 696 639 759Q598 831 597 911V915Q598 995 639 1068Q682 1143 760 1185Q788 1199 818 1209Q792 1227 775 1256Q753 1295 753 1336Q753 1379 775.5 1416.5Q798 1454 837.0 1475.0Q876 1496 918 1496Q959 1496 998.0 1475.0Q1037 1454 1059.5 1416.5Q1082 1379 1082 1336Q1082 1295 1061 1256Q1045 1227 1019 1208Q1047 1199 1076 1185Q1153 1143 1197 1068Q1239 995 1240 915V911Q1239 831 1197 759Q1160 697 1102 659Q1113 644 1121 627Q1152 574 1152 514Q1152 456 1120 402Q1118 399 1116 395L1398 0H438L709 404ZM977 738V862H1149V970H977V1094H859V970H687V862H859V738ZM1021 404Q1081 449 1081 522Q1081 565 1058.5 604.0Q1036 643 997.5 663.5Q959 684 917.0 684.0Q875 684 836.5 663.5Q798 643 775.5 604.0Q753 565 753 522Q753 458 816 404L594 64H1244ZM918 1449Q889 1449 863.0 1435.5Q837 1422 822.0 1395.5Q807 1369 807.0 1340.0Q807 1311 821.5 1284.5Q836 1258 862.5 1244.0Q889 1230 918.0 1230.0Q947 1230 974.0 1244.0Q1001 1258 1015.5 1284.5Q1030 1311 1030.0 1340.0Q1030 1369 1015.0 1395.5Q1000 1422 973.0 1435.5Q946 1449 918 1449Z"/></symbol><symbol id="s-b" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M684 514Q684 574 716 627Q724 644 735 658Q675 696 639 759Q598 831 597 911V915Q598 995 639 1068Q682 1143 760 1185Q788 1199 818 1209Q792 1227 775 1256Q753 1295 753 1336Q753 1379 775.5 1416.5Q798 1454 837.0 1475.0Q876 1496 918 1496Q959 1496 998.0 1475.0Q1037 1454 1059.5 1416.5Q1082 1379 1082 1336Q1082 1295 1061 1256Q1045 1227 1019 1208Q1047 1199 1076 1185Q1153 1143 1197 1068Q1239 995 1240 915V911Q1239 831 1197 759Q1160 697 1102 659Q1113 644 1121 627Q1152 574 1152 514Q1152 456 1120 402L1398 0H438L709 404Q684 457 684 514Z"/></symbol><symbol id="g-n" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M790 1254Q827 1277 827 1316Q827 1341 812.0 1369.5Q797 1398 797 1420Q797 1466 855 1496Q940 1415 947.5 1370.5Q955 1326 955 1313Q955 1266 921 1254H925Q925 1253 923 1253Q1459 913 1504 0H534Q521 56 521 114Q521 274 723.5 415.5Q926 557 926 670Q926 678 925 685Q859 518 742 518Q742 518 732 518Q642 372 539 372Q535 372 532 372L580 476L473 396Q359 424 332 507Q420 736 420 926Q420 953 418 979Q466 1088 565 1192Q568 1202 568 1211Q568 1239 545.5 1252.0Q523 1265 523 1300Q523 1337 543 1403Q647 1376 703 1254ZM533 999V983Q537 953 545 953H566Q635 953 635 1002Q635 1036 678 1084H672Q576 1084 539 1020ZM424 549V525Q424 496 452 496H462Q534 511 534 564L527 598Q465 598 424 549ZM922 1174 974 1085Q1349 816 1355 52H1432Q1387 902 922 1174Z"/></symbol><symbol id="w-n" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M798 1256Q802 1264 802 1275Q802 1296 791.0 1317.5Q780 1339 780 1353Q780 1402 850 1496Q972 1392 972 1289Q972 1263 964 1236Q1454 913 1499 0H529Q516 56 516 114Q516 274 713.0 422.0Q910 570 910 634Q910 634 910 640Q820 525 764 522Q718 380 560 362L551 384L507 354Q368 400 337 480Q415 729 415 921Q415 951 413 979Q461 1088 533 1210Q512 1242 508.5 1251.5Q505 1261 505 1266Q505 1293 538 1403Q642 1376 696 1256ZM534 979Q571 1042 667 1042H673Q630 996 630 961Q630 912 561 912H540Q532 912 528 942V957ZM522 557 529 522Q529 470 457 455H447Q419 455 419 485V508Q460 557 522 557ZM676 1236Q641 1332 564 1370Q539 1308 539 1271Q539 1244 553.5 1227.5Q568 1211 568 1193Q568 1177 557 1162Q498 1065 454 966Q458 922 458 878Q458 681 384 489Q409 413 512 389L609 461L574 387Q709 397 738 541Q843 545 925 718Q936 688 936 658Q936 538 745.0 400.0Q554 262 554 137Q554 83 566 31L1441 32Q1402 855 908 1235Q909 1235 909 1236H905Q936 1246 936 1289Q936 1301 929.5 1340.5Q923 1380 846 1454Q815 1380 815 1339Q815 1320 824.0 1303.5Q833 1287 833 1268Q833 1251 825 1236Z"/></symbol><symbol id="s-n" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M790 1254Q827 1277 827 1316Q827 1341 812.0 1369.5Q797 1398 797 1420Q797 1466 855 1496Q940 1415 947.5 1370.5Q955 1326 955 1313Q955 1266 921 1254H925Q925 1253 923 1253Q1459 913 1504 0H534Q521 56 521 114Q521 274 723.5 415.5Q926 557 926 670Q926 678 925 685Q859 518 742 518Q742 518 732 518Q642 372 539 372Q535 372 532 372L580 476L473 396Q359 424 332 507Q420 736 420 926Q420 953 418 979Q466 1088 565 1192Q568 1202 568 1211Q568 1239 545.5 1252.0Q523 1265 523 1300Q523 1337 543 1403Q647 1376 703 1254Z"/></symbol><symbol id="g-p" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M315 -1Q304 56 304 114Q304 274 386.5 420.5Q469 567 615 645Q653 666 693 681Q663 710 642 748Q600 823 600 905Q600 988 642.5 1063.5Q685 1139 762 1181Q789 1195 818 1205Q792 1224 777 1253Q754 1292 754.0 1334.0Q754 1376 776.0 1414.5Q798 1453 837.0 1474.0Q876 1495 917 1495Q957 1495 996.0 1474.0Q1035 1453 1057.5 1414.5Q1080 1376 1080.0 1334.0Q1080 1292 1059 1253Q1042 1224 1017 1204Q1044 1195 1074 1181Q1149 1139 1192.0 1063.5Q1235 988 1235 905Q1235 823 1194 748Q1172 710 1142 681Q1180 665 1218 645Q1365 567 1448.0 420.5Q1531 274 1531 114Q1531 56 1519 -1Z"/></symbol><symbol id="w-p" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M917 693Q974 693 1024.5 721.0Q1075 749 1103.0 799.0Q1131 849 1131.0 905.0Q1131 961 1102.5 1012.5Q1074 1064 1023.0 1091.0Q972 1118 917 1118Q863 1118 812.5 1091.0Q762 1064 732.5 1012.5Q703 961 703.0 905.0Q703 849 732.0 799.0Q761 749 811.5 721.0Q862 693 917 693ZM858 1334Q858 1318 866.0 1304.5Q874 1291 888.0 1283.5Q902 1276 917 1276Q933 1276 947.0 1283.5Q961 1291 969.0 1304.5Q977 1318 977 1334Q977 1349 969.0 1363.0Q961 1377 946.5 1385.0Q932 1393 917 1393Q903 1393 888.5 1385.0Q874 1377 866.0 1363.0Q858 1349 858 1334ZM1461 0V-1H398V0L315 -1Q304 56 304 114Q304 274 386.5 420.5Q469 567 615 645Q653 666 693 681Q663 710 642 748Q600 823 600 905Q600 988 642.5 1063.5Q685 1139 762 1181Q789 1195 818 1205Q792 1224 777 1253Q754 1292 754.0 1334.0Q754 1376 776.0 1414.5Q798 1453 837.0 1474.0Q876 1495 917 1495Q957 1495 996.0 1474.0Q1035 1453 1057.5 1414.5Q1080 1376 1080.0 1334.0Q1080 1292 1059 1253Q1042 1224 1017 1204Q1044 1195 1074 1181Q1149 1139 1192.0 1063.5Q1235 988 1235 905Q1235 823 1194 748Q1172 710 1142 681Q1180 665 1218 645Q1365 567 1448.0 420.5Q1531 274 1531 114Q1531 56 1519 -1ZM1427 131Q1423 256 1359 369Q1290 490 1167.5 555.5Q1045 621 917 621Q788 621 665.5 555.5Q543 490 476 369Q411 256 407 131Z"/></symbol><symbol id="s-p" viewBox="118 -1580 1600 1640"><path transform="scale(1,-1)" d="M315 -1Q304 56 304 114Q304 274 386.5 420.5Q469 567 615 645Q653 666 693 681Q663 710 642 748Q600 823 600 905Q600 988 642.5 1063.5Q685 1139 762 1181Q789 1195 818 1205Q792 1224 777 1253Q754 1292 754.0 1334.0Q754 1376 776.0 1414.5Q798 1453 837.0 1474.0Q876 1495 917 1495Q957 1495 996.0 1474.0Q1035 1453 1057.5 1414.5Q1080 1376 1080.0 1334.0Q1080 1292 1059 1253Q1042 1224 1017 1204Q1044 1195 1074 1181Q1149 1139 1192.0 1063.5Q1235 988 1235 905Q1235 823 1194 748Q1172 710 1142 681Q1180 665 1218 645Q1365 567 1448.0 420.5Q1531 274 1531 114Q1531 56 1519 -1Z"/></symbol></defs></svg>
@@ -727,6 +762,28 @@ function solveStars(type,start,stars,rocks){
   }
   return -1;
 }
+/* kürzester Weg: Liste der Felder, die nacheinander angesteuert werden */
+function starPath(type,start,stars,rocks){
+  const list=[...stars],idx=new Map(list.map((s,i)=>[s,i])),full=(1<<list.length)-1;
+  if(!list.length)return[];
+  const key=(p,m)=>p*1024+m,prev=new Map([[key(start,0),-1]]);let q=[[start,0]],goal=-1;
+  for(let d=0;d<16&&q.length&&goal<0;d++){
+    const nq=[];
+    for(const [p,m] of q){
+      const left=new Set(list.filter((s,i)=>!(m&(1<<i))));
+      for(const t of starMoves(type,p,rocks,left)){
+        let mm=m;if(idx.has(t))mm|=1<<idx.get(t);
+        const k=key(t,mm);if(prev.has(k))continue;prev.set(k,key(p,m));
+        if(mm===full){goal=k;break}nq.push([t,mm]);
+      }
+      if(goal>=0)break;
+    }
+    q=nq;
+  }
+  if(goal<0)return[];
+  const path=[];let k=goal;while(k!==-1&&prev.has(k)){path.unshift(Math.floor(k/1024));k=prev.get(k)}
+  return path.slice(1);
+}
 function genStars(type,opt){
   opt=opt||{};const nStars=opt.stars||3,nRocks=opt.rocks||0,maxPar=opt.maxPar||6,minPar=opt.minPar||nStars;
   for(let tries=0;tries<400;tries++){
@@ -1014,7 +1071,7 @@ function genIsMate(level){
 }
 
 const GEN={mate:genMate,capture:genCapture,rescue:genRescue,escape:genEscape,fork:genFork,pawncap:genPawnCap,promote:genPromote,castle:genCastle,ismate:genIsMate};
-const T={setSeed,rand,genStars,solveStars,starMoves,genReach,GEN,fenFrom,freeCaptures,rescueOk,forkTargets};
+const T={setSeed,rand,genStars,solveStars,starMoves,starPath,genReach,GEN,fenFrom,freeCaptures,rescueOk,forkTargets};
 if(typeof module!=='undefined')module.exports=T;else root.Trainer=T;
 })(typeof window!=='undefined'?window:globalThis,typeof module!=='undefined'?null:{Pos,sqName,onBoard,opp,ALL_SQ,VAL,AVAL,N_OFF,B_OFF,R_OFF,K_OFF,hanging,threatsAgainst,allMatesInOne,mateInOne});
 
@@ -1147,22 +1204,45 @@ function peterSVG(o){
 const STORE_KEY='peterSchach.v2';
 const Store={
   data:null,
+  read(key){try{const d=JSON.parse(localStorage.getItem(key));return d&&d.profiles&&Object.keys(d.profiles).length?d:null}catch(e){return null}},
   load(){
-    let d=null;try{d=JSON.parse(localStorage.getItem(STORE_KEY))}catch(e){}
-    if(!d||!d.profiles){d={v:2,current:null,profiles:{}};
-      /* alte Version übernehmen */
+    let d=this.read(STORE_KEY);
+    /* Spielstand beschädigt? Dann die letzte Sicherung nehmen */
+    if(!d)d=this.read(STORE_KEY+'.backup')||this.read(STORE_KEY+'.daily');
+    if(!d){d={v:2,current:null,profiles:{}};
       let old=null;try{old=JSON.parse(localStorage.getItem('peterSchach.v1'))}catch(e){}
       const p=newProfile('Alexander',{fig:'n',color:'#2B7BD8'});
       if(old&&old.prof){p.game.level=old.prof.level||1;p.game.w=old.prof.w||0;p.game.l=old.prof.l||0;p.game.d=old.prof.d||0}
       d.profiles[p.id]=p;d.current=p.id;
+    }else{
+      /* Sicherung beim Start: so geht bei einem Update nichts verloren */
+      try{localStorage.setItem(STORE_KEY+'.backup',JSON.stringify(d))}catch(e){}
+      try{const day=localStorage.getItem(STORE_KEY+'.dailyDate');if(day!==today()){localStorage.setItem(STORE_KEY+'.daily',JSON.stringify(d));localStorage.setItem(STORE_KEY+'.dailyDate',today())}}catch(e){}
     }
-    this.data=d;return d;
+    /* neue Felder ergänzen, ohne etwas zu überschreiben */
+    for(const id in d.profiles)fillDefaults(d.profiles[id],newProfile(d.profiles[id].name||'Kind',d.profiles[id].avatar||{fig:'n',color:'#2B7BD8'}));
+    if(!d.profiles[d.current])d.current=Object.keys(d.profiles)[0];
+    d.v=2;this.data=d;return d;
   },
-  save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(this.data))}catch(e){}}
+  save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(this.data))}catch(e){}},
+  exportCode(){return 'PETER1:'+btoa(unescape(encodeURIComponent(JSON.stringify(this.data))))},
+  importCode(code){
+    const m=String(code||'').trim().match(/PETER1:([A-Za-z0-9+/=\s]+)/);if(!m)return false;
+    try{const d=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/\s/g,'')))));if(!d||!d.profiles||!Object.keys(d.profiles).length)return false;
+      try{localStorage.setItem(STORE_KEY+'.beforeImport',JSON.stringify(this.data))}catch(e){}
+      this.data=d;this.save();this.load();return true}catch(e){return false}
+  }
 };
+function fillDefaults(obj,def){
+  for(const k in def){
+    if(obj[k]===undefined||obj[k]===null&&def[k]!==null)obj[k]=def[k];
+    else if(def[k]&&typeof def[k]==='object'&&!Array.isArray(def[k])&&obj[k]&&typeof obj[k]==='object'&&!Array.isArray(obj[k]))fillDefaults(obj[k],def[k]);
+  }
+  return obj;
+}
 function newProfile(name,avatar){
   return{id:'p'+Date.now().toString(36)+Math.floor(Math.random()*1e4),name,avatar,created:today(),
-    xp:0,stars:0,lessons:{},skills:{},badges:{},
+    xp:0,stars:0,lessons:{},skills:{},badges:{},resume:null,
     outfit:{hats:['none'],colors:['#0E8C7E'],hat:'none',color:'#0E8C7E'},
     streak:{count:0,last:null},daily:null,chests:0,
     game:{level:1,winsAt:0,lossStreak:0,w:0,l:0,d:0,current:null},
@@ -1224,14 +1304,52 @@ const Piper={
       try{await this.synth('Hallo!')}catch(e){}
     }catch(e){this.state='error';this.emit()}
   },
-  async synth(text){
-    if(this.cache.has(text))return this.cache.get(text);
-    audioUnlock();if(!ac)throw new Error('kein Audio');
-    const t=await this.lib();
-    const blob=await t.predict({text,voiceId:this.VOICE});
-    const buf=await ac.decodeAudioData(await blob.arrayBuffer());
-    this.cache.set(text,buf);if(this.cache.size>120)this.cache.delete(this.cache.keys().next().value);
-    return buf;
+  /* Die Stimme rechnet in einem eigenen Hintergrund-Thread, immer nur ein Satz auf einmal.
+     Nach einigen Sätzen wird der Thread neu gestartet, damit der Speicher frei bleibt. */
+  worker:null,wcount:0,busy:false,q:[],reqId:0,
+  makeWorker(){
+    if(this.worker)return this.worker;
+    try{
+      const src=`let t=null;onmessage=async e=>{const d=e.data;try{if(!t)t=await import(d.lib);const b=await t.predict({text:d.text,voiceId:d.voice});const buf=await b.arrayBuffer();postMessage({id:d.id,buf},[buf])}catch(err){postMessage({id:d.id,err:String(err&&err.message||err)})}}`;
+      this.worker=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})),{type:'module'});
+      this.wcount=0;
+    }catch(e){this.worker=null}
+    return this.worker;
+  },
+  killWorker(){if(this.worker){try{this.worker.terminate()}catch(e){}this.worker=null}},
+  synth(text){
+    if(this.cache.has(text))return Promise.resolve(this.cache.get(text));
+    const gen=Voice.pseq;
+    const p=new Promise((res,rej)=>{this.q.push({text,gen,res,rej});this.pump()});
+    p.catch(()=>{});
+    return p;
+  },
+  async pump(){
+    if(this.busy)return;
+    const it=this.q.shift();if(!it)return;
+    if(it.gen!==Voice.pseq){it.rej(new Error('alt'));return this.pump()}
+    this.busy=true;
+    try{
+      audioUnlock();if(!ac)throw new Error('kein Audio');
+      let data;
+      const w=this.makeWorker();
+      if(w){
+        data=await new Promise((res,rej)=>{
+          const id=++this.reqId;
+          const to=setTimeout(()=>{w.removeEventListener('message',on);this.killWorker();rej(new Error('Zeit'))},15000);
+          const on=e=>{if(e.data.id!==id)return;clearTimeout(to);w.removeEventListener('message',on);e.data.err?rej(new Error(e.data.err)):res(e.data.buf)};
+          w.addEventListener('message',on);
+          w.postMessage({id,text:it.text,voice:this.VOICE,lib:this.LIB});
+        });
+        if(++this.wcount>=15)this.killWorker();
+      }else{
+        const t=await this.lib();data=await (await t.predict({text:it.text,voiceId:this.VOICE})).arrayBuffer();
+      }
+      const buf=await ac.decodeAudioData(data);
+      if(it.text.length<=60){this.cache.set(it.text,buf);if(this.cache.size>40)this.cache.delete(this.cache.keys().next().value)}
+      it.res(buf);
+    }catch(e){it.rej(e)}
+    finally{this.busy=false;this.pump()}
   },
   /* einzelne Sätze, damit Peter schon spricht, während der nächste Satz entsteht */
   sentences(t){return (t.match(/[^.!?…]+[.!?…]*/g)||[t]).map(x=>x.trim()).filter(Boolean)},
@@ -1240,7 +1358,7 @@ const Piper={
 
 /* ---------- Peters Stimme ---------- */
 const Voice={
-  voices:[],voice:null,ok:false,failed:false,seq:0,pending:{},nativeVoices:[],
+  pseq:0,voices:[],voice:null,ok:false,failed:false,seq:0,pending:{},nativeVoices:[],
   init(){
     if(Native.ok){
       Native.on('speechEnd',m=>{const r=this.pending[m.id];if(r){delete this.pending[m.id];r()}Peter.talking(false)});
@@ -1272,7 +1390,7 @@ const Voice={
       const id=++this.seq;
       return new Promise(res=>{this.pending[id]=res;Native.post({type:'speak',id,text:this.spoken(text),voice:s.voice||'',rate:s.speechRate||1});setTimeout(()=>{if(this.pending[id]){delete this.pending[id];res()}},Math.max(4000,text.length*120))});
     }
-    if(Piper.usable())return this.speakNatural(text).then(()=>{Piper.fails=0},()=>{Piper.fails=(Piper.fails||0)+1;if(Piper.fails>=3){Piper.state='broken';Piper.emit()}return this.speakWeb(text)});
+    if(Piper.usable())return this.speakNatural(text).then(()=>{Piper.fails=0},e=>{if(e&&e.message==='alt')return;Piper.fails=(Piper.fails||0)+1;if(Piper.fails>=3){Piper.state='broken';Piper.emit()}return this.speakWeb(text)});
     return this.speakWeb(text);
   },
   async speakNatural(text){
@@ -1495,7 +1613,7 @@ const Skills={
 
 /* ---------- Welten und Lektionen ---------- */
 const WORLDS=[
-  {id:'brett',acc:'die Brettstadt',dat:'in der Brettstadt',name:'Brettstadt',fig:'p',c:'#2B7BD8',soft:'#DCEAFB',dark:'#1B5BAD',ink:'#174F97',desc:'Das Schachbrett und seine Felder',lessons:[
+  {id:'brett',acc:'die Brettstadt',dat:'in der Brettstadt',name:'Brettstadt',fig:'p',c:'#2675D0',soft:'#DCEAFB',dark:'#1C5AA3',ink:'#174F97',desc:'Das Schachbrett und seine Felder',lessons:[
     {id:'brett1',name:'Hallo Schachbrett',icon:'grid',steps:[
       {t:'talk',text:'Hallo! Das ist ein Schachbrett. Es hat 64 Felder, helle und dunkle. Jedes Feld hat einen Namen: zuerst ein Buchstabe, dann eine Zahl.',board:'empty',names:true},
       {t:'talk',text:'Unten rechts ist immer ein helles Feld. Merk dir: Hell ist rechts! Das Feld hier unten rechts heißt H1.',board:'empty',names:true,goal:['h1']},
@@ -1509,11 +1627,11 @@ const WORLDS=[
     ]},
     {id:'brett3',name:'Brett aufbauen',icon:'board',real:true,steps:[
       {t:'setup'},
-      {t:'quiz',q:'Wo steht die weiße Dame am Anfang?',options:['Auf D1','Auf E1','Auf A1'],answer:0,explain:'Die Dame steht auf ihrer Farbe: Die weiße Dame auf dem hellen Feld D1.',skill:'coords'},
-      {t:'quiz',q:'Welches Feld ist unten rechts?',options:['Ein helles Feld','Ein dunkles Feld'],answer:0,explain:'Unten rechts ist immer hell. Hell ist rechts!',skill:'coords'}
+      {t:'quiz',q:'Wo steht die weiße Dame am Anfang?',say:'Wo steht die weiße Dame am Anfang? Schau dir die drei Bilder an und tipp auf das richtige!',options:[{t:'D1',pic:'sq:d1:Q'},{t:'E1',pic:'sq:e1:Q'},{t:'A1',pic:'sq:a1:Q'}],answer:0,explain:'Die Dame steht auf ihrer Farbe: Die weiße Dame auf dem hellen Feld D1.',skill:'coords'},
+      {t:'quiz',q:'Welches Feld ist unten rechts?',say:'Welches Feld ist unten rechts? Das helle oder das dunkle?',options:[{t:'hell',pic:'light'},{t:'dunkel',pic:'dark'}],answer:0,explain:'Unten rechts ist immer hell. Hell ist rechts!',skill:'coords'}
     ]}
   ]},
-  {id:'turm',acc:'die Turmburg',dat:'in der Turmburg',name:'Turmburg',fig:'r',c:'#C8553D',soft:'#F8E1DA',dark:'#953B28',ink:'#8E3423',desc:'Der Turm fährt geradeaus',lessons:[
+  {id:'turm',acc:'die Turmburg',dat:'in der Turmburg',name:'Turmburg',fig:'r',c:'#C35037',soft:'#F8E1DA',dark:'#933A27',ink:'#8E3423',desc:'Der Turm fährt geradeaus',lessons:[
     {id:'turm1',name:'Der Turm',icon:'r',steps:[
       {t:'talk',text:'Das ist Turm Theo. Er fährt geradeaus: nach vorne, nach hinten, nach links und nach rechts. So weit er will!',demo:{type:'r',from:'d4'}},
       {t:'reach',type:'r',count:3,level:1},
@@ -1529,16 +1647,16 @@ const WORLDS=[
       {t:'reach',type:'r',count:2,level:2}
     ]}
   ]},
-  {id:'laeufer',acc:'den Läuferwald',dat:'im Läuferwald',name:'Läuferwald',fig:'b',c:'#3E9B4F',soft:'#DDF1E1',dark:'#2A7438',ink:'#226B30',desc:'Der Läufer läuft schräg',lessons:[
+  {id:'laeufer',acc:'den Läuferwald',dat:'im Läuferwald',name:'Läuferwald',fig:'b',c:'#358343',soft:'#DDF1E1',dark:'#286434',ink:'#226B30',desc:'Der Läufer läuft schräg',lessons:[
     {id:'lae1',name:'Der Läufer',icon:'b',steps:[
       {t:'talk',text:'Das ist Läuferin Lilli. Sie läuft immer schräg, wie auf einer Rutsche. Und sie bleibt immer auf ihrer Farbe!',demo:{type:'b',from:'d4'}},
       {t:'reach',type:'b',count:3,level:1},
-      {t:'quiz',q:'Ein Läufer steht auf einem hellen Feld. Kann er jemals auf ein dunkles Feld?',options:['Nein, nie','Ja, klar'],answer:0,explain:'Der Läufer läuft nur schräg und bleibt deshalb immer auf seiner Farbe.',skill:'move_b'}
+      {t:'quiz',q:'Kann der Läufer auf ein dunkles Feld?',say:'Der Läufer steht auf einem hellen Feld. Kann er jemals auf ein dunkles Feld? Grüner Haken heißt Ja, rotes Kreuz heißt Nein.',fen:'8/8/8/8/4B3/8/8/8 w - - 0 1',goal:['e5'],options:[{t:'Ja',pic:'yes'},{t:'Nein',pic:'no'}],answer:1,explain:'Der Läufer läuft nur schräg und bleibt deshalb immer auf seiner Farbe.',skill:'move_b'}
     ]},
     {id:'lae2',name:'Sterne im Wald',icon:'star',steps:[{t:'stars',type:'b',count:4,stars:3,rocks:0}]},
     {id:'lae3',name:'Läufer-Labyrinth',icon:'rock',steps:[{t:'stars',type:'b',count:3,stars:3,rocks:5},{t:'reach',type:'b',count:2,level:2}]}
   ]},
-  {id:'dame',acc:'das Damenschloss',dat:'im Damenschloss',name:'Damenschloss',fig:'q',c:'#7A5CFF',soft:'#E9E3FF',dark:'#5537D6',ink:'#4B2FC4',desc:'Die Dame kann fast alles',lessons:[
+  {id:'dame',acc:'das Damenschloss',dat:'im Damenschloss',name:'Damenschloss',fig:'q',c:'#7454FF',soft:'#E9E3FF',dark:'#5535D6',ink:'#4B2FC4',desc:'Die Dame kann fast alles',lessons:[
     {id:'dame1',name:'Die Dame',icon:'q',steps:[
       {t:'talk',text:'Das ist Dame Dora, die stärkste Figur! Sie kann gerade fahren wie der Turm und schräg laufen wie der Läufer.',demo:{type:'q',from:'d4'}},
       {t:'reach',type:'q',count:3,level:1},
@@ -1546,7 +1664,7 @@ const WORLDS=[
     ]},
     {id:'dame2',name:'Damen-Labyrinth',icon:'rock',steps:[{t:'stars',type:'q',count:4,stars:4,rocks:6},{t:'reach',type:'q',count:2,level:2}]}
   ]},
-  {id:'koenig',acc:'den Königspalast',dat:'im Königspalast',name:'Königspalast',fig:'k',c:'#D99A00',soft:'#FBEFCF',dark:'#A87400',ink:'#7A5400',desc:'Der König und das Schach',lessons:[
+  {id:'koenig',acc:'den Königspalast',dat:'im Königspalast',name:'Königspalast',fig:'k',c:'#9C6B00',soft:'#FBEFCF',dark:'#734F00',ink:'#7A5400',desc:'Der König und das Schach',lessons:[
     {id:'koe1',name:'Der König',icon:'k',steps:[
       {t:'talk',text:'Das ist König Kalle. Er ist die wichtigste Figur! Er geht immer nur einen Schritt, aber in jede Richtung.',demo:{type:'k',from:'e4'}},
       {t:'reach',type:'k',count:3,level:1},
@@ -1559,10 +1677,10 @@ const WORLDS=[
     {id:'koe3',name:'Rochade',icon:'castle',steps:[
       {t:'talk',text:'Die Rochade ist ein Spezialzug: König und Turm ziehen gleichzeitig! Der König macht zwei Schritte zum Turm, und der Turm hüpft über ihn drüber. So ist der König gut versteckt.',fen:'r3k2r/pppq1ppp/2npbn2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R2QK2R w KQkq - 0 1',arrows:[['e1','g1'],['h1','f1']]},
       {t:'puzzle',kind:'castle',count:3},
-      {t:'quiz',q:'Darf man rochieren, wenn der König im Schach steht?',options:['Nein','Ja'],answer:0,explain:'Im Schach ist keine Rochade erlaubt. Zuerst muss der König gerettet werden.',skill:'opening'}
+      {t:'quiz',q:'Darf der König im Schach rochieren?',say:'Der König steht im Schach. Darf er jetzt rochieren? Grüner Haken heißt Ja, rotes Kreuz heißt Nein.',fen:'4r2k/8/8/8/8/8/8/R3K2R w KQ - 0 1',danger:['e8','e1'],options:[{t:'Ja',pic:'yes'},{t:'Nein',pic:'no'}],answer:1,explain:'Im Schach ist keine Rochade erlaubt. Zuerst muss der König gerettet werden.',skill:'opening'}
     ]}
   ]},
-  {id:'springer',acc:'die Springerberge',dat:'in den Springerbergen',name:'Springerberge',fig:'n',c:'#0E8C7E',soft:'#D3EFE9',dark:'#0A6A5F',ink:'#08594F',desc:'Der Springer springt wie ein L',lessons:[
+  {id:'springer',acc:'die Springerberge',dat:'in den Springerbergen',name:'Springerberge',fig:'n',c:'#0D8376',soft:'#D3EFE9',dark:'#09615A',ink:'#08594F',desc:'Der Springer springt wie ein L',lessons:[
     {id:'spr1',name:'Der Springer',icon:'n',steps:[
       {t:'talk',text:'Das ist Springer Sami. Er springt wie ein L: zwei Felder geradeaus und dann eins zur Seite. Und er darf über andere Figuren drüber springen!',demo:{type:'n',from:'d4'}},
       {t:'reach',type:'n',count:4,level:1}
@@ -1570,7 +1688,7 @@ const WORLDS=[
     {id:'spr2',name:'Hüpf-Sterne',icon:'star',steps:[{t:'stars',type:'n',count:3,stars:2,rocks:0,maxPar:4}]},
     {id:'spr3',name:'Springer-Profi',icon:'star',steps:[{t:'stars',type:'n',count:3,stars:3,rocks:0,maxPar:6},{t:'reach',type:'n',count:2,level:2}]}
   ]},
-  {id:'bauer',acc:'das Bauerndorf',dat:'im Bauerndorf',name:'Bauerndorf',fig:'p',c:'#E8743B',soft:'#FCE6D9',dark:'#B9541F',ink:'#9C4214',desc:'Bauern ziehen nach vorne',lessons:[
+  {id:'bauer',acc:'das Bauerndorf',dat:'im Bauerndorf',name:'Bauerndorf',fig:'p',c:'#C55017',soft:'#FCE6D9',dark:'#923A10',ink:'#9C4214',desc:'Bauern ziehen nach vorne',lessons:[
     {id:'bau1',name:'Der Bauer',icon:'p',steps:[
       {t:'talk',text:'Das ist Bauer Bruno. Er geht nur nach vorne, immer ein Feld. Beim allerersten Zug darf er auch zwei Felder gehen!',demo:{type:'p',from:'e2'}},
       {t:'reach',type:'p',count:3,level:1}
@@ -1588,7 +1706,7 @@ const WORLDS=[
       {t:'duel',variant:'pawns'}
     ]}
   ]},
-  {id:'adler',acc:'die Adlerklippen',dat:'auf den Adlerklippen',name:'Adlerklippen',fig:'b',c:'#1E9BD7',soft:'#D8EFFA',dark:'#1177A8',ink:'#0B6A98',desc:'Schlagen und Schützen',lessons:[
+  {id:'adler',acc:'die Adlerklippen',dat:'auf den Adlerklippen',name:'Adlerklippen',fig:'b',c:'#187CAC',soft:'#D8EFFA',dark:'#115B80',ink:'#0B6A98',desc:'Schlagen und Schützen',lessons:[
     {id:'adl1',name:'Adlerauge',icon:'eye',steps:[
       {t:'talk',text:'Ein Adler sieht alles! Manchmal steht eine Figur von mir ganz allein, niemand passt auf sie auf. Die darfst du einfach schlagen!',fen:'4k3/8/8/3n4/8/8/8/3RK3 w - - 0 1',arrows:[['d1','d5']]},
       {t:'puzzle',kind:'capture',count:5}
@@ -1627,37 +1745,37 @@ function worldDone(w){return w.lessons.every(l=>P().lessons[l.id])}
 
 /* ---------- Figurenfreunde ---------- */
 const FRIENDS=[
-  {fig:'r',name:'Turm Theo',c:'#C8553D',world:'turm',text:'Ich fahre geradeaus: vor, zurück, links und rechts. So weit ich will!'},
-  {fig:'b',name:'Läuferin Lilli',c:'#3E9B4F',world:'laeufer',text:'Ich laufe schräg wie auf einer Rutsche und bleibe immer auf meiner Farbe.'},
-  {fig:'q',name:'Dame Dora',c:'#7A5CFF',world:'dame',text:'Ich bin die Stärkste! Ich kann gerade und schräg, so weit ich will.'},
-  {fig:'k',name:'König Kalle',c:'#D99A00',world:'koenig',text:'Ich mache nur kleine Schritte. Pass gut auf mich auf!'},
-  {fig:'n',name:'Springer Sami',c:'#0E8C7E',world:'springer',text:'Ich springe wie ein L und hüpfe sogar über andere drüber!'},
-  {fig:'p',name:'Bauer Bruno',c:'#E8743B',world:'bauer',text:'Ich gehe nach vorne und schlage schräg. Ganz hinten werde ich zur Dame!'}
+  {fig:'r',name:'Turm Theo',c:'#C35037',world:'turm',text:'Ich fahre geradeaus: vor, zurück, links und rechts. So weit ich will!'},
+  {fig:'b',name:'Läuferin Lilli',c:'#358343',world:'laeufer',text:'Ich laufe schräg wie auf einer Rutsche und bleibe immer auf meiner Farbe.'},
+  {fig:'q',name:'Dame Dora',c:'#7454FF',world:'dame',text:'Ich bin die Stärkste! Ich kann gerade und schräg, so weit ich will.'},
+  {fig:'k',name:'König Kalle',c:'#9C6B00',world:'koenig',text:'Ich mache nur kleine Schritte. Pass gut auf mich auf!'},
+  {fig:'n',name:'Springer Sami',c:'#0D8376',world:'springer',text:'Ich springe wie ein L und hüpfe sogar über andere drüber!'},
+  {fig:'p',name:'Bauer Bruno',c:'#C55017',world:'bauer',text:'Ich gehe nach vorne und schlage schräg. Ganz hinten werde ich zur Dame!'}
 ];
 
 /* ---------- Abzeichen ---------- */
 const BADGES=[
-  {id:'first_lesson',name:'Erster Schritt',icon:'footprints',c:'#2B7BD8',desc:'Die erste Lektion geschafft',test:p=>p.stats.lessons>=1},
-  {id:'coord20',name:'Felder-Profi',icon:'grid',c:'#2B7BD8',desc:'20 Felder hintereinander richtig gefunden',test:p=>p.stats.bestCoordRun>=20},
-  {id:'stars50',name:'Sternenjäger',icon:'sparkle',c:'#D99A00',desc:'50 Sterne gesammelt',test:p=>p.stars>=50},
-  {id:'stars150',name:'Sternenkönig',icon:'crown',c:'#D99A00',desc:'150 Sterne gesammelt',test:p=>p.stars>=150},
-  {id:'first_game',name:'Erstes Duell',icon:'board',c:'#0E8C7E',desc:'Die erste Partie mit Peter gespielt',test:p=>p.game.w+p.game.l+p.game.d>=1},
-  {id:'first_win',name:'Peter besiegt',icon:'trophy',c:'#E8743B',desc:'Die erste Partie gegen Peter gewonnen',test:p=>p.game.w>=1},
-  {id:'wins5',name:'Siegesserie',icon:'trophy',c:'#C8553D',desc:'5 Partien gegen Peter gewonnen',test:p=>p.game.w>=5},
+  {id:'first_lesson',name:'Erster Schritt',icon:'footprints',c:'#2675D0',desc:'Die erste Lektion geschafft',test:p=>p.stats.lessons>=1},
+  {id:'coord20',name:'Felder-Profi',icon:'grid',c:'#2675D0',desc:'20 Felder hintereinander richtig gefunden',test:p=>p.stats.bestCoordRun>=20},
+  {id:'stars50',name:'Sternenjäger',icon:'sparkle',c:'#9C6B00',desc:'50 Sterne gesammelt',test:p=>p.stars>=50},
+  {id:'stars150',name:'Sternenkönig',icon:'crown',c:'#9C6B00',desc:'150 Sterne gesammelt',test:p=>p.stars>=150},
+  {id:'first_game',name:'Erstes Duell',icon:'board',c:'#0D8376',desc:'Die erste Partie mit Peter gespielt',test:p=>p.game.w+p.game.l+p.game.d>=1},
+  {id:'first_win',name:'Peter besiegt',icon:'trophy',c:'#C55017',desc:'Die erste Partie gegen Peter gewonnen',test:p=>p.game.w>=1},
+  {id:'wins5',name:'Siegesserie',icon:'trophy',c:'#C35037',desc:'5 Partien gegen Peter gewonnen',test:p=>p.game.w>=5},
   {id:'mate_game',name:'Matt-Meister',icon:'crown',c:'#4F46E5',desc:'In einer Partie Schachmatt gesetzt',test:p=>p.stats.mates>=1},
-  {id:'castle',name:'Burgbaumeister',icon:'castle',c:'#C8553D',desc:'In einer Partie rochiert',test:p=>p.stats.castled>=1},
-  {id:'promo',name:'Verwandlung',icon:'sparkle',c:'#7A5CFF',desc:'Einen Bauern in einer Partie zur Dame gemacht',test:p=>p.stats.promos>=1},
-  {id:'puzzles25',name:'Tüftler',icon:'bulb',c:'#3E9B4F',desc:'25 Rätsel gelöst',test:p=>p.stats.puzzlesOk>=25},
-  {id:'puzzles100',name:'Rätsel-Ass',icon:'bulb',c:'#2A7438',desc:'100 Rätsel gelöst',test:p=>p.stats.puzzlesOk>=100},
-  {id:'eagle',name:'Adlerauge',icon:'eye',c:'#1E9BD7',desc:'Freie Figuren immer sicher entdecken',test:p=>{const s=p.skills.capture;return !!s&&s.n>=12&&s.v>=80}},
-  {id:'shield',name:'Schutzschild',icon:'shield',c:'#1177A8',desc:'Eigene Figuren immer gut beschützen',test:p=>{const s=p.skills.protect;return !!s&&s.n>=12&&s.v>=80}},
+  {id:'castle',name:'Burgbaumeister',icon:'castle',c:'#C35037',desc:'In einer Partie rochiert',test:p=>p.stats.castled>=1},
+  {id:'promo',name:'Verwandlung',icon:'sparkle',c:'#7454FF',desc:'Einen Bauern in einer Partie zur Dame gemacht',test:p=>p.stats.promos>=1},
+  {id:'puzzles25',name:'Tüftler',icon:'bulb',c:'#358343',desc:'25 Rätsel gelöst',test:p=>p.stats.puzzlesOk>=25},
+  {id:'puzzles100',name:'Rätsel-Ass',icon:'bulb',c:'#286434',desc:'100 Rätsel gelöst',test:p=>p.stats.puzzlesOk>=100},
+  {id:'eagle',name:'Adlerauge',icon:'eye',c:'#187CAC',desc:'Freie Figuren immer sicher entdecken',test:p=>{const s=p.skills.capture;return !!s&&s.n>=12&&s.v>=80}},
+  {id:'shield',name:'Schutzschild',icon:'shield',c:'#115B80',desc:'Eigene Figuren immer gut beschützen',test:p=>{const s=p.skills.protect;return !!s&&s.n>=12&&s.v>=80}},
   {id:'fork',name:'Gabel-Held',icon:'fork',c:'#C2410C',desc:'5 Gabeln gefunden',test:p=>p.stats.forks>=5},
-  {id:'pawnwin',name:'Bauernkönig',icon:'trophy',c:'#E8743B',desc:'Eine Bauernschlacht gewonnen',test:p=>p.stats.pawnWins>=1},
+  {id:'pawnwin',name:'Bauernkönig',icon:'trophy',c:'#C55017',desc:'Eine Bauernschlacht gewonnen',test:p=>p.stats.pawnWins>=1},
   {id:'streak3',name:'Drei Tage',icon:'calendar',c:'#FF7A1A',desc:'Drei Tage hintereinander gespielt',test:p=>p.streak.count>=3},
   {id:'streak7',name:'Eine Woche',icon:'calendar',c:'#E5484D',desc:'Sieben Tage hintereinander gespielt',test:p=>p.streak.count>=7},
-  {id:'world3',name:'Entdecker',icon:'map',c:'#0E8C7E',desc:'Drei Welten geschafft',test:()=>WORLDS.filter(worldDone).length>=3},
+  {id:'world3',name:'Entdecker',icon:'map',c:'#0D8376',desc:'Drei Welten geschafft',test:()=>WORLDS.filter(worldDone).length>=3},
   {id:'allworlds',name:'Schachland-Held',icon:'crown',c:'#4F46E5',desc:'Alle Welten geschafft',test:()=>WORLDS.every(worldDone)},
-  {id:'level3',name:'Peter wird stärker',icon:'sparkle',c:'#7A5CFF',desc:'Peter auf Stufe 3 gebracht',test:p=>p.game.level>=3}
+  {id:'level3',name:'Peter wird stärker',icon:'sparkle',c:'#7454FF',desc:'Peter auf Stufe 3 gebracht',test:p=>p.game.level>=3}
 ];
 
 /* ---------- Rang ---------- */
@@ -1744,7 +1862,9 @@ const Runner={
     /* cfg: {title,color,steps,lesson?,training?,onExit} */
     Voice.stop();Ears.stop();
     const items=cfg.steps.reduce((n,s)=>n+(s.count||1),0);
-    this.cur={...cfg,items,done:0,mistakes:0,stepIdx:0,alive:true,starsFromDuel:null,skillHits:{}};
+    const startStep=cfg.resume?Math.min(cfg.resume.step,cfg.steps.length-1):0;
+    const done=cfg.steps.slice(0,startStep).reduce((n,s)=>n+(s.count||1),0);
+    this.cur={...cfg,items,done,mistakes:cfg.resume?cfg.resume.mistakes||0:0,stepIdx:startStep,startStep,alive:true,starsFromDuel:null,skillHits:{}};
     UI.go('lesson');
   },
   render(){
@@ -1766,16 +1886,19 @@ const Runner={
     });
     this.run();
   },
-  progress(n){const c=this.cur;c.done=Math.min(c.items,c.done+(n||1));const b=$('.prog i');if(b)b.style.width=Math.round(c.done/c.items*100)+'%'},
+  progress(n){const c=this.cur;c.done=Math.min(c.items,c.done+(n===0?0:(n||1)));const b=$('.prog i');if(b)b.style.width=Math.round(c.done/c.items*100)+'%'},
   mistake(){this.cur.mistakes++},
   quit(){
-    UI.confirm('Aufhören?','Dein Fortschritt in dieser Lektion geht verloren.','Weiterüben','Aufhören').then(stay=>{if(!stay){this.cur.alive=false;Voice.stop();UI.go(this.cur.training?'train':'map')}});
+    Voice.speak('Möchtest du aufhören? Grün heißt weiterspielen.');
+    UI.confirm('Aufhören?','Du kannst später genau hier weitermachen.','Weiterspielen','Aufhören',{yesIcon:'play',noIcon:'home'}).then(stay=>{if(!stay){this.cur.alive=false;Voice.stop();UI.go(this.cur.training?'train':'home')}else Voice.stop()});
   },
   async run(){
     const c=this.cur;
-    for(c.stepIdx=0;c.stepIdx<c.steps.length;c.stepIdx++){
+    setTimeout(()=>this.progress(0),50);
+    for(c.stepIdx=c.startStep||0;c.stepIdx<c.steps.length;c.stepIdx++){
       if(!c.alive)return;
       const step=c.steps[c.stepIdx];
+      if(c.lesson){P().resume={id:c.lesson.id,step:c.stepIdx,mistakes:c.mistakes,date:today()};save()}
       const fn=STEP[step.t];if(!fn)continue;
       const stage=$('#stage');if(!stage)return;
       stage.innerHTML='';
@@ -1788,11 +1911,12 @@ const Runner={
   starsFor(c){
     if(c.starsFromDuel!=null)return c.starsFromDuel;
     const r=c.mistakes/Math.max(1,c.items);
-    return c.mistakes<=1?3:r<=.35?2:1;
+    return c.mistakes<=2?3:r<=.5?2:1;
   },
   finish(){
     const c=this.cur;if(!c||!c.alive)return;c.alive=false;
     const p=P(),stars=this.starsFor(c);
+    if(c.lesson)p.resume=null;
     let newStars=stars,friend=null,worldNow=false;
     if(c.lesson){
       const prev=p.lessons[c.lesson.id]||0;newStars=Math.max(0,stars-prev);
@@ -1809,11 +1933,14 @@ const Runner={
 };
 
 /* ---------- Hilfen ---------- */
-function stageHTML(task,extra){return `<p class="task">${task}</p><div class="bd"></div>${extra||''}<div class="ctl"></div>`}
+function stageHTML(task,extra,pic){return `<button class="taskline" data-act="repeat" aria-label="Aufgabe vorlesen">${pic?`<span class="tpic">${pic}</span>`:''}<span class="task">${task}</span><span class="tspk">${ICON.speaker}</span></button><div class="bd"></div>${extra||''}<div class="ctl"></div>`}
+const KIND_PIC={mate:ICON.crown,capture:ICON.eye,rescue:ICON.shield,escape:ICON.ring,fork:ICON.fork,pawncap:'p',promote:'q',castle:ICON.castle,ismate:ICON.crown};
+const picOf=k=>k&&k.length===1?pieceSVG('w',k,'i'):k;
+function dots(n,total){let h='<span class="dots">';for(let i=0;i<total;i++)h+=`<i class="${i<n?'on':''}"></i>`;return h+'</span>'}
 function waitClick(el){return new Promise(r=>el.addEventListener('click',()=>{audioUnlock();r()},{once:true}))}
 function continueBtn(stage,label,cls){
   const ctl=$('.ctl',stage)||stage;
-  ctl.innerHTML=`<button class="big ${cls||'go'} wide" data-cont style="background:var(--wc);color:#fff">${label||'Weiter'} ${ICON.next}</button>`;
+  ctl.innerHTML=`<button class="big ${cls||'go'} wide nextbtn" data-cont style="background:var(--wc);color:#fff" aria-label="${esc(label||'Weiter')}"><span>${label||'Weiter'}</span><span class="nexticon">${label&&/Fertig|Erledigt|aufgebaut/.test(label)?ICON.check:ICON.next}</span></button>`;
   return waitClick($('[data-cont]',ctl));
 }
 function feedback(stage,good,text){
@@ -1852,7 +1979,7 @@ const STEP={
   },
 
   async coordFind(step,stage,c){
-    stage.innerHTML=stageHTML('Tippe auf das Feld <span class="sqbig" id="cf">E4</span>','<div class="counter"><span id="cfn"></span></div>');
+    stage.innerHTML=stageHTML('Tippe auf <span class="sqbig" id="cf">E4</span>','<div class="counter" id="cfn"></div>',ICON.target);
     const b=new Board($('.bd',stage),{names:step.names});b.setPieces([]);
     let run=0;const p=P();
     const pool=ALL_SQ.filter(s=>step.region==='low'?(s>>4)<=3:true);
@@ -1860,7 +1987,7 @@ const STEP={
     for(let i=0;i<step.count;i++){
       if(!c.alive)return;
       let t;do{t=pick(pool)}while(t===lastT);lastT=t;
-      $('#cf').textContent=SQ(t);$('#cfn').textContent=`${i+1} von ${step.count}`;
+      $('#cf').textContent=SQ(t);$('#cfn').innerHTML=dots(i,step.count);
       b.clearMarks().render();
       Peter.say(i===0?`Wo ist ${SQ(t)}? Tippe drauf!`:pick([`Und jetzt ${SQ(t)}!`,`Finde ${SQ(t)}!`,`Wo ist ${SQ(t)}?`,`${SQ(t)}, bitte!`]),'smile');
       let tries=0;
@@ -1877,7 +2004,7 @@ const STEP={
   },
 
   async coordName(step,stage,c){
-    stage.innerHTML=stageHTML('Wie heißt das leuchtende Feld?','<div class="options" id="opts"></div>');
+    stage.innerHTML=stageHTML('Wie heißt das gelbe Feld?','<div class="options" id="opts"></div>',ICON.grid);
     const b=new Board($('.bd',stage),{names:'edge'});b.setPieces([]);
     for(let i=0;i<step.count;i++){
       if(!c.alive)return;
@@ -1898,7 +2025,7 @@ const STEP={
 
   async reach(step,stage,c){
     const type=step.type;
-    stage.innerHTML=stageHTML(`Tippe alle Felder, wohin ${ART[type]} ${NAME[type]} ziehen kann!`,'<div class="counter"><span id="rc"></span></div>');
+    stage.innerHTML=stageHTML(`Wohin kann ${ART[type]} ${NAME[type]}?`,'<div class="counter" id="rc"></div>',pieceSVG('w',type,'i'));
     const b=new Board($('.bd',stage),{names:'edge'});
     for(let i=0;i<step.count;i++){
       if(!c.alive)return;
@@ -1906,7 +2033,7 @@ const STEP={
       if(!lv){Runner.progress(1);continue}
       const pos=new Pos(lv.fen);b.clearMarks();b.setPos(pos);b.mark('sel',[lv.from]).render();window.__reach=lv;
       const found=new Set();let wrong=0;
-      const upd=()=>{$('#rc').textContent=`${found.size} von ${lv.targets.length} gefunden`};upd();
+      const upd=()=>{$('#rc').innerHTML=`<span class="cnt">${ICON.check}<b>${found.size}</b> / ${lv.targets.length}</span>`};upd();
       Peter.say(i===0?`Wohin kann ${ART[type]} ${NAME[type]} ziehen? Tippe alle Felder an!`:pick(['Und hier? Tippe alle Felder!','Nächste Runde! Wohin geht es?']),'smile');
       await new Promise(res=>{
         b.opt.onTap=sq=>{
@@ -1928,7 +2055,7 @@ const STEP={
 
   async stars(step,stage,c){
     const type=step.type;
-    stage.innerHTML=stageHTML(`Sammle alle Sterne mit ${ART[type]==='die'?'der':'dem'} ${NAME[type]}!`,'<div class="counter"><span id="mv"></span><span id="par"></span></div>');
+    stage.innerHTML=stageHTML(`Sammle alle Sterne!`,'<div class="counter"><span id="mv" class="cnt"></span></div>',pieceSVG('w',type,'i'));
     const ctl=$('.ctl',stage);
     const b=new Board($('.bd',stage),{names:'edge'});
     for(let i=0;i<step.count;i++){
@@ -1937,8 +2064,14 @@ const STEP={
       const lv=Trainer.genStars(type,{stars:nStars,rocks:step.rocks,maxPar:step.maxPar||Math.max(6,nStars+3)});
       if(!lv){Runner.progress(1);continue}
       let cur,left,moves,wrong=0;
-      const reset=()=>{cur=lv.start;left=new Set(lv.stars);moves=0;const arr=new Array(128).fill(null);arr[cur]='w'+type;b.clearMarks();b.setPieces(arr);b.mark('star',[...left]).mark('rock',lv.rocks).mark('sel',[cur]).render();upd()};
-      const upd=()=>{$('#mv').textContent=`Züge: ${moves}`;$('#par').textContent=`Ziel: ${lv.par}`};
+      let helping=false;
+      const showHelp=(say)=>{
+        const path=Trainer.starPath(type,cur,[...left],new Set(lv.rocks));
+        if(!path.length)return;helping=true;b.mark('goal',[path[0]]).render();
+        if(say)Peter.say(pick(['Ich helfe dir! Zieh auf das gelbe Feld.','Schau mal, das gelbe Feld! Da geht es weiter.']),'smile');
+      };
+      const reset=()=>{cur=lv.start;left=new Set(lv.stars);moves=0;helping=false;const arr=new Array(128).fill(null);arr[cur]='w'+type;b.clearMarks();b.setPieces(arr);b.mark('star',[...left]).mark('rock',lv.rocks).mark('sel',[cur]).render();upd()};
+      const upd=()=>{$('#mv').innerHTML=`${ICON.footprints.replace('<svg','<svg aria-label="Züge"')}<b>${moves}</b>&nbsp;/ ${lv.par}`;$('#mv').classList.toggle('over',moves>lv.par)};
       ctl.innerHTML=`<button class="big ghost wide" data-reset>${ICON.refresh} Nochmal von vorne</button>`;window.__stars={lv,get cur(){return cur},get left(){return [...left]}};
       reset();
       Peter.say(i===0?`Sammle alle Sterne ein! Schaffst du es in ${lv.par} Zügen?`:pick([`Neue Sterne! Ziel: ${lv.par} Züge.`,`Weiter geht's! Wie wäre es mit ${lv.par} Zügen?`]),'smile');
@@ -1948,11 +2081,14 @@ const STEP={
           if(sq===cur)return;
           const ok=Trainer.starMoves(type,cur,new Set(lv.rocks),left).includes(sq);
           if(!ok){sfx.nope();b.flash(sq,'bad');wrong++;if(wrong===1){Runner.mistake();recordTask('move_'+type,false,.4,false)}
+            if(wrong>=3||moves>=lv.par+3){showHelp(true);return}
             Peter.say(lv.rocks.includes(sq)?'Auf einen Stein kannst du nicht ziehen.':pick([`So kann ${ART[type]} ${NAME[type]} nicht ziehen.`,'Da kommst du nicht in einem Zug hin.']),'think');return}
           const from=cur;cur=sq;moves++;
           const arr=new Array(128).fill(null);arr[cur]='w'+type;b.setPieces(arr);b.mark('sel',[cur]);b.animate(from,cur);
+          b.mark('goal',[]);
           if(left.has(sq)){left.delete(sq);sfx.star();b.mark('star',[...left]).render()}else{sfx.move();b.render()}
           upd();
+          if(left.size&&(helping||moves>=lv.par+3))showHelp(!helping);
           if(!left.size){
             b.opt.onTap=null;const great=moves<=lv.par,good=moves<=lv.par+2;
             if(!great&&!good)Runner.mistake();
@@ -1970,7 +2106,7 @@ const STEP={
 
   async puzzle(step,stage,c){
     const kind=step.kind,skill=KIND_SKILL[kind];
-    stage.innerHTML=stageHTML(KIND_TASK[kind],'');
+    stage.innerHTML=stageHTML(KIND_TASK[kind],'',picOf(KIND_PIC[kind]));
     const b=new Board($('.bd',stage),{names:'edge'});
     for(let i=0;i<step.count;i++){
       if(!c.alive)return;
@@ -1979,11 +2115,11 @@ const STEP={
       if(!pz){Runner.progress(1);continue}
       if(step.real){
         b.clearMarks();b.setPos(new Pos(pz.fen));b.render();
-        $('.task',stage).textContent='Bau diese Stellung auf deinem Brett nach';
+        $('.task',stage).textContent='Bau das auf deinem Brett nach';
         Peter.say(i===0?'Jetzt wird es echt! Stell diese Figuren auf deinem Schachbrett auf. Weiß unten. Sag Bescheid, wenn du fertig bist!':'Neue Stellung! Räum dein Brett ab und stell diese Figuren auf.','smile');
         await continueBtn(stage,'Fertig aufgebaut');
         if(!c.alive)return;
-        $('.task',stage).textContent=KIND_TASK[kind]+' Zieh am Brett, dann tipp den Zug hier an.';
+        $('.task',stage).textContent=KIND_TASK[kind];
       }
       if(kind==='ismate')await askIsMate(pz,b,stage,c,i);
       else await solveMove(pz,b,stage,c,i,skill,kind);
@@ -1993,13 +2129,17 @@ const STEP={
   },
 
   async quiz(step,stage,c){
-    stage.innerHTML=`<p class="task">${esc(step.q)}</p><div class="options">${step.options.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')}</div><div class="ctl"></div>`;
-    Peter.say(step.q,'think');
+    const opts=step.options.map(o=>typeof o==='string'?{t:o}:o);
+    stage.innerHTML=`<button class="taskline" data-act="repeat"><span class="tpic">${ICON.bulb}</span><span class="task">${esc(step.q)}</span><span class="tspk">${ICON.speaker}</span></button>
+      ${step.fen?'<div class="bd"></div>':''}
+      <div class="options pics">${opts.map((o,i)=>`<button class="opt pic" data-i="${i}">${o.pic?quizPic(o.pic):''}<span>${esc(o.t)}</span></button>`).join('')}</div><div class="ctl"></div>`;
+    if(step.fen){const b=new Board($('.bd',stage),{names:'edge'});b.setPos(new Pos(step.fen));if(step.goal)b.mark('goal',step.goal.map(sqIdx));if(step.danger)b.mark('danger',step.danger.map(sqIdx));if(step.arrows)b.arrows(step.arrows.map(a=>({from:sqIdx(a[0]),to:sqIdx(a[1]),kind:'hint'})));b.render()}
+    Peter.say(step.say||step.q,'think');
     let first=true;
     await new Promise(res=>{
       stage.onclick=e=>{const bt=e.target.closest('.opt');if(!bt||bt.disabled)return;const i=+bt.dataset.i;
-        if(i===step.answer){bt.classList.add('right');sfx.good();if(step.skill)recordTask(step.skill,first,.5,false);$$('.opt',stage).forEach(x=>x.disabled=true);Peter.say((first?praise()+' ':'')+step.explain,'wow');feedback(stage,true,step.explain);stage.onclick=null;res()}
-        else{bt.classList.add('wrong');sfx.nope();if(first){Runner.mistake();if(step.skill)recordTask(step.skill,false,.5,false)}first=false;Peter.say('Hmm, nicht ganz. Probier die andere Antwort!','think')}};
+        if(i===step.answer){bt.classList.add('right');sfx.good();Peter.bounce();if(step.skill)recordTask(step.skill,first,.5,false);$$('.opt',stage).forEach(x=>x.disabled=true);Peter.say((first?praise()+' ':'')+step.explain,'wow');feedback(stage,true,step.explain);stage.onclick=null;res()}
+        else{bt.classList.add('wrong');bt.disabled=true;sfx.nope();if(first){Runner.mistake();if(step.skill)recordTask(step.skill,false,.5,false)}first=false;Peter.say('Hmm, nicht ganz. Probier ein anderes Bild!','think')}};
     });
     await continueBtn(stage);
     Runner.progress(1);
@@ -2015,7 +2155,7 @@ const STEP={
       {t:'Der König kommt auf das letzte freie Feld daneben: E1 und E8.',pcs:['e1K','e8k']},
       {t:'Zum Schluss die Bauern. Sie stehen alle in einer Reihe davor.',pcs:'abcdefgh'.split('').flatMap(f=>[f+'2P',f+'7p'])}
     ];
-    stage.innerHTML=stageHTML('Bau dein echtes Brett auf','');
+    stage.innerHTML=stageHTML('Bau dein echtes Brett auf','',ICON.board);
     const b=new Board($('.bd',stage),{names:'edge'});
     const arr=new Array(128).fill(null);b.setPieces(arr);
     for(let k=0;k<S.length;k++){
@@ -2039,13 +2179,30 @@ const STEP={
     const b=new Board($('.bd',stage),{names:'edge'});b.setPos(new Pos(step.variant==='pawns'?PAWNS_FEN:START_FEN));
     Peter.say(step.variant==='pawns'?'Bauernschlacht! Stell nur die Bauern auf. Wer zuerst ganz hinten ankommt, gewinnt.':'Zeit für ein echtes Duell! Bau dein Brett auf, dann geht es los.','smile');
     await continueBtn(stage,'Los geht\'s!');
-    Game.start({variant:step.variant,fresh:true,lessonCb:(result)=>{
+    const gc=P().game.current;const cont=!!(gc&&gc.lesson===(c.lesson&&c.lesson.id)&&gc.variant===step.variant&&gc.moves&&gc.moves.length);
+    Game.start({variant:step.variant,fresh:!cont,lesson:c.lesson&&c.lesson.id,lessonCb:(result)=>{
       c.starsFromDuel=result==='w'?3:result==='d'?2:1;
       if(result!=='w'&&c.lesson&&!P().lessons[c.lesson.id])c.starsFromDuel=1;
       Runner.cur=c;c.alive=true;Runner.finish();
     }});
   }
 };
+
+/* ---------- Bilder für Antworten (für Kinder, die noch nicht lesen) ---------- */
+function quizPic(p){
+  if(p==='yes')return `<span class="qp yes">${ICON.check}</span>`;
+  if(p==='no')return `<span class="qp no">${ICON.close}</span>`;
+  if(p==='light'||p==='dark')return `<span class="qp sqsw ${p}"></span>`;
+  if(p.startsWith('sq:')){const[,s,pc]=p.split(':');return miniBoard(sqIdx(s),pc)}
+  return '';
+}
+function miniBoard(hl,pc){
+  /* Ausschnitt: 3×2 Felder rund um das Feld, groß genug, um Farbe und Figur zu erkennen */
+  const hx=hl&7,hr=hl>>4,c0=Math.max(0,Math.min(5,hx-1)),r0=Math.max(0,Math.min(6,hr));let r='';
+  for(let y=0;y<2;y++)for(let x=0;x<3;x++){const rank=r0+1-y,file=c0+x,sq=rank*16+file;r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${(file+rank)%2===0?'var(--dark-sq)':'var(--light-sq)'}"/>`;if(sq===hl)r+=`<rect x="${x+.04}" y="${y+.04}" width=".92" height=".92" fill="none" stroke="var(--sun)" stroke-width=".08"/>`}
+  const x=hx-c0,y=r0+1-hr;const col=pc&&pc===pc.toUpperCase()?'w':'b';
+  return `<svg class="qp mini" viewBox="0 0 3 2" aria-hidden="true">${r}${pc?`<svg x="${x+.06}" y="${y+.04}" width=".88" height=".88" class="p${col}">${pieceUses(col,pc.toLowerCase())}</svg>`:''}</svg>`;
+}
 
 /* ---------- Rätsel mit Zug ---------- */
 function solveMove(pz,b,stage,c,i,skill,kind){
@@ -2070,8 +2227,17 @@ function solveMove(pz,b,stage,c,i,skill,kind){
     Peter.say(pick(intro),'smile');
     const sols=new Set(pz.sol);
     const showHint=()=>{const s=pz.sol[0];b.arrows([{from:sqIdx(s.slice(0,2)),to:sqIdx(s.slice(2,4)),kind:'hint'}]).render()};
+    const autoSolve=()=>{
+      const s=pz.sol[0];const m=pos.legal().find(x=>sqName(x.from)+sqName(x.to)===s&&(!x.promo||x.promo==='q'));
+      if(!m)return;solved=true;b.opt.onTap=null;
+      Peter.say(pick(['Das war knifflig! Schau, so geht es.','Ich zeige es dir. Schau genau hin!']),'smile');
+      setTimeout(()=>{pos.make(m);b.clearMarks();b.setPos(pos);b.animate(m.from,m.to);m.cap?sfx.capture():sfx.move();
+        if(kind==='mate')b.mark('check',[pos.kings.b]).render();
+        P().stats.puzzles++;save();setTimeout(res,2600)},1200);
+    };
     const fail=(text)=>{
       wrong++;sfx.nope();if(wrong===1){Runner.mistake();recordTask(skill,false,.7,true)}
+      if(wrong>=4&&kind!=='escape'){autoSolve();return}
       Peter.say(text,'think');
       if(wrong>=2)showHint();
     };
@@ -2136,8 +2302,8 @@ function askIsMate(pz,b,stage,c,i){
     const pos=new Pos(pz.fen);b.clearMarks();b.setPos(pos);
     const last=pz.last;b.mark('last',[sqIdx(last.slice(0,2)),sqIdx(last.slice(2,4))]).mark('check',[pos.kings.b]).render();
     const ctl=$('.ctl',stage);
-    ctl.innerHTML=`<div class="options"><button class="opt" data-a="1">Ja, Matt!</button><button class="opt" data-a="0">Nein</button></div>`;
-    Peter.say(pick(['Der schwarze König steht im Schach. Ist das schon Schachmatt?','Schach! Aber ist es auch Matt?']),'think');
+    ctl.innerHTML=`<div class="options pics"><button class="opt pic" data-a="1"><span class="qp yes">${ICON.crown}</span><span>Ja, Matt!</span></button><button class="opt pic" data-a="0"><span class="qp no">${ICON.close}</span><span>Nein</span></button></div>`;
+    Peter.say(pick(['Der schwarze König steht im Schach. Ist das schon Schachmatt? Tipp auf die Krone für Ja, auf das Kreuz für Nein.','Schach! Aber ist es auch Matt? Krone heißt Ja, Kreuz heißt Nein.']),'think');
     let first=true;
     ctl.onclick=e=>{const bt=e.target.closest('.opt');if(!bt)return;const a=bt.dataset.a==='1';
       if(a===pz.answer){bt.classList.add('right');sfx.good();recordTask('mate',first,.6,true);ctl.onclick=null;
@@ -2153,18 +2319,18 @@ function askIsMate(pz,b,stage,c,i){
 
 /* ---------- Trainings ---------- */
 const TRAININGS=[
-  {id:'coords',name:'Feldjäger',skill:'coords',icon:'grid',c:'#2B7BD8',desc:'Felder finden und benennen',steps:()=>[{t:'coordFind',count:8,names:'edge'},{t:'coordName',count:4}]},
-  {id:'stars',name:'Sternensammler',skill:null,icon:'sparkle',c:'#D99A00',desc:'Sterne mit einer Figur sammeln',pickPiece:true,steps:(fig)=>{const lv=Skills.level('move_'+fig);return[{t:'stars',type:fig,count:4,stars:2+lv,rocks:fig==='n'||fig==='k'?0:lv*2,maxPar:fig==='n'?4+lv:6}]}},
-  {id:'reach',name:'Wohin kann ich?',skill:null,icon:'moves',c:'#3E9B4F',desc:'Alle Zugfelder einer Figur finden',pickPiece:true,allowPawn:true,steps:(fig)=>[{t:'reach',type:fig,count:4,level:Skills.level('move_'+fig)}]},
-  {id:'capture',name:'Adlerauge',skill:'capture',icon:'eye',c:'#1E9BD7',desc:'Freie Figuren schlagen',steps:()=>[{t:'puzzle',kind:'capture',count:5}]},
-  {id:'rescue',name:'Schutzschild',skill:'protect',icon:'shield',c:'#1177A8',desc:'Bedrohte Figuren retten',steps:()=>[{t:'puzzle',kind:'rescue',count:5}]},
-  {id:'escape',name:'Schach-Retter',skill:'escape',icon:'ring',c:'#D99A00',desc:'Den König aus dem Schach retten',steps:()=>[{t:'puzzle',kind:'escape',count:5}]},
+  {id:'coords',name:'Feldjäger',skill:'coords',icon:'grid',c:'#2675D0',desc:'Felder finden und benennen',steps:()=>[{t:'coordFind',count:8,names:'edge'},{t:'coordName',count:4}]},
+  {id:'stars',name:'Sternensammler',skill:null,icon:'sparkle',c:'#9C6B00',desc:'Sterne mit einer Figur sammeln',pickPiece:true,steps:(fig)=>{const lv=Skills.level('move_'+fig);return[{t:'stars',type:fig,count:4,stars:2+lv,rocks:fig==='n'||fig==='k'?0:lv*2,maxPar:fig==='n'?4+lv:6}]}},
+  {id:'reach',name:'Wohin kann ich?',skill:null,icon:'moves',c:'#358343',desc:'Alle Zugfelder einer Figur finden',pickPiece:true,allowPawn:true,steps:(fig)=>[{t:'reach',type:fig,count:4,level:Skills.level('move_'+fig)}]},
+  {id:'capture',name:'Adlerauge',skill:'capture',icon:'eye',c:'#187CAC',desc:'Freie Figuren schlagen',steps:()=>[{t:'puzzle',kind:'capture',count:5}]},
+  {id:'rescue',name:'Schutzschild',skill:'protect',icon:'shield',c:'#115B80',desc:'Bedrohte Figuren retten',steps:()=>[{t:'puzzle',kind:'rescue',count:5}]},
+  {id:'escape',name:'Schach-Retter',skill:'escape',icon:'ring',c:'#9C6B00',desc:'Den König aus dem Schach retten',steps:()=>[{t:'puzzle',kind:'escape',count:5}]},
   {id:'mate',name:'Matt-Blick',skill:'mate',icon:'crown',c:'#4F46E5',desc:'Matt in einem Zug',steps:()=>[{t:'puzzle',kind:'ismate',count:2},{t:'puzzle',kind:'mate',count:4}]},
   {id:'fork',name:'Gabel-Trick',skill:'fork',icon:'fork',c:'#C2410C',desc:'Zwei Figuren auf einmal angreifen',steps:()=>[{t:'puzzle',kind:'fork',count:4}]},
-  {id:'pawns',name:'Bauern-Profi',skill:'move_p',icon:'sword',c:'#E8743B',desc:'Schräg schlagen und verwandeln',steps:()=>[{t:'puzzle',kind:'pawncap',count:3},{t:'puzzle',kind:'promote',count:2}]},
-  {id:'castle',name:'Rochade',skill:'opening',icon:'castle',c:'#C8553D',desc:'Den König in Sicherheit bringen',steps:()=>[{t:'puzzle',kind:'castle',count:3}]},
-  {id:'realmate',name:'Brett-Rätsel',skill:'mate',icon:'board',c:'#0E8C7E',desc:'Stellung am echten Brett aufbauen und lösen',steps:()=>[{t:'puzzle',kind:'mate',count:3,level:1,real:true},{t:'puzzle',kind:'capture',count:2,level:1,real:true}]},
-  {id:'pawnbattle',name:'Bauernschlacht',skill:null,icon:'trophy',c:'#E8743B',desc:'Am echten Brett: nur Bauern gegen Peter',game:'pawns',steps:()=>[]}
+  {id:'pawns',name:'Bauern-Profi',skill:'move_p',icon:'sword',c:'#C55017',desc:'Schräg schlagen und verwandeln',steps:()=>[{t:'puzzle',kind:'pawncap',count:3},{t:'puzzle',kind:'promote',count:2}]},
+  {id:'castle',name:'Rochade',skill:'opening',icon:'castle',c:'#C35037',desc:'Den König in Sicherheit bringen',steps:()=>[{t:'puzzle',kind:'castle',count:3}]},
+  {id:'realmate',name:'Brett-Rätsel',skill:'mate',icon:'board',c:'#0D8376',desc:'Stellung am echten Brett aufbauen und lösen',steps:()=>[{t:'puzzle',kind:'mate',count:3,level:1,real:true},{t:'puzzle',kind:'capture',count:2,level:1,real:true}]},
+  {id:'pawnbattle',name:'Bauernschlacht',skill:null,icon:'trophy',c:'#C55017',desc:'Am echten Brett: nur Bauern gegen Peter',game:'pawns',steps:()=>[]}
 ];
 function startTraining(id,fig){
   const tr=TRAININGS.find(t=>t.id===id);if(!tr)return;
@@ -2286,6 +2452,7 @@ const Game={
     const cur=P().game.current;
     if(!opt.fresh&&cur&&cur.moves&&cur.moves.length&&(!opt.variant||opt.variant===cur.variant)){this.restore(cur)}
     else this.reset(opt.variant||'standard');
+    if(P().game.current)P().game.current.lesson=opt.lesson||null;
     this.state=this.pos.turn==='w'?'human':'peter';
     UI.go('play');
     const my=++this.flow;
@@ -2326,7 +2493,7 @@ const Game={
       <span class="chip" title="Peters Stärke">${pieceSVG('b',L.fig,'i')} ${esc(this.variant==='pawns'?'Bauernschlacht':L.name)}</span></div>
       <div id="gboard"></div>
       <div class="tray" id="trays"></div>
-      <div class="card ask" id="ask" hidden><p id="askText"></p><div class="row"><button class="big dangerbtn" data-act="askyes">Ja, zurück</button><button class="big ghost" data-act="askno">Nein, weiter</button></div></div>
+      <div class="card ask" id="ask" hidden><p id="askText"></p><div class="row"><button class="big dangerbtn" data-act="askyes">${ICON.undo} Zurück</button><button class="big ghost" data-act="askno">${ICON.play} Weiter</button></div></div>
       <div class="card center" id="endCard" hidden style="display:flex;flex-direction:column;gap:10px;border:3px solid var(--sun)"></div>
       <form class="voice-row" id="moveForm" autocomplete="off"><input id="moveInput" type="text" enterkeyhint="send" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Zug sagen oder tippen" aria-label="Dein Zug"><button class="big mic" type="button" data-act="mic" aria-label="Sprechen" ${Ears.available()?'':'hidden'}>${ICON.mic}</button><button class="big go" type="submit">Los</button></form>
       <p class="hint-line" id="heard">Figur antippen, dann das Ziel. Oder deinen Zug sagen.</p>
@@ -2526,7 +2693,7 @@ const Game={
       Peter.show('…','worry');
       const ai=await Brain.ask(`Das Kind hat gerade gezogen: ${moveFacts(m,'kid')}.\nGefahr: ${a.warn.fact}\nWarne es lieb und aufgeregt in ein bis zwei kurzen Sätzen, nenne die Felder, und frag dann, ob es den Zug lieber zurücknehmen möchte. Es soll Ja oder Nein sagen.`,4500,t=>/\?/.test(t));
       if(my!==this.flow||this.state!=='ask')return;
-      await Peter.say(ai||a.warn.text+' Willst du den Zug lieber zurücknehmen?','worry');
+      await Peter.say(ai?ai+' Roter Knopf heißt zurück.':a.warn.text+' Willst du den Zug lieber zurücknehmen? Dann tipp auf den roten Knopf.','worry');
       return this.autoListen(my);
     }
     await this.peterTurn(my,{m,kidFb:a.warn?a.warn.text:a.comment,mood:a.warn?'worry':a.mood,kidFact:a.warn?a.warn.fact:a.comment});
@@ -2746,8 +2913,9 @@ const UI={
     if(onMount)onMount($('.sheet',o),close);
     return close;
   },
-  confirm(title,text,yes,no){
-    return new Promise(res=>{this.sheet(`<h2>${esc(title)}</h2><p class="muted" style="margin:0">${esc(text)}</p><div class="row"><button class="big go" data-y>${esc(yes)}</button><button class="big ghost" data-n>${esc(no)}</button></div>`,(s,close)=>{
+  confirm(title,text,yes,no,o){
+    o=o||{};
+    return new Promise(res=>{this.sheet(`<h2>${esc(title)}</h2><p class="muted" style="margin:0">${esc(text)}</p><div class="row"><button class="big go" data-y>${o.yesIcon?ICON[o.yesIcon]:''}${esc(yes)}</button><button class="big ghost" data-n>${o.noIcon?ICON[o.noIcon]:''}${esc(no)}</button></div>`,(s,close)=>{
       $('[data-y]',s).onclick=()=>{close();res(true)};$('[data-n]',s).onclick=()=>{close();res(false)};
     })});
   },
@@ -2778,8 +2946,8 @@ const UI={
       <p class="say" data-live style="text-align:center"></p>
       <div id="rewards" style="display:flex;flex-direction:column;gap:10px;width:100%"></div>
       <div class="row" style="width:100%">
-        ${r.lesson&&nl?`<button class="big go" data-act="next" style="background:${nl.world.c};color:#fff">Weiter ${ICON.next}</button>`:''}
-        <button class="big ghost" data-act="back">${r.training?'Zum Training':'Zur Karte'}</button>
+        ${r.lesson&&nl?`<button class="big go" data-act="next" style="background:${nl.world.c};color:#fff">${ICON.play} Weiter</button>`:''}
+        <button class="big ghost" data-act="back">${r.training?ICON.target:ICON.map} ${r.training?'Training':'Karte'}</button>
       </div></div></div>`;
     const svgs=$$('.bigstars svg',view);
     svgs.forEach((s,i)=>setTimeout(()=>{if(i<r.stars){s.outerHTML=STAR(true);sfx.star()}},500+i*450));
@@ -2820,10 +2988,12 @@ function hudHTML(){
     <div class="chips" style="flex-direction:column;align-items:flex-end"><span class="chip" title="Tage in Folge">${FLAME}${p.streak.count}</span><span class="chip" title="Sterne">${STARCHIP}${p.stars}</span></div>
   </div>`;
 }
-function openLesson(l){
+function openLesson(l,resume){
   if(!l)return;
-  Runner.start({title:l.name,color:l.world.c,steps:l.steps,lesson:l});
+  if(!resume&&P().resume&&P().resume.id===l.id)resume=P().resume;
+  Runner.start({title:l.name,color:l.world.c,steps:l.steps,lesson:l,resume});
 }
+function resumeLesson(){const r=P().resume;if(!r)return null;const l=LESSONS.find(x=>x.id===r.id);return l&&lessonUnlocked(l)?l:null}
 
 /* ---------- Start ---------- */
 UI.screens.home={
@@ -2835,7 +3005,9 @@ UI.screens.home={
       ${hudHTML()}
       <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Peter">${peterSVG(p.outfit)}</button>
       <div class="bubble"><p class="say" data-live>${greet}, ${esc(p.name)}!</p><button class="speak" data-act="repeat" aria-label="Vorlesen">${ICON.speaker}</button></div></div>
-      ${nl?`<button class="hero" data-act="lesson" style="--wc:${nl.world.c}">
+      ${resumeLesson()?`<button class="hero" data-act="resume" style="--wc:${resumeLesson().world.c}">
+        <span class="eyebrow">Weitermachen</span><h2>${esc(resumeLesson().name)}</h2>
+        <span class="cta">${ICON.play} Weiter</span><span class="glyph">${friendSVG(resumeLesson().world.fig,'w')}</span></button>`:nl?`<button class="hero" data-act="lesson" style="--wc:${nl.world.c}">
         <span class="eyebrow">${esc(nl.world.name)} · Abenteuer</span><h2>${esc(nl.name)}</h2>
         <span class="cta">${ICON.play} Weiterspielen</span><span class="glyph">${friendSVG(nl.world.fig,'w')}</span></button>`:
         `<button class="hero" data-act="play" style="--wc:#4F46E5"><span class="eyebrow">Alle Welten geschafft</span><h2>Fordere Peter heraus!</h2><span class="cta">${ICON.play} Partie starten</span></button>`}
@@ -2849,7 +3021,7 @@ UI.screens.home={
           <div style="flex:1;min-width:0"><h2>Tagesmission</h2><p class="small muted" style="margin:2px 0 0">Schaff alle drei und öffne die Schatztruhe!</p></div>
           <button class="chestbtn" data-act="chest" aria-label="Schatztruhe">${CHEST(dl.claimed).replace('class="chest"',`class="chest${chestReady?' ready':''}"`)}</button>
         </div>
-        <ul>${dl.tasks.map(t=>`<li class="${t.have>=t.goal?'done':''}"><span class="ck">${t.have>=t.goal?ICON.check:''}</span><span class="t">${esc(t.label)}</span><span class="n">${Math.min(t.have,t.goal)}/${t.goal}</span></li>`).join('')}</ul>
+        <ul>${dl.tasks.map(t=>`<li class="${t.have>=t.goal?'done':''}"><span class="mi">${t.id==='skill'?(SKILLS[t.skill].fig?pieceSVG('w',SKILLS[t.skill].fig,'i'):ICON[SKILLS[t.skill].icon]):t.id==='lesson'?ICON.map:t.id==='game'?ICON.board:ICON.bulb}</span><span class="ck">${t.have>=t.goal?ICON.check:''}</span><span class="t">${esc(t.label)}</span><span class="n">${Math.min(t.have,t.goal)}/${t.goal}</span></li>`).join('')}</ul>
       </div>
       <button class="big ghost wide" data-act="parents">${ICON.parent} Für Eltern</button>
     </div>`;
@@ -2857,6 +3029,7 @@ UI.screens.home={
   mount(el){
     el.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;audioUnlock();const act=a.dataset.act;
       if(act==='lesson')openLesson(nextLesson());
+      if(act==='resume'){const l=resumeLesson();if(l)openLesson(l,P().resume)}
       if(act==='play')UI.go('playhub');
       if(act==='train'){const w=Skills.weakest();if(w&&a.classList.contains('tile'))UI.go('train');else UI.go('train')}
       if(act==='parents')Parents.gate();
@@ -2984,7 +3157,7 @@ UI.screens.album={
       <p class="small muted" style="margin:10px 0 0">Neue Hüte und Farben gibt es in Schatztruhen: für jede geschaffte Welt und jede Tagesmission.</p></div>`;
     }
     return `<div class="view"><h1 style="font-size:1.7rem">Mein Album</h1>
-      <div class="seg"><button data-tab="friends" aria-pressed="${t==='friends'}">Figuren</button><button data-tab="badges" aria-pressed="${t==='badges'}">Abzeichen</button><button data-tab="peter" aria-pressed="${t==='peter'}">Peter</button></div>
+      <div class="seg"><button data-tab="friends" aria-pressed="${t==='friends'}">${pieceSVG('w','n','i')}Figuren</button><button data-tab="badges" aria-pressed="${t==='badges'}">${ICON.trophy}Abzeichen</button><button data-tab="peter" aria-pressed="${t==='peter'}"><span style="width:26px;height:26px;display:block">${peterSVG({})}</span>Peter</button></div>
       ${body}</div>`;
   },
   mount(el){
@@ -3127,6 +3300,10 @@ const Parents={
         <div class="setting"><div><label>Neues Profil</label><small>Für Geschwister: jedes Kind hat eigenen Fortschritt.</small></div><button class="big ghost" style="min-height:44px;font-size:1rem" data-act="newprofile">Anlegen</button></div>
         <div class="setting"><div><label>Fortschritt zurücksetzen</label><small>Löscht alles von ${esc(p.name)}.</small></div><button class="big ghost" style="min-height:44px;font-size:1rem;color:var(--danger)" data-act="reset">Zurücksetzen</button></div>
       </div>
+      <div class="card"><h2>Spielstand sichern</h2>
+        <p class="small muted" style="margin:6px 0 0">Die App sichert den Spielstand automatisch bei jedem Start und einmal am Tag. Zusätzlich kannst du ihn hier als Code sichern, zum Beispiel per Nachricht an dich selbst, und auf einem anderen Gerät wiederherstellen.</p>
+        <div class="row" style="margin-top:10px"><button class="big go" data-act="export">${ICON.share} Sichern</button><button class="big ghost" data-act="import">${ICON.refresh} Wiederherstellen</button></div>
+      </div>
       <div class="card"><h2>Als App auf dem iPhone</h2>
         <p style="margin:8px 0 0">${Native.ok?'Du nutzt die iPhone-App. Peter spricht mit der Systemstimme und hört über das Mikrofon zu.':'Diese Seite in Safari öffnen, dann auf Teilen und „Zum Home-Bildschirm“ tippen. So startet Peter wie eine App.'}</p>
         ${Native.ok?'':`<p class="small muted" style="margin:8px 0 0">Die eigenständige iPhone-App (mit Zuhören ohne Tippen) liegt als Xcode-Projekt bei. Sie lässt sich mit einem Mac auf das eigene iPhone installieren.</p>`}
@@ -3140,6 +3317,8 @@ const Parents={
       const tr=e.target.closest('[data-train]');if(tr){if(tr.dataset.tskill)trainingForSkill(tr.dataset.tskill)();else startTraining(tr.dataset.train);return}
       if(!a)return;const act=a.dataset.act;
       if(act==='back')UI.go('home');
+      if(act==='export')this.exportSheet();
+      if(act==='import')this.importSheet();
       if(act==='editprofile')Profiles.create(true);
       if(act==='piperload')Piper.download();
       if(act==='newprofile')Profiles.create(false);
@@ -3154,6 +3333,25 @@ const Parents={
     bind('sAi',e=>{P().settings.ai=e.target.checked;save()});
     bind('sSound',e=>{P().settings.sound=e.target.checked;save()});
     bind('sNames',e=>{P().settings.names=e.target.checked;save()});
+  },
+  exportSheet(){
+    save();const code=Store.exportCode();
+    UI.sheet(`<h2>Spielstand sichern</h2><p class="muted" style="margin:0">Diesen Code aufbewahren. Mit „Wiederherstellen“ holst du den Spielstand zurück.</p>
+      <textarea class="field" id="expCode" rows="5" readonly style="font-size:.8rem;font-family:ui-monospace,monospace;word-break:break-all">${esc(code)}</textarea>
+      <div class="row"><button class="big go" data-copy>Kopieren</button>${navigator.share?'<button class="big ghost" data-share>Teilen</button>':''}</div>
+      <button class="big ghost" data-x>Schließen</button>`,(s,close)=>{
+      $('[data-x]',s).onclick=close;
+      $('[data-copy]',s).onclick=()=>{const t=$('#expCode',s);navigator.clipboard&&navigator.clipboard.writeText(code).then(()=>UI.toast(ICON.check,'Kopiert!'),()=>{t.select()})||t.select()};
+      const sh=$('[data-share]',s);if(sh)sh.onclick=()=>{navigator.share({title:'Schach mit Peter – Spielstand',text:code}).catch(()=>{})};
+    });
+  },
+  importSheet(){
+    UI.sheet(`<h2>Spielstand wiederherstellen</h2><p class="muted" style="margin:0">Füge den gesicherten Code ein. Der jetzige Spielstand wird vorher noch einmal gesichert.</p>
+      <textarea class="field" id="impCode" rows="5" placeholder="PETER1:…" style="font-size:.8rem;font-family:ui-monospace,monospace"></textarea>
+      <div class="row"><button class="big go" data-ok>Übernehmen</button><button class="big ghost" data-x>Abbrechen</button></div>`,(s,close)=>{
+      $('[data-x]',s).onclick=close;
+      $('[data-ok]',s).onclick=()=>{if(Store.importCode($('#impCode',s).value)){close();UI.toast(ICON.check,'Spielstand wiederhergestellt');UI.go('parents')}else{sfx.nope();UI.toast(ICON.close,'Der Code passt nicht. Bitte ganz einfügen.')}};
+    });
   },
   replay(gm){
     if(!gm)return;
