@@ -1226,11 +1226,24 @@ const Store={
   },
   save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(this.data))}catch(e){}},
   exportCode(){return 'PETER1:'+btoa(unescape(encodeURIComponent(JSON.stringify(this.data))))},
+  decodeCode(code){
+    // Robust gegen alles, was iOS beim Kopieren/Teilen dazupackt: unsichtbare Zeichen, Umbrüche, Titelzeilen, fehlendes Padding
+    let s=String(code||'').normalize('NFKC');
+    const i=s.toUpperCase().lastIndexOf('PETER1');
+    if(i>=0)s=s.slice(i+6);
+    s=s.replace(/-/g,'+').replace(/_/g,'/').replace(/[^A-Za-z0-9+/]/g,'');
+    const j=s.indexOf('eyJ');if(j>0)s=s.slice(j);
+    if(!s)return null;
+    for(let cut=0;cut<Math.min(s.length,400);cut++){
+      let t=s.slice(0,s.length-cut);while(t.length%4)t+='=';
+      try{const d=JSON.parse(decodeURIComponent(escape(atob(t))));if(d&&d.profiles&&Object.keys(d.profiles).length)return d}catch(e){}
+    }
+    return null;
+  },
   importCode(code){
-    const m=String(code||'').trim().match(/PETER1:([A-Za-z0-9+/=\s]+)/);if(!m)return false;
-    try{const d=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/\s/g,'')))));if(!d||!d.profiles||!Object.keys(d.profiles).length)return false;
-      try{localStorage.setItem(STORE_KEY+'.beforeImport',JSON.stringify(this.data))}catch(e){}
-      this.data=d;this.save();this.load();return true}catch(e){return false}
+    const d=this.decodeCode(code);if(!d)return false;
+    try{localStorage.setItem(STORE_KEY+'.beforeImport',JSON.stringify(this.data))}catch(e){}
+    this.data=d;this.save();try{this.load()}catch(e){}return true;
   }
 };
 function fillDefaults(obj,def){
@@ -3347,10 +3360,16 @@ const Parents={
   },
   importSheet(){
     UI.sheet(`<h2>Spielstand wiederherstellen</h2><p class="muted" style="margin:0">Füge den gesicherten Code ein. Der jetzige Spielstand wird vorher noch einmal gesichert.</p>
-      <textarea class="field" id="impCode" rows="5" placeholder="PETER1:…" style="font-size:.8rem;font-family:ui-monospace,monospace"></textarea>
+      ${navigator.clipboard&&navigator.clipboard.readText?'<button class="big" data-paste>Aus Zwischenablage einfügen</button>':''}
+      <textarea class="field" id="impCode" rows="5" placeholder="PETER1:…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="font-size:.8rem;font-family:ui-monospace,monospace;word-break:break-all"></textarea>
       <div class="row"><button class="big go" data-ok>Übernehmen</button><button class="big ghost" data-x>Abbrechen</button></div>`,(s,close)=>{
       $('[data-x]',s).onclick=close;
-      $('[data-ok]',s).onclick=()=>{if(Store.importCode($('#impCode',s).value)){close();UI.toast(ICON.check,'Spielstand wiederhergestellt');UI.go('parents')}else{sfx.nope();UI.toast(ICON.close,'Der Code passt nicht. Bitte ganz einfügen.')}};
+      const ta=$('#impCode',s);
+      const apply=txt=>{if(Store.importCode(txt)){close();UI.toast(ICON.check,'Spielstand wiederhergestellt');UI.go('parents');return true}
+        sfx.nope();const n=String(txt||'').replace(/\s/g,'').length;
+        UI.toast(ICON.close,n<200?'Da ist noch kein Code drin. Bitte zuerst einfügen.':'Der Code ist unvollständig ('+n+' Zeichen). Bitte nochmal ganz kopieren.');return false};
+      const pb=$('[data-paste]',s);if(pb)pb.onclick=()=>{navigator.clipboard.readText().then(t=>{ta.value=t;apply(t)},()=>{ta.focus();UI.toast(ICON.close,'Bitte lang ins Feld tippen und „Einfügen“ wählen.')})};
+      $('[data-ok]',s).onclick=()=>apply(ta.value);
     });
   },
   replay(gm){
