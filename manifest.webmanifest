@@ -1,7 +1,7 @@
 {
-  "name": "Schach mit Peter",
-  "short_name": "Peter",
-  "description": "Schach lernen und am echten Brett gegen Peter spielen.",
+  "name": "Schach mit Rokko",
+  "short_name": "Rokko",
+  "description": "Schach lernen und am echten Brett gegen Rokko spielen.",
   "lang": "de",
   "start_url": "./index.html",
   "scope": "./",

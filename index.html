@@ -1,17 +1,15 @@
 <!doctype html><html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Schach mit Peter</title>
+<title>Schach mit Rokko</title>
 <meta name="theme-color" content="#0E8C7E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Peter">
+<meta name="apple-mobile-web-app-title" content="Rokko">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<!-- Keine Verbindung zu Google: auf iPhone und Mac zeichnet SF Pro Rounded (ui-rounded) die Schrift -->
 <style>
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:0}
+:root{padding:0}
 body{margin:0}
 img{max-width:100%}[hidden]{display:none!important}
 /* Layout: eine Handy-Spalte (max. 600px) mit fester Tab-Leiste unten; jede Ansicht ist eine Szene in Peters Schachland. */
@@ -629,6 +627,88 @@ svg.i{width:22px;height:22px;flex:0 0 auto}
 .pause p{margin:0;opacity:.85;font-size:1.1rem}
 .pause .ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35);box-shadow:none;margin-top:18px;font-size:1rem;min-height:48px}
 @keyframes sleepy{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(6px) rotate(2deg)}}
+.sbars{display:inline-flex;align-items:flex-end;gap:2px;height:20px;vertical-align:middle}
+.sbars i{width:5px;border-radius:2px;background:var(--line)}
+.sbars i.on{background:var(--peter)}
+.rung .rn{font-family:var(--font-display);font-size:1.3rem;line-height:1}
+
+/* =================== Version 5: iPhone-Statusleiste =================== */
+/* iOS legt über die Uhrzeile einen Glas-Effekt. Inhalt darf nie darunter rutschen:
+   ein fester Streifen in Seitenfarbe deckt den Bereich ab, die Ansicht beginnt darunter. */
+:root{--sat:env(safe-area-inset-top,0px)}
+.view{padding-top:calc(var(--sat) + 14px)}
+body::before{content:"";position:fixed;z-index:14;left:0;right:0;top:0;height:calc(var(--sat) + 12px);background:linear-gradient(180deg,var(--bg) calc(100% - 12px),transparent);pointer-events:none}
+.overlay{padding-top:calc(var(--sat) + 16px)}
+.pause{padding-top:calc(var(--sat) + 24px)}
+/* Stummschalter und Titelzeile */
+.topbar{display:flex;align-items:center;gap:10px}
+.topbar .ptitle{flex:1;min-width:0}
+.mutebtn{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--peter);display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 3px 0 var(--line)}
+.mutebtn svg{width:24px;height:24px}
+.mutebtn.on{background:var(--danger-soft);border-color:var(--danger);color:var(--danger);box-shadow:0 3px 0 var(--danger)}
+.mutebtn:active{transform:translateY(2px)}
+.status .mutebtn{width:40px;height:40px}
+.hud .chips{margin-left:auto}
+/* Abenteuer-Karussell */
+.wcar{display:grid;grid-auto-flow:column;grid-auto-columns:100%;column-gap:16px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+.wcar::-webkit-scrollbar{display:none}
+.wcar .wpage{scroll-snap-align:center;scroll-snap-stop:always;min-width:0}
+.wtitle h2{font-size:1.75rem;line-height:1.05;color:var(--ink)}
+.wfig{border:0;padding:0;cursor:pointer;position:relative}
+.wfig .wspk{position:absolute;right:-4px;bottom:-4px;width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--peter);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 var(--line);border:1.5px solid var(--line)}
+.wfig .wspk svg{width:18px;height:18px}
+.advent .wdot{transition:transform .25s,box-shadow .25s}
+.wdots i{transition:width .25s,background .25s}
+/* Kopfzeile: Level antippbar */
+button.hud-main{border:0;background:none;padding:0;text-align:left;color:inherit;cursor:pointer}
+button.hud-main .hud-name,button.hud-main .hud-rank{display:block}
+button.hud-main .xpbar{display:block}
+/* Training in drei Gruppen */
+.sect{display:flex;align-items:center;gap:8px;font-size:1.15rem;margin-top:4px}
+.sect svg{width:22px;height:22px;color:var(--peter)}
+.trainlist.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ttile.new{opacity:.75}
+.ttile .mastery.q{font-size:.8rem}
+.ttile.real .tdesc{font-size:.78rem;color:var(--muted);line-height:1.2}
+/* Mein Weg: Level */
+.lvlcard{display:flex;flex-direction:column;gap:14px}
+.lvlnow{display:flex;align-items:center;gap:14px}
+.lvlnow>div{flex:1;min-width:0}
+.lvlnow h2{font-size:1.25rem;margin:2px 0 8px}
+.xpbar.xl{height:14px}
+.rmedal{position:relative;flex:0 0 auto;width:56px;height:56px;border-radius:50%;background:var(--rc);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 color-mix(in srgb,var(--rc) 70%,#000);padding:6px}
+.rmedal svg{width:100%;height:100%}
+.rmedal>svg:not(.friend){width:30px;height:30px}
+.rmedal b{position:absolute;left:-4px;top:-4px;min-width:22px;height:22px;border-radius:11px;background:var(--surface);color:var(--ink);font-family:var(--font-display);font-size:.8rem;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 0 var(--line);border:1.5px solid var(--line)}
+.rmedal .rok{position:absolute;right:-4px;bottom:-4px;width:20px;height:20px;border-radius:50%;background:var(--good);color:var(--on-good);display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.rmedal .rok svg{width:12px;height:12px;stroke-width:3.4}
+.rmedal.now{width:72px;height:72px;box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--sun),0 5px 0 6px color-mix(in srgb,var(--sun) 60%,transparent)}
+.rmedal.todo{background:var(--bg2);color:var(--muted);box-shadow:0 4px 0 var(--line);padding:16px}
+.road{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 6px}
+.rstep{border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink)}
+.rstep span:last-child{font-size:.68rem;font-weight:700;line-height:1.1;text-align:center;color:var(--muted);hyphens:auto;-webkit-hyphens:auto}
+.rstep .rmedal.now{width:56px;height:56px}
+.xprules{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.xpr{display:flex;align-items:center;gap:10px}
+.xpr .xpi{width:34px;height:34px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--peter);flex:0 0 auto}
+.xpr .xpi svg{width:22px;height:22px}
+.xpr .xpt{flex:1;font-weight:700}
+.xpr b{font-family:var(--font-display);color:var(--good);font-size:1.05rem;font-variant-numeric:tabular-nums}
+.linkcard{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:var(--surface);border-radius:18px;padding:12px;box-shadow:var(--shadow);text-align:left}
+.linkcard .ti{width:46px;height:46px;border-radius:14px;background:var(--peter-soft);color:var(--peter);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.linkcard .ti svg{width:28px;height:28px}
+.linkcard>span:nth-child(2){flex:1;display:flex;flex-direction:column}
+.linkcard b{font-family:var(--font-display);font-size:1.05rem}
+.linkcard>svg{width:22px;height:22px;color:var(--muted)}
+.toast .rmedal{width:40px;height:40px;padding:4px}.toast .rmedal b,.toast .rmedal .rok{display:none}
+.hud-sub{display:flex;align-items:center;gap:6px;margin-top:2px}
+.hud-sub .xpbar{flex:1;min-width:40px}
+.chip.sm{padding:1px 8px 1px 5px;font-size:.88rem;gap:2px}
+.chip.sm svg.i{width:17px;height:17px}
+/* Partie: Statuszeile in einer Reihe */
+.status{flex-wrap:nowrap}
+.status .turn{flex:1;min-width:0;font-size:1rem;padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status .chip{flex:0 1 auto;min-width:0;font-size:.9rem;white-space:nowrap;overflow:hidden}
 
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="px-head" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>
@@ -642,7 +722,7 @@ svg.i{width:22px;height:22px;flex:0 0 auto}
 <div class="splash" id="splash" hidden></div>
 <script>
 /* ===================================================================
-   Peter-Schach · Regeln, Stellungen und Peters Denken
+   Rokko-Schach · Regeln, Stellungen und Rokkos Denken
    0x88-Brett: Index = Reihe*16 + Linie (a1 = 0, h8 = 119)
    =================================================================== */
 const START_FEN='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -779,7 +859,7 @@ class Pos{
   pseudoFrom(sq){return this.gen().filter(m=>m.from===sq)}
 }
 
-/* ---------- Peter denkt ---------- */
+/* ---------- Rokko denkt ---------- */
 const MATE=100000;
 function evaluate(pos){
   let s=0;const B=pos.board;
@@ -821,11 +901,11 @@ function search(pos,depth,alpha,beta,ply,q){
   return alpha;
 }
 const LEVELS=[null,
-  {name:'Küken',fig:'p',random:true},
-  {name:'Hüpfer',fig:'n',depth:1,q:0,noise:110,randomP:0.2},
-  {name:'Kluger Läufer',fig:'b',depth:2,q:2,noise:60},
-  {name:'Starker Turm',fig:'r',depth:2,q:4,noise:20},
-  {name:'Meisterin Dame',fig:'q',depth:3,q:4,noise:6}
+  {name:'Gemütlich',say:'ganz gemütlich',fig:'p',random:true},
+  {name:'Locker',say:'locker',fig:'n',depth:1,q:0,noise:110,randomP:0.2},
+  {name:'Schlau',say:'schlau',fig:'b',depth:2,q:2,noise:60},
+  {name:'Stark',say:'richtig stark',fig:'r',depth:2,q:4,noise:20},
+  {name:'Meisterhaft',say:'wie ein Meister',fig:'q',depth:3,q:4,noise:6}
 ];
 function mateInOne(pos){
   for(const m of pos.legal()){pos.make(m);const mate=pos.isMate();pos.unmake();if(mate)return m}
@@ -917,7 +997,7 @@ function threatsAgainst(pos,color){
 if(typeof module!=='undefined')module.exports={Pos,START_FEN,PAWNS_FEN,sqName,SQ,sqIdx,onBoard,opp,ALL_SQ,isLight,VAL,AVAL,evaluate,bestMove,chooseMove,mateInOne,allMatesInOne,LEVELS,hanging,threatsAgainst,pawnGameResult,choosePawnMove,pawnMovesNoPromo,N_OFF,B_OFF,R_OFF,K_OFF};
 
 /* ===================================================================
-   Peter-Schach · Trainingsaufgaben
+   Rokko-Schach · Trainingsaufgaben
    Sternensammler, Wohin-kann-ich, Rätsel-Generatoren (Matt in 1,
    Adlerauge, Schutzschild, Schach-Retter, Gabel, Bauern, Rochade)
    =================================================================== */
@@ -1275,7 +1355,7 @@ if(typeof module!=='undefined')module.exports=T;else root.Trainer=T;
 })(typeof window!=='undefined'?window:globalThis,typeof module!=='undefined'?null:{Pos,sqName,onBoard,opp,ALL_SQ,VAL,AVAL,N_OFF,B_OFF,R_OFF,K_OFF,hanging,threatsAgainst,allMatesInOne,mateInOne});
 
 /* ===================================================================
-   Peter-Schach · Grundlagen: Symbole, Speicher, Profile, Töne, Stimme
+   Rokko-Schach · Grundlagen: Symbole, Speicher, Profile, Töne, Stimme
    =================================================================== */
 const $=(s,el)=>(el||document).querySelector(s);
 const $$=(s,el)=>[...(el||document).querySelectorAll(s)];
@@ -1341,10 +1421,12 @@ const ICON={
   clock:I('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
   heart:I('<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>'),
   phone:I('<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>'),
+  mute:I('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/>'),
   user:I('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>'),
   moon:I('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'),
   share:I('<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>')
 };
+function strengthBars(n){let h='<span class="sbars" aria-label="Stärke '+n+' von 5">';for(let i=1;i<=5;i++)h+=`<i class="${i<=n?'on':''}" style="height:${4+i*3}px"></i>`;return h+'</span>'}
 const STAR=(on,cls)=>`<svg viewBox="0 0 24 24" class="${cls||''}${on?' on':''}" aria-hidden="true"><path d="M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4L2.8 9.3l6.4-.8z" fill="${on?'#F6B91F':'currentColor'}" stroke="${on?'#C98A00':'none'}" stroke-width="1.2" stroke-linejoin="round" opacity="${on?1:.28}"/></svg>`;
 const FLAME=`<svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M12 2c1 4 5 5.5 5 11a5 5 0 0 1-10 0c0-2.5 1.2-4 2.5-5 .2 1.6.9 2.6 2 3C11 8 11 5 12 2z" fill="#FF7A1A"/><path d="M12 13c.6 1.6 2.3 2.3 2.3 4.2a2.3 2.3 0 0 1-4.6 0c0-1.2.6-1.9 1.3-2.4.3.6.6 1 1 1.1-.2-1 .1-2 0-2.9z" fill="#FFD23F"/></svg>`;
 const STARCHIP=`<svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4L2.8 9.3l6.4-.8z" fill="#F6B91F" stroke="#C98A00" stroke-width="1.2"/></svg>`;
@@ -1366,7 +1448,7 @@ function friendSVG(type,color){
   <svg x="5" y="1" width="90" height="94" class="pf${c}"><use class="sil" href="#s-${type}" width="100%" height="100%"/><use class="shade" href="#s-${type}" width="100%" height="100%"/><use class="lin" href="#${c==='w'?'w':'g'}-${type}" width="100%" height="100%"/></svg></svg>`;
 }
 
-/* ---------- Peter ---------- */
+/* ---------- Rokko ---------- */
 const HATS={
   none:'',
   krone:'<path class="hat-on" d="M22 16l6 6 6-10 6 10 6-10 6 10 6-6-3 14H25z" fill="#F6B91F" stroke="#B07D00" stroke-width="1.5" stroke-linejoin="round"/><circle cx="40" cy="22" r="2.2" fill="#E5484D"/>',
@@ -1379,7 +1461,7 @@ const HATS={
 };
 const HAT_NAMES={none:'Ohne Hut',krone:'Krone',zauberhut:'Zauberhut',pirat:'Piratenhut',kappe:'Kappe',party:'Partyhut',helm:'Ritterhelm',blume:'Blume'};
 const PETER_COLORS=['#0E8C7E','#E8743B','#7A5CFF','#D6402F','#2B7BD8','#D99A00','#E0559A'];
-/* Peter: Roboterkopf mit dunklem Display, leuchtende Augen zeigen die Stimmung */
+/* Rokko: Roboterkopf mit dunklem Display, leuchtende Augen zeigen die Stimmung */
 function peterSVG(o){
   o=o||{};const col=o.color||'#0E8C7E',hat=HATS[o.hat||'none']||'';const E='#7DF3DE';
   return `<svg viewBox="0 -8 80 84" class="peterbot" aria-hidden="true">
@@ -1434,11 +1516,11 @@ const Store={
     d.v=2;this.data=d;return d;
   },
   save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(this.data))}catch(e){}},
-  exportCode(){return 'PETER1:'+btoa(unescape(encodeURIComponent(JSON.stringify(this.data))))},
+  exportCode(){return 'ROKKO1:'+btoa(unescape(encodeURIComponent(JSON.stringify(this.data))))},
   decodeCode(code){
     // Robust gegen alles, was iOS beim Kopieren/Teilen dazupackt: unsichtbare Zeichen, Umbrüche, Titelzeilen, fehlendes Padding
     let s=String(code||'').normalize('NFKC');
-    const i=s.toUpperCase().lastIndexOf('PETER1');
+    const U=s.toUpperCase(),i=Math.max(U.lastIndexOf('PETER1'),U.lastIndexOf('ROKKO1'));
     if(i>=0)s=s.slice(i+6);
     s=s.replace(/-/g,'+').replace(/_/g,'/').replace(/[^A-Za-z0-9+/]/g,'');
     const j=s.indexOf('eyJ');if(j>0)s=s.slice(j);
@@ -1495,13 +1577,14 @@ const sfx={
 };
 
 /* ---------- Brücke zur iOS-App ---------- */
+const NATIVE_H=window.webkit&&window.webkit.messageHandlers&&(window.webkit.messageHandlers.rokko||window.webkit.messageHandlers.peter);
 const Native={
-  ok:!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.peter),
-  post(msg){try{window.webkit.messageHandlers.peter.postMessage(msg)}catch(e){}},
+  ok:!!NATIVE_H,
+  post(msg){try{NATIVE_H.postMessage(msg)}catch(e){}},
   handlers:{},
   on(type,fn){(this.handlers[type]=this.handlers[type]||[]).push(fn)}
 };
-window.PeterNative={receive(msg){try{(Native.handlers[msg.type]||[]).forEach(f=>f(msg))}catch(e){}}};
+window.RokkoNative=window.PeterNative={receive(msg){try{(Native.handlers[msg.type]||[]).forEach(f=>f(msg))}catch(e){}}};
 function haptic(style){if(Native.ok)Native.post({type:'haptic',style});else if(navigator.vibrate&&style==='error')try{navigator.vibrate(30)}catch(e){}}
 
 
@@ -1573,12 +1656,12 @@ const Piper={
     }catch(e){it.rej(e)}
     finally{this.busy=false;this.pump()}
   },
-  /* einzelne Sätze, damit Peter schon spricht, während der nächste Satz entsteht */
+  /* einzelne Sätze, damit Rokko schon spricht, während der nächste Satz entsteht */
   sentences(t){return (t.match(/[^.!?…]+[.!?…]*/g)||[t]).map(x=>x.trim()).filter(Boolean)},
   usable(){return this.state==='ready'&&P().settings.natural!==false&&P().settings.sound}
 };
 
-/* ---------- Peters Stimme ---------- */
+/* ---------- Rokkos Stimme ---------- */
 const Voice={
   pseq:0,voices:[],voice:null,ok:false,failed:false,seq:0,pending:{},nativeVoices:[],
   init(){
@@ -1603,7 +1686,9 @@ const Voice={
   },
   list(){return Native.ok?this.nativeVoices.map(v=>({id:v.id,name:v.name,good:v.quality>=2})):this.voices.map(v=>({id:v.name,name:v.name,good:this.score(v)>=20}))},
   pickVoice(){const want=P()&&P().settings.voice;this.voice=this.voices.find(v=>v.name===want)||this.voices[0]||null},
-  spoken(t){return upSq(t).replace(/\b([A-H])([1-8])\b/g,'$1 $2').replace(/\bO-O-O\b/g,'lange Rochade').replace(/\bO-O\b/g,'kurze Rochade')},
+  /* Englische Wörter spricht die deutsche Stimme schlecht aus: vor dem Sprechen eindeutschen */
+  DE:[[/\bWow\b/gi,'Boah'],[/\bOkay\b/gi,'Gut'],[/\bOK\b/g,'Gut'],[/\bcool\b/gi,'klasse'],[/\bStars?\b/g,'Held'],[/\bLevel\b/g,'Stufe'],[/\bHey\b/g,'He'],[/\bSorry\b/gi,'Entschuldigung'],[/\bYeah\b/gi,'Ja'],[/\bYay\b/gi,'Juhu'],[/\bOops\b/gi,'Hoppla']],
+  spoken(t){for(const [r,w] of this.DE)t=String(t).replace(r,w);return upSq(t).replace(/\b([A-H])([1-8])\b/g,'$1 $2').replace(/\bO-O-O\b/g,'lange Rochade').replace(/\bO-O\b/g,'kurze Rochade')},
   /* Warteschlange: Sätze werden nacheinander gesprochen, nie mehr mitten im Satz abgeschnitten.
      Abbrechen nur bewusst mit stop() (Seitenwechsel durch das Kind, Mikrofon an, „Nochmal“). */
   q:[],cur:null,gen:0,idleWaiters:[],
@@ -1651,7 +1736,7 @@ const Voice={
   est(t){const r=(P().settings.speechRate||1);return Math.round(t.length*150/r+5000)},
   engine(text,it){
     const s=P().settings;
-    if(!s.sound)return sleep(Math.min(2400,400+text.length*30));
+    if(!s.sound||(s.muted&&!(it&&it.opt&&it.opt.force)))return sleep(Math.min(1800,300+text.length*22));
     if(Native.ok){
       return (async()=>{const my=this.pseq,parts=Piper.sentences(this.spoken(text));
         for(let i=0;i<parts.length;i++){if(my!==this.pseq||this.cutHere(it,i))return;const id=++this.seq,sp=parts[i];
@@ -1713,6 +1798,17 @@ const Voice={
   }
 };
 
+/* ---------- Stummschalter: Rokkos Stimme aus/an, in jeder Ansicht erreichbar ---------- */
+function muteBtnHTML(){const m=!!P().settings.muted;return `<button class="mutebtn ${m?'on':''}" data-mute aria-pressed="${m}" aria-label="${m?'Rokko ist stumm. Antippen, damit er wieder spricht':'Rokko stumm schalten'}">${m?ICON.mute:ICON.speaker}</button>`}
+function toggleMute(){
+  const s=P().settings;s.muted=!s.muted;save();
+  $$('[data-mute]').forEach(b=>{b.outerHTML=muteBtnHTML()});
+  if(s.muted){Voice.stop();UI.toast(ICON.mute,'Rokko ist jetzt stumm')}
+  else{UI.toast(ICON.speaker,'Rokko spricht wieder');Voice.speak('Da bin ich wieder!',{interrupt:true})}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mute]');if(b){e.stopPropagation();audioUnlock();toggleMute()}},true);
+function topbarHTML(title){return `<div class="topbar"><h1 class="ptitle">${esc(title)}</h1>${muteBtnHTML()}</div>`}
+
 /* ---------- Zuhören (iOS-App oder Browser-Spracherkennung) ---------- */
 const Ears={
   native:Native.ok,web:!!(window.SpeechRecognition||window.webkitSpeechRecognition)&&!Native.ok,
@@ -1742,15 +1838,15 @@ const Ears={
   stop(){this.cb=null;if(this.native)Native.post({type:'stopListen'});else if(this.rec)try{this.rec.abort()}catch(e){}this.on=false;UI.listenState&&UI.listenState(false)}
 };
 
-/* ---------- Claude formuliert Peters Sätze (nur im Claude-Artefakt) ---------- */
+/* ---------- Claude formuliert Rokkos Sätze (nur im Claude-Artefakt) ---------- */
 const Brain={
   fn:null,dead:false,
   async init(){try{if(window.claude&&window.claude.use)this.fn=await window.claude.use('sample')}catch(e){this.fn=null}},
   on(){return !!this.fn&&!this.dead&&P().settings.ai},
   clean(t){return String(t||'').replace(/[*_#`>"„“”«»]/g,'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'').replace(/\s+/g,' ').trim()},
-  persona(){const n=P().name;return `Du bist Peter, ein lustiger, warmherziger Schachroboter. Du spielst an einem echten Schachbrett mit ${n}, einem Kind, das gerade Schach lernt. ${n} spielt Weiß, du spielst Schwarz. Was du schreibst, wird laut vorgelesen.
+  persona(){const n=P().name;return `Du bist Rokko, ein lustiger, warmherziger Schachroboter. Du spielst an einem echten Schachbrett mit ${n}, einem Kind, das gerade Schach lernt. ${n} spielt Weiß, du spielst Schwarz. Was du schreibst, wird laut vorgelesen.
 So sprichst du: wie ein netter großer Freund, natürlich und locker, begeistert und kindgerecht, mit einfachen Wörtern und kurzen Sätzen. Nie belehrend, nie steif, nie roboterhaft. Fang nicht jedes Mal gleich an. Sprich ${n} mit du an und ab und zu mit Namen.
-Regeln: Schachfelder immer als Großbuchstabe plus Zahl, zum Beispiel E4. Keine Emojis, keine Sternchen, keine Listen, keine Anführungszeichen. Antworte nur mit dem, was Peter laut sagt.${Peter.last?`\nZuletzt hast du gesagt: ${Peter.last}\nFormuliere diesmal anders.`:''}`},
+Regeln: Schachfelder immer als Großbuchstabe plus Zahl, zum Beispiel E4. Keine Emojis, keine Sternchen, keine Listen, keine Anführungszeichen. Antworte nur mit dem, was Rokko laut sagt. Benutze keine englischen Wörter wie Wow, Okay, Cool, Star oder Level, sondern deutsche: Boah, Gut, Klasse, Held, Stufe.${Peter.last?`\nZuletzt hast du gesagt: ${Peter.last}\nFormuliere diesmal anders.`:''}`},
   async ask(task,timeout,check){
     if(!this.on())return null;
     const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),timeout||5000);
@@ -1773,11 +1869,11 @@ const Peter={
   bounce(){const f=this.els().face;if(!f)return;f.classList.remove('bounce');void f.offsetWidth;f.classList.add('bounce')},
   show(text,mood){text=upSq(text);this.last=text;const e=this.els();if(e.say)e.say.textContent=text;if(mood)this.mood(mood)},
   say(text,mood,opt){text=upSq(text);return Voice.speak(text,Object.assign({onStart:()=>this.show(text,mood)},opt||{}))},
-  repeat(){return Voice.speak(this.last,{interrupt:true})}
+  repeat(){return Voice.speak(this.last,{interrupt:true,force:true})}
 };
 
 /* ===================================================================
-   Peter-Schach · Das Brett (zum Antippen, mit Sternen, Pfeilen, Animation)
+   Rokko-Schach · Das Brett (zum Antippen, mit Sternen, Pfeilen, Animation)
    =================================================================== */
 class Board{
   constructor(host,opt){
@@ -1841,24 +1937,24 @@ class Board{
 }
 
 /* ===================================================================
-   Peter-Schach · Lernpfad, Fähigkeiten, Belohnungen
+   Rokko-Schach · Lernpfad, Fähigkeiten, Belohnungen
    =================================================================== */
 
 /* ---------- Fähigkeiten ---------- */
 const SKILLS={
-  coords:{name:'Felder-Profi',icon:'grid',train:'coords',desc:'Felder wie E4 finden und benennen'},
-  move_r:{name:'Turm-Züge',fig:'r',train:'stars_r',desc:'Wie der Turm zieht'},
-  move_b:{name:'Läufer-Züge',fig:'b',train:'stars_b',desc:'Wie der Läufer zieht'},
-  move_q:{name:'Damen-Züge',fig:'q',train:'stars_q',desc:'Wie die Dame zieht'},
-  move_k:{name:'Königs-Züge',fig:'k',train:'stars_k',desc:'Wie der König zieht'},
-  move_n:{name:'Springer-Züge',fig:'n',train:'stars_n',desc:'Wie der Springer springt'},
-  move_p:{name:'Bauern-Züge',fig:'p',train:'pawns',desc:'Wie Bauern ziehen und schlagen'},
-  capture:{name:'Adlerauge',icon:'eye',train:'capture',desc:'Freie Figuren entdecken und schlagen'},
-  protect:{name:'Schutzschild',icon:'shield',train:'rescue',desc:'Eigene Figuren nicht ungeschützt stehen lassen'},
-  escape:{name:'Schach-Retter',icon:'ring',train:'escape',desc:'Den König aus dem Schach retten'},
-  mate:{name:'Matt-Blick',icon:'crown',train:'mate',desc:'Schachmatt in einem Zug finden'},
-  fork:{name:'Gabel-Trick',icon:'fork',train:'fork',desc:'Zwei Figuren auf einmal angreifen'},
-  opening:{name:'Guter Start',icon:'castle',train:'castle',desc:'Mitte besetzen, Figuren rausholen, Rochade'}
+  coords:{name:'Felder',icon:'grid',group:'brett',train:'coords',desc:'Felder wie E4 finden und benennen'},
+  move_r:{name:'Turm',fig:'r',group:'figuren',desc:'Wie der Turm zieht'},
+  move_b:{name:'Läufer',fig:'b',group:'figuren',desc:'Wie der Läufer zieht'},
+  move_q:{name:'Dame',fig:'q',group:'figuren',desc:'Wie die Dame zieht'},
+  move_k:{name:'König',fig:'k',group:'figuren',desc:'Wie der König zieht'},
+  move_n:{name:'Springer',fig:'n',group:'figuren',desc:'Wie der Springer springt'},
+  move_p:{name:'Bauer',fig:'p',group:'figuren',desc:'Wie Bauern ziehen, schlagen und sich verwandeln'},
+  capture:{name:'Adlerauge',icon:'eye',group:'tricks',train:'capture',desc:'Freie Figuren entdecken und schlagen'},
+  protect:{name:'Schutzschild',icon:'shield',group:'tricks',train:'rescue',desc:'Bedrohte Figuren retten'},
+  escape:{name:'Schach-Retter',icon:'ring',group:'tricks',train:'escape',desc:'Den König aus dem Schach retten'},
+  mate:{name:'Matt-Blick',icon:'crown',group:'tricks',train:'mate',desc:'Schachmatt in einem Zug finden'},
+  fork:{name:'Gabel-Trick',icon:'fork',group:'tricks',train:'fork',desc:'Zwei Figuren auf einmal angreifen'},
+  opening:{name:'Guter Start',icon:'castle',group:'tricks',train:'castle',desc:'Rochade, Mitte besetzen, Figuren rausholen'}
 };
 const Skills={
   get(id){const s=P().skills[id];return s?s.v:null},
@@ -1993,7 +2089,7 @@ const WORLDS=[
       {t:'talk',text:'Und andersrum: Wenn ich eine deiner Figuren angreife, rette sie! Zieh sie weg, schütze sie, oder schlag den Angreifer.',fen:'4k3/8/8/2n5/8/3B4/8/4K3 w - - 0 1',danger:['d3','c5']},
       {t:'puzzle',kind:'rescue',count:5}
     ]},
-    {id:'adl3',name:'Partie mit Peter',icon:'board',real:true,steps:[{t:'duel',variant:'standard'}]}
+    {id:'adl3',name:'Partie mit Rokko',icon:'board',real:true,steps:[{t:'duel',variant:'standard'}]}
   ]},
   {id:'matt',acc:'den Mattgipfel',dat:'auf dem Mattgipfel',name:'Mattgipfel',fig:'k',c:'#4F46E5',soft:'#E2E1FB',dark:'#3730A3',ink:'#3730A3',desc:'Schachmatt setzen',lessons:[
     {id:'mat1',name:'Was ist Matt?',icon:'crown',steps:[
@@ -2005,7 +2101,7 @@ const WORLDS=[
       {t:'talk',text:'Ein berühmter Trick: Der König ist hinter seinen eigenen Bauern eingesperrt. Ein Turm oder die Dame auf der letzten Reihe, und es ist Matt!',fen:'6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1',arrows:[['a1','a8']]},
       {t:'puzzle',kind:'mate',count:5,level:3}
     ]},
-    {id:'mat4',name:'Partie mit Peter',icon:'board',real:true,steps:[{t:'duel',variant:'standard'}]}
+    {id:'mat4',name:'Partie mit Rokko',icon:'board',real:true,steps:[{t:'duel',variant:'standard'}]}
   ]},
   {id:'trick',acc:'die Trickhöhle',dat:'in der Trickhöhle',name:'Trickhöhle',fig:'n',c:'#C2410C',soft:'#FCE3D4',dark:'#932F07',ink:'#8A2C07',desc:'Gabeln und schlaue Tricks',lessons:[
     {id:'tri1',name:'Die Gabel',icon:'fork',steps:[
@@ -2037,9 +2133,9 @@ const BADGES=[
   {id:'coord20',name:'Felder-Profi',icon:'grid',c:'#2675D0',desc:'20 Felder hintereinander richtig gefunden',test:p=>p.stats.bestCoordRun>=20},
   {id:'stars50',name:'Sternenjäger',icon:'sparkle',c:'#9C6B00',desc:'50 Sterne gesammelt',test:p=>p.stars>=50},
   {id:'stars150',name:'Sternenkönig',icon:'crown',c:'#9C6B00',desc:'150 Sterne gesammelt',test:p=>p.stars>=150},
-  {id:'first_game',name:'Erstes Duell',icon:'board',c:'#0D8376',desc:'Die erste Partie mit Peter gespielt',test:p=>p.game.w+p.game.l+p.game.d>=1},
-  {id:'first_win',name:'Peter besiegt',icon:'trophy',c:'#C55017',desc:'Die erste Partie gegen Peter gewonnen',test:p=>p.game.w>=1},
-  {id:'wins5',name:'Siegesserie',icon:'trophy',c:'#C35037',desc:'5 Partien gegen Peter gewonnen',test:p=>p.game.w>=5},
+  {id:'first_game',name:'Erstes Duell',icon:'board',c:'#0D8376',desc:'Die erste Partie mit Rokko gespielt',test:p=>p.game.w+p.game.l+p.game.d>=1},
+  {id:'first_win',name:'Rokko besiegt',icon:'trophy',c:'#C55017',desc:'Die erste Partie gegen Rokko gewonnen',test:p=>p.game.w>=1},
+  {id:'wins5',name:'Siegesserie',icon:'trophy',c:'#C35037',desc:'5 Partien gegen Rokko gewonnen',test:p=>p.game.w>=5},
   {id:'mate_game',name:'Matt-Meister',icon:'crown',c:'#4F46E5',desc:'In einer Partie Schachmatt gesetzt',test:p=>p.stats.mates>=1},
   {id:'castle',name:'Burgbaumeister',icon:'castle',c:'#C35037',desc:'In einer Partie rochiert',test:p=>p.stats.castled>=1},
   {id:'promo',name:'Verwandlung',icon:'sparkle',c:'#7454FF',desc:'Einen Bauern in einer Partie zur Dame gemacht',test:p=>p.stats.promos>=1},
@@ -2053,11 +2149,15 @@ const BADGES=[
   {id:'streak7',name:'Eine Woche',icon:'calendar',c:'#E5484D',desc:'Sieben Tage hintereinander gespielt',test:p=>p.streak.count>=7},
   {id:'world3',name:'Entdecker',icon:'map',c:'#0D8376',desc:'Drei Welten geschafft',test:()=>WORLDS.filter(worldDone).length>=3},
   {id:'allworlds',name:'Schachland-Held',icon:'crown',c:'#4F46E5',desc:'Alle Welten geschafft',test:()=>WORLDS.every(worldDone)},
-  {id:'level3',name:'Peter wird stärker',icon:'sparkle',c:'#7454FF',desc:'Peter auf Stufe 3 gebracht',test:p=>p.game.level>=3}
+  {id:'level3',name:'Rokko wird stärker',icon:'sparkle',c:'#7454FF',desc:'Rokko auf Stärke 3 gebracht',test:p=>p.game.level>=3}
 ];
 
 /* ---------- Rang ---------- */
 const RANKS=['Schach-Küken','Bauern-Lehrling','Bauern-Profi','Turm-Wächter','Läufer-Kundschafter','Springer-Ritter','Damen-Held','Königs-Freund','Schach-Meister','Großmeister'];
+const RANK_ART=[{icon:'sparkle',c:'#2675D0'},{fig:'p',c:'#C55017'},{fig:'p',c:'#B2470F'},{fig:'r',c:'#C35037'},{fig:'b',c:'#358343'},{fig:'n',c:'#0D8376'},{fig:'q',c:'#7454FF'},{fig:'k',c:'#9C6B00'},{icon:'crown',c:'#4F46E5'},{icon:'trophy',c:'#B07800'}];
+/* Punkte, die man für ein Level braucht: Level n beginnt bei rankStart(n) */
+function rankStart(n){let base=0;for(let l=1;l<n;l++)base+=l===1?60:60+l*30;return base}
+const XP_RULES=[{icon:'map',t:'Lektion geschafft',xp:15},{star:true,t:'Jeder neue Stern',xp:10},{icon:'target',t:'Training geschafft',xp:10},{icon:'board',t:'Partie gespielt',xp:25},{icon:'trophy',t:'Partie gewonnen',xp:60},{chest:true,t:'Schatztruhe geöffnet',xp:30}];
 function rankInfo(xp){
   let lvl=1,need=60,base=0;
   while(xp>=base+need){base+=need;lvl++;need=60+lvl*30}
@@ -2093,7 +2193,7 @@ const Rewards={
     const tasks=[
       {id:'skill',skill:weak,goal:3,have:0,label:`${SKILLS[weak].name}: 3 Aufgaben`},
       nl?{id:'lesson',goal:1,have:0,label:`Lektion: ${nl.name}`}:{id:'puzzles',goal:5,have:0,label:'5 Rätsel lösen'},
-      {id:'game',goal:1,have:0,label:'Eine Partie mit Peter'}
+      {id:'game',goal:1,have:0,label:'Eine Partie mit Rokko'}
     ];
     p.daily={date:d,tasks,claimed:false};save();return p.daily;
   },
@@ -2115,7 +2215,7 @@ const Rewards={
     const lockedCols=PETER_COLORS.filter(c=>!p.outfit.colors.includes(c));
     let prize;
     if(lockedHats.length&&(Math.random()<.6||!lockedCols.length)){const h=pick(lockedHats);p.outfit.hats.push(h);prize={kind:'hat',id:h,name:HAT_NAMES[h]}}
-    else if(lockedCols.length){const c=pick(lockedCols);p.outfit.colors.push(c);prize={kind:'color',id:c,name:'Neue Farbe für Peter'}}
+    else if(lockedCols.length){const c=pick(lockedCols);p.outfit.colors.push(c);prize={kind:'color',id:c,name:'Neue Farbe für Rokko'}}
     else{prize={kind:'xp',name:'50 Bonuspunkte'};this.addXP(50)}
     this.addXP(30);save();return prize;
   }
@@ -2123,10 +2223,10 @@ const Rewards={
 function badgeMedal(b,on){return `<span class="medal" style="--bc:${b.c}">${ICON[b.icon]||ICON.trophy}</span>`}
 
 /* ===================================================================
-   Peter-Schach · Lektionen und Trainings (Runner + Aufgabenarten)
+   Rokko-Schach · Lektionen und Trainings (Runner + Aufgabenarten)
    =================================================================== */
-const PRAISE=['Super!','Klasse gemacht!','Richtig!','Wow, genau!','Toll!','Prima!','Stark!','Bravo!','Spitze!','Ja, genau so!'];
-const ENCOURAGE=['Fast! Probier es nochmal.','Hmm, nicht ganz. Schau nochmal genau hin.','Ups! Versuch es nochmal.','Knapp daneben. Du schaffst das!'];
+const PRAISE=['Super!','Klasse gemacht!','Richtig!','Boah, genau!','Toll!','Prima!','Stark!','Bravo!','Spitze!','Ja, genau so!'];
+const ENCOURAGE=['Fast! Probier es nochmal.','Hmm, nicht ganz. Schau nochmal genau hin.','Hoppla! Versuch es nochmal.','Knapp daneben. Du schaffst das!'];
 const KIND_SKILL={mate:'mate',capture:'capture',rescue:'protect',escape:'escape',fork:'fork',pawncap:'move_p',promote:'move_p',castle:'opening',ismate:'mate'};
 const KIND_TASK={
   mate:'Setze den König schachmatt!',capture:'Schlag die Figur, die ganz allein steht!',rescue:'Rette deine bedrohte Figur!',
@@ -2149,10 +2249,10 @@ const Runner={
     const c=this.cur;
     return `<div class="view full" style="--wc:${c.color}">
       <div class="lesson-top"><button class="iconbtn" data-act="quit" aria-label="Lektion beenden">${ICON.close}</button>
-      <div class="prog" aria-hidden="true"><i style="width:0%"></i></div></div>
-      <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Peter">${peterSVG(P().outfit)}</button>
+      <div class="prog" aria-hidden="true"><i style="width:0%"></i></div>${muteBtnHTML()}</div>
+      <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Rokko">${peterSVG(P().outfit)}</button>
       <div class="bubble"><p class="say" data-live aria-live="polite"></p><button class="speak" data-act="repeat" aria-label="Nochmal vorlesen">${ICON.speaker}</button></div></div>
-      <div class="card" id="soundHelp" hidden style="border-color:var(--sun)"><b>Peter ist stumm?</b> <span class="small">Lautstärke hochdrehen. Am iPhone den Stummschalter an der Seite auf „laut“ stellen.</span></div>
+      <div class="card" id="soundHelp" hidden style="border-color:var(--sun)"><b>Rokko ist stumm?</b> <span class="small">Lautstärke hochdrehen. Am iPhone den Stummschalter an der Seite auf „laut“ stellen.</span></div>
       <div id="stage" style="display:flex;flex-direction:column;gap:12px"></div></div>`;
   },
   mount(el){
@@ -2182,7 +2282,7 @@ const Runner={
       stage.innerHTML='';
       await fn(step,stage,c);
       if(!c.alive)return;
-      /* Peter darf seinen Satz zu Ende sprechen, bevor die nächste Aufgabe kommt */
+      /* Rokko darf seinen Satz zu Ende sprechen, bevor die nächste Aufgabe kommt */
       if(step.t!=='duel'&&step.t!=='talk')await Promise.race([Voice.idle(),sleep(8000)]);
       if(!c.alive)return;
       if(step.t==='duel')return; /* Partie übernimmt */
@@ -2455,7 +2555,7 @@ const STEP={
 
   async duel(step,stage,c){
     stage.innerHTML=`<div class="card center" style="display:flex;flex-direction:column;gap:12px">
-      <h2>${step.variant==='pawns'?'Bauernschlacht':'Partie mit Peter'}</h2>
+      <h2>${step.variant==='pawns'?'Bauernschlacht':'Partie mit Rokko'}</h2>
       <p class="muted" style="margin:0">${step.variant==='pawns'?'Stell auf deinem echten Brett nur die Bauern auf: Weiß in Reihe 2, Schwarz in Reihe 7.':'Bau dein echtes Brett ganz normal auf. Du spielst Weiß.'}</p>
       <div class="bd"></div></div><div class="ctl"></div>`;
     const b=new Board($('.bd',stage),{names:'edge'});b.setPos(new Pos(step.variant==='pawns'?PAWNS_FEN:START_FEN));
@@ -2601,7 +2701,10 @@ function askIsMate(pz,b,stage,c,i){
 
 /* ---------- Trainings ---------- */
 const TRAININGS=[
-  {id:'coords',name:'Feldjäger',skill:'coords',icon:'grid',c:'#2675D0',desc:'Felder finden und benennen',steps:()=>[{t:'coordFind',count:8,names:'edge'},{t:'coordName',count:4}]},
+  {id:'coords',name:'Felder',skill:'coords',icon:'grid',c:'#2675D0',desc:'Felder finden und benennen',steps:()=>[{t:'coordFind',count:8,names:'edge'},{t:'coordName',count:4}]},
+  {id:'piece',name:'Figur',skill:null,icon:'moves',c:'#0D8376',desc:'Zugfelder finden und Sterne sammeln',steps:(fig)=>{const lv=Skills.level('move_'+fig);
+    if(fig==='p')return[{t:'reach',type:'p',count:2,level:lv},{t:'puzzle',kind:'pawncap',count:2},{t:'puzzle',kind:'promote',count:2}];
+    return[{t:'reach',type:fig,count:2,level:lv},{t:'stars',type:fig,count:3,stars:2+lv,rocks:fig==='n'||fig==='k'?0:lv*2,maxPar:fig==='n'?4+lv:6}]}},
   {id:'stars',name:'Sternensammler',skill:null,icon:'sparkle',c:'#9C6B00',desc:'Sterne mit einer Figur sammeln',pickPiece:true,steps:(fig)=>{const lv=Skills.level('move_'+fig);return[{t:'stars',type:fig,count:4,stars:2+lv,rocks:fig==='n'||fig==='k'?0:lv*2,maxPar:fig==='n'?4+lv:6}]}},
   {id:'reach',name:'Wohin kann ich?',skill:null,icon:'moves',c:'#358343',desc:'Alle Zugfelder einer Figur finden',pickPiece:true,allowPawn:true,steps:(fig)=>[{t:'reach',type:fig,count:4,level:Skills.level('move_'+fig)}]},
   {id:'capture',name:'Adlerauge',skill:'capture',icon:'eye',c:'#187CAC',desc:'Freie Figuren schlagen',steps:()=>[{t:'puzzle',kind:'capture',count:5}]},
@@ -2610,26 +2713,27 @@ const TRAININGS=[
   {id:'mate',name:'Matt-Blick',skill:'mate',icon:'crown',c:'#4F46E5',desc:'Matt in einem Zug',steps:()=>[{t:'puzzle',kind:'ismate',count:2},{t:'puzzle',kind:'mate',count:4}]},
   {id:'fork',name:'Gabel-Trick',skill:'fork',icon:'fork',c:'#C2410C',desc:'Zwei Figuren auf einmal angreifen',steps:()=>[{t:'puzzle',kind:'fork',count:4}]},
   {id:'pawns',name:'Bauern-Profi',skill:'move_p',icon:'sword',c:'#C55017',desc:'Schräg schlagen und verwandeln',steps:()=>[{t:'puzzle',kind:'pawncap',count:3},{t:'puzzle',kind:'promote',count:2}]},
-  {id:'castle',name:'Rochade',skill:'opening',icon:'castle',c:'#C35037',desc:'Den König in Sicherheit bringen',steps:()=>[{t:'puzzle',kind:'castle',count:3}]},
+  {id:'castle',name:'Guter Start',skill:'opening',icon:'castle',c:'#C35037',desc:'Rochade: den König in Sicherheit bringen',steps:()=>[{t:'puzzle',kind:'castle',count:3}]},
   {id:'realmate',name:'Brett-Rätsel',skill:'mate',icon:'board',c:'#0D8376',desc:'Stellung am echten Brett aufbauen und lösen',steps:()=>[{t:'puzzle',kind:'mate',count:3,level:1,real:true},{t:'puzzle',kind:'capture',count:2,level:1,real:true}]},
-  {id:'pawnbattle',name:'Bauernschlacht',skill:null,icon:'trophy',c:'#C55017',desc:'Am echten Brett: nur Bauern gegen Peter',game:'pawns',steps:()=>[]}
+  {id:'pawnbattle',name:'Bauernschlacht',skill:null,icon:'trophy',c:'#C55017',desc:'Nur Bauern gegen Rokko',game:'pawns',steps:()=>[]}
 ];
 function startTraining(id,fig){
   const tr=TRAININGS.find(t=>t.id===id);if(!tr)return;
   if(tr.game){Game.start({variant:tr.game,fresh:true});return}
   if(tr.pickPiece&&!fig){UI.pickPiece(tr,f=>startTraining(id,f));return}
-  Runner.start({title:tr.name+(fig?' · '+NAME[fig]:''),color:tr.c,steps:tr.steps(fig),training:tr});
+  const w=fig&&WORLDS.find(x=>x.fig===fig&&x.id!=='brett');
+  Runner.start({title:id==='piece'?NAME[fig]:tr.name+(fig?' · '+NAME[fig]:''),color:w?w.c:tr.c,steps:tr.steps(fig),training:tr});
 }
 function trainingForSkill(skill){
-  if(skill.startsWith('move_')){const f=skill.slice(5);return()=>f==='p'?startTraining('pawns'):startTraining('stars',f)}
+  if(skill.startsWith('move_')){const f=skill.slice(5);return()=>startTraining('piece',f)}
   const t=SKILLS[skill]&&SKILLS[skill].train;const tr=TRAININGS.find(x=>x.id===t);
   return()=>startTraining(tr?tr.id:'capture');
 }
 
 /* ===================================================================
-   Peter-Schach · Partie am echten Brett
+   Rokko-Schach · Partie am echten Brett
    Alexander zieht am Brett und sagt (oder tippt) seinen Zug,
-   Peter antwortet, beobachtet und lernt mit.
+   Rokko antwortet, beobachtet und lernt mit.
    =================================================================== */
 
 /* ---------- Sprache verstehen ---------- */
@@ -2709,7 +2813,7 @@ function moveFacts(m,who){
   const mine=who==='peter';
   if(m.flag==='k'||m.flag==='q'){const r=mine?8:1;return `${m.flag==='k'?'kurze':'lange'} Rochade (König von E${r} nach ${m.flag==='k'?'G':'C'}${r}, Turm von ${m.flag==='k'?'H':'A'}${r} nach ${m.flag==='k'?'F':'D'}${r})`}
   let s=`${NAME[m.piece]} von ${SQ(m.from)} nach ${SQ(m.to)}`;
-  if(m.flag==='e')s+=', schlägt en passant';else if(m.cap)s+=`, schlägt ${mine?'den':'Peters'} ${NAME[m.cap]}`;
+  if(m.flag==='e')s+=', schlägt en passant';else if(m.cap)s+=`, schlägt ${mine?'den':'Rokkos'} ${NAME[m.cap]}`;
   if(m.promo)s+=`, der Bauer wird zur ${m.promo==='q'?'Dame':NAME[m.promo]}`;
   return s;
 }
@@ -2719,7 +2823,7 @@ function fbPeterMove(m){
   if(m.flag==='e')return `Achtung, Spezialtrick! Mein Bauer schlägt en passant und landet auf ${SQ(m.to)}. Nimm deinen Bauern daneben vom Brett.`;
   let t;
   if(m.cap)t=pick([`Hehe, erwischt! ${cap1(NOM_MEIN[m.piece])} von ${SQ(m.from)} schnappt sich ${ACC_DEIN[m.cap]} auf ${SQ(m.to)}.`,`Zack! Ich schlage mit ${DAT_MEIN[m.piece]} von ${SQ(m.from)} auf ${SQ(m.to)}. Nimm ${ACC_DEIN[m.cap]} bitte vom Brett.`]);
-  else t=pick([`Okay, ich hab's! ${cap1(NOM_MEIN[m.piece])} geht von ${SQ(m.from)} nach ${SQ(m.to)}.`,`Ich nehme ${ACC_MEIN[m.piece]} von ${SQ(m.from)} und stelle ${PRON_A[m.piece]} auf ${SQ(m.to)}.`,`Hmm, lass mich mal … ja! ${cap1(NOM_MEIN[m.piece])} zieht von ${SQ(m.from)} nach ${SQ(m.to)}.`,`Jetzt bin ich dran: ${NAME[m.piece]} von ${SQ(m.from)} nach ${SQ(m.to)}.`]);
+  else t=pick([`Alles klar, ich hab's! ${cap1(NOM_MEIN[m.piece])} geht von ${SQ(m.from)} nach ${SQ(m.to)}.`,`Ich nehme ${ACC_MEIN[m.piece]} von ${SQ(m.from)} und stelle ${PRON_A[m.piece]} auf ${SQ(m.to)}.`,`Hmm, lass mich mal … ja! ${cap1(NOM_MEIN[m.piece])} zieht von ${SQ(m.from)} nach ${SQ(m.to)}.`,`Jetzt bin ich dran: ${NAME[m.piece]} von ${SQ(m.from)} nach ${SQ(m.to)}.`]);
   if(m.promo)t+=` Und mein Bauer wird zur ${m.promo==='q'?'Dame':NAME[m.promo]}!`;
   return t;
 }
@@ -2729,7 +2833,7 @@ const Game={
   pos:null,played:[],keys:[],state:'idle',sel:-1,pending:null,hint:null,danger:[],flow:0,
   variant:'standard',lessonCb:null,events:[],tipsSaid:{},blunderCtx:null,board:null,newArmed:null,
   start(opt){
-    opt=opt||{};
+    opt=opt||{};Voice.stop();
     this.lessonCb=opt.lessonCb||null;
     const cur=P().game.current;
     if(!opt.fresh&&cur&&cur.moves&&cur.moves.length&&(!opt.variant||opt.variant===cur.variant)){this.restore(cur)}
@@ -2756,12 +2860,12 @@ const Game={
   },
   persist(){const c=P().game.current||(P().game.current={});c.variant=this.variant;c.moves=this.played.map(m=>sqName(m.from)+sqName(m.to)+(m.promo||''));c.events=this.events;save()},
   opp(){return P().settings.familyName||'Papa'},
-  /* gegnerische Figur benennen: Peter sagt „mein“, in der Familienpartie „der schwarze“ */
+  /* gegnerische Figur benennen: Rokko sagt „mein“, in der Familienpartie „der schwarze“ */
   oN(t){return this.family?{p:'der schwarze Bauer',n:'der schwarze Springer',b:'der schwarze Läufer',r:'der schwarze Turm',q:'die schwarze Dame',k:'der schwarze König'}[t]:NOM_MEIN[t]},
   oA(t){return this.family?{p:'den schwarzen Bauern',n:'den schwarzen Springer',b:'den schwarzen Läufer',r:'den schwarzen Turm',q:'die schwarze Dame',k:'den schwarzen König'}[t]:ACC_MEIN[t]},
   familySetup(){
     const cur=P().settings.familyName||'';const names=['Papa','Mama','Oma','Opa','Bruder','Schwester'];
-    UI.sheet(`<h2>Familienpartie</h2><p class="muted" style="margin:0">${esc(P().name)} spielt Weiß, du spielst Schwarz. Peter ist Schiedsrichter und hilft ${esc(P().name)}. Beide sagen ihre Züge an oder tippen sie.</p>
+    UI.sheet(`<h2>Familienpartie</h2><p class="muted" style="margin:0">${esc(P().name)} spielt Weiß, du spielst Schwarz. Rokko ist Schiedsrichter und hilft ${esc(P().name)}. Beide sagen ihre Züge an oder tippen sie.</p>
       <div class="namechips">${names.map(n=>`<button class="chip ${n===cur?'on':''}" data-n="${n}">${n}</button>`).join('')}</div>
       <input class="field" id="famIn" maxlength="16" placeholder="Oder Name eingeben" value="${names.includes(cur)?'':esc(cur)}">
       <button class="big go wide" data-ok>${ICON.play} Los geht’s</button>`,(sh,close)=>{
@@ -2786,11 +2890,11 @@ const Game={
   render(){
     const s=P().settings,L=LEVELS[P().game.level];
     return `<div class="view">
-      <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Peter">${peterSVG(P().outfit)}</button>
+      <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Rokko">${peterSVG(P().outfit)}</button>
       <div class="bubble"><p class="say" data-live aria-live="polite">${esc(Peter.last||'')}</p><button class="speak" id="earBtn" data-act="ear" aria-label="${Ears.available()?'Zuhören':'Nochmal vorlesen'}">${Ears.available()?ICON.mic:ICON.speaker}</button></div></div>
-      <div class="card" id="soundHelp" hidden style="border-color:var(--sun)"><b>Peter ist stumm?</b> <span class="small">Lautstärke hochdrehen. Am iPhone den Stummschalter an der Seite auf „laut“ stellen.</span><div class="row" style="margin-top:8px"><button class="big sunbtn" data-act="testsound">Ton testen</button></div></div>
-      <div class="status"><span class="turn" id="turnPill"><span class="dot"></span><span id="turnText"></span></span>
-      <span class="chip" title="${this.family?'Familienpartie':'Peters Stärke'}">${this.family?ICON.parent+' gegen '+esc(this.opp()):pieceSVG('b',L.fig,'i')+' '+esc(this.variant==='pawns'?'Bauernschlacht':L.name)}</span></div>
+      <div class="card" id="soundHelp" hidden style="border-color:var(--sun)"><b>Rokko ist stumm?</b> <span class="small">Lautstärke hochdrehen. Am iPhone den Stummschalter an der Seite auf „laut“ stellen.</span><div class="row" style="margin-top:8px"><button class="big sunbtn" data-act="testsound">Ton testen</button></div></div>
+      <div class="status">${muteBtnHTML()}<span class="turn" id="turnPill"><span class="dot"></span><span id="turnText"></span></span>
+      <span class="chip" title="${this.family?'Familienpartie':'Rokkos Stärke: '+esc(L.name)}">${this.family?ICON.parent:(this.variant==='pawns'?pieceSVG('b','p','i')+' Bauernschlacht':strengthBars(P().game.level))}</span></div>
       <div id="gboard"></div>
       <div class="tray" id="trays"></div>
       <div class="card ask" id="ask" hidden><p id="askText"></p><div class="row"><button class="big dangerbtn" data-act="askyes">${ICON.undo} Zurück</button><button class="big ghost" data-act="askno">${ICON.play} Weiter</button></div></div>
@@ -2804,9 +2908,9 @@ const Game={
         <button class="act" data-act="new" id="newBtn">${ICON.plus}<span>Neu</span></button>
         <button class="act" data-act="names">${ICON.grid}Namen</button>
       </div>
-      ${this.family?'':`<details class="card"><summary>Peters Stärke</summary>
-        <div class="level-pick" style="margin-top:10px">${[1,2,3,4,5].map(n=>`<button class="rung" data-lvl="${n}" aria-pressed="${n===P().game.level}">${pieceSVG('b',LEVELS[n].fig,'i')}${esc(LEVELS[n].name)}</button>`).join('')}</div>
-        <p class="small muted" style="margin:10px 0 0">Peter passt sich an: Nach zwei Siegen spielt er stärker, nach drei Niederlagen gemütlicher.</p>
+      ${this.family?'':`<details class="card"><summary>Rokkos Stärke</summary>
+        <div class="level-pick" style="margin-top:10px">${[1,2,3,4,5].map(n=>`<button class="rung" data-lvl="${n}" aria-pressed="${n===P().game.level}"><b class="rn">${n}</b>${esc(LEVELS[n].name)}</button>`).join('')}</div>
+        <p class="small muted" style="margin:10px 0 0">Rokko passt sich an: Nach zwei Siegen spielt er stärker, nach drei Niederlagen gemütlicher.</p>
       </details>`}
       <details class="card"><summary>Alle Züge</summary><ol id="mlist" style="margin:10px 0 0;padding-left:1.4em;columns:2;font-variant-numeric:tabular-nums"></ol></details>
     </div>`;
@@ -2822,7 +2926,7 @@ const Game={
       if(act==='testsound'){sfx.star();Voice.speak('Hallo! Kannst du mich hören?')}
       if(act==='hint')this.giveHint();
       if(act==='undo')this.undo();
-      if(act==='hands'){P().settings.handsFree=!P().settings.handsFree;save();a.classList.toggle('on',P().settings.handsFree);UI.toast(ICON.ear,P().settings.handsFree?'Peter hört nach jedem Zug zu.':'Zuhören nur auf Knopfdruck.');if(P().settings.handsFree)this.autoListen(this.flow)}
+      if(act==='hands'){P().settings.handsFree=!P().settings.handsFree;save();a.classList.toggle('on',P().settings.handsFree);UI.toast(ICON.ear,P().settings.handsFree?'Rokko hört nach jedem Zug zu.':'Zuhören nur auf Knopfdruck.');if(P().settings.handsFree)this.autoListen(this.flow)}
       if(act==='names'){P().settings.names=!P().settings.names;save();this.board.setNames(P().settings.names?true:'edge')}
       if(act==='new')this.askNew(a);
       if(act==='askyes')this.answerAsk(true);
@@ -2846,24 +2950,24 @@ const Game={
     this.board.arrows(ar).render();
     const capW=[],capB=[];for(const m of this.played){if(m.cap)(m.color==='w'?capW:capB).push(m.cap)}
     const ord='qrbnp',srt=a=>a.sort((x,y)=>ord.indexOf(x)-ord.indexOf(y));
-    const tr=$('#trays');if(tr)tr.innerHTML=(capW.length?`<span>Du hast:</span>${srt(capW).map(c=>pieceSVG('b',c,'i')).join('')}`:'')+(capB.length?`<span style="margin-left:auto">${this.family?esc(this.opp()):'Peter'} hat:</span>${srt(capB).map(c=>pieceSVG('w',c,'i')).join('')}`:'');
+    const tr=$('#trays');if(tr)tr.innerHTML=(capW.length?`<span>Du hast:</span>${srt(capW).map(c=>pieceSVG('b',c,'i')).join('')}`:'')+(capB.length?`<span style="margin-left:auto">${this.family?esc(this.opp()):'Rokko'} hat:</span>${srt(capB).map(c=>pieceSVG('w',c,'i')).join('')}`:'');
     const ml=$('#mlist');if(ml){let h='';for(const m of this.played)h+=`<li>${moveText(m)}</li>`;ml.innerHTML=h}
     const pill=$('#turnPill'),tt=$('#turnText');if(!pill)return;
     pill.classList.remove('peter-turn');
-    if(this.state==='peter'){pill.classList.add('peter-turn');tt.textContent='Peter überlegt …'}
+    if(this.state==='peter'){pill.classList.add('peter-turn');tt.textContent='Rokko überlegt …'}
     else if(this.state==='over')tt.textContent='Spiel vorbei';
     else if(this.state==='ask')tt.textContent='Zurücknehmen?';
     else if(this.sel>=0&&pos.board[this.sel]){tt.innerHTML=`${pieceSVG('w',pos.board[this.sel][1],'i')} ${NAME[pos.board[this.sel][1]]}: wohin?`}
     else if(this.family&&pos.turn==='b'){pill.classList.add('peter-turn');tt.innerHTML=`${esc(this.opp())} ist dran`}
     else if(this.family&&pos.turn==='w')tt.textContent=P().name+' ist dran!';
-    else if(last&&last.color==='b'){pill.classList.add('peter-turn');tt.innerHTML=`Peter: ${pieceSVG('b',last.piece,'i')} ${last.flag==='k'?'kurze Rochade':last.flag==='q'?'lange Rochade':SQ(last.from)+' → '+SQ(last.to)}`}
+    else if(last&&last.color==='b'){pill.classList.add('peter-turn');tt.innerHTML=`Rokko: ${pieceSVG('b',last.piece,'i')} ${last.flag==='k'?'kurze Rochade':last.flag==='q'?'lange Rochade':SQ(last.from)+' → '+SQ(last.to)}`}
     else tt.textContent='Du bist dran!';
   },
   /* ---------- Zuhören ---------- */
   autoListen(my){
     if(my!==this.flow||this.state==='peter'||this.state==='over')return;
     if(!(P().settings.handsFree&&Ears.available()&&UI.current==='play'))return;
-    /* erst zuhören, wenn Peter wirklich fertig ist – sonst schneidet das Mikrofon ihm das Wort ab */
+    /* erst zuhören, wenn Rokko wirklich fertig ist – sonst schneidet das Mikrofon ihm das Wort ab */
     Voice.idle().then(()=>setTimeout(()=>{if(my===this.flow&&this.state!=='peter'&&this.state!=='over'&&UI.current==='play'&&!Voice.busy())this.listenNow()},250));
   },
   listenNow(){
@@ -2895,7 +2999,7 @@ const Game={
       if(!pos.legal().some(m=>m.from===i)){this.board.flash(i,'shake');Peter.say(`${cap1(me==='w'?NOM_DEIN[p[1]]:this.oN(p[1]))} kann gerade nicht ziehen.`,'think')}
       return;
     }
-    if(p&&p[0]!==me){this.board.flash(i,'shake');sfx.nope();Peter.say(this.family?(me==='w'?`Du spielst Weiß, ${P().name}!`:`${this.opp()} spielt Schwarz und ist dran.`):pick(['Hey, das ist meine Figur!','Hihi, die gehört mir!']),'wow');return}
+    if(p&&p[0]!==me){this.board.flash(i,'shake');sfx.nope();Peter.say(this.family?(me==='w'?`Du spielst Weiß, ${P().name}!`:`${this.opp()} spielt Schwarz und ist dran.`):pick(['Halt, das ist meine Figur!','Hihi, die gehört mir!']),'wow');return}
     this.sel=-1;this.pending=null;this.refresh();
   },
   illegal(piece){Skills.record('move_'+piece,false,.35);this.events.push({ply:this.played.length,kind:'illegal',piece,text:`Versuchter Zug, den ${ART[piece]==='die'?'die':'der'} ${NAME[piece]} nicht kann`});this.persist()},
@@ -2905,7 +3009,7 @@ const Game={
     const r=parseSpeech(raw);const my=this.flow;
     if(this.state==='ask'){if(r.cmd==='yes'||r.cmd==='undo')return this.answerAsk(true);if(r.cmd==='no')return this.answerAsk(false);await Peter.say('Sag einfach Ja oder Nein.');return this.autoListen(my)}
     if(r.cmd==='repeat'){await Peter.repeat();return this.autoListen(my)}
-    if(r.cmd==='stop'){Ears.stop();P().settings.handsFree=false;save();return Peter.say('Okay, ich höre erst wieder zu, wenn du auf das Mikrofon tippst.')}
+    if(r.cmd==='stop'){Ears.stop();P().settings.handsFree=false;save();return Peter.say('Gut, ich höre erst wieder zu, wenn du auf das Mikrofon tippst.')}
     if(r.cmd==='new')return this.newGame();
     if(this.state==='over'){if(r.cmd==='yes')return this.newGame();return Peter.say('Sag „Neues Spiel“, dann spielen wir nochmal!')}
     if(this.state!=='human')return Peter.say('Moment, ich überlege noch!','think');
@@ -2923,7 +3027,7 @@ const Game={
         await Peter.say('Oh, '+res.error.charAt(0).toLowerCase()+res.error.slice(1)+' Stell die Figur bitte wieder zurück.','worry');return this.autoListen(my)}
     }
     if(Brain.on()){
-      Peter.show('Peter überlegt …','think');
+      Peter.show('Rokko überlegt …','think');
       const pcs=c=>this.pos.pieces(c).map(p=>NAME[p.type]+' '+SQ(p.sq)).join(', ');
       const ans=await Brain.ask(`Das Kind sagt oder fragt gerade: ${raw}\nAntworte in höchstens drei kurzen Sätzen. Wenn es einen Schachzug meint, den du nicht sicher verstehst, sag ihm freundlich, wie es ihn sagen kann, zum Beispiel: Springer nach F3. Erfinde keine Züge.\nStellung – Weiß: ${pcs('w')}. Schwarz: ${pcs('b')}.`,9000);
       if(ans){await Peter.say(ans,'smile');return this.autoListen(my)}
@@ -2962,8 +3066,8 @@ const Game={
       if(!still.length&&!(m.cap&&VAL[m.cap]>=before.threat[0].value)){add('saved','Bedrohte Figur gerettet');Skills.record('protect',true,.8)}
     }
     const newHang=after.find(h=>!(h.sq===m.to&&fair)&&!(m.cap&&VAL[m.cap]>=h.value));
-    if(mateThreat){warn={text:this.family?`Uh-oh! Jetzt könnte ${this.opp()} dich mit einem einzigen Zug schachmatt setzen!`:'Uh-oh! Jetzt könnte ich dich mit einem einzigen Zug schachmatt setzen!',sqs:[mateThreat.from,mateThreat.to],fact:`Peter könnte jetzt mit ${moveFacts(mateThreat,'peter')} mattsetzen.`};add('blunderMate','Matt in 1 für Peter zugelassen');Skills.record('protect',false,1)}
-    else if(newHang){warn={text:`Oh oh! ${cap1(NOM_DEIN[newHang.piece])} auf ${SQ(newHang.sq)} ist in Gefahr. ${cap1(this.oN(newHang.byPiece))} auf ${SQ(newHang.by)} könnte ${PRON_A[newHang.piece]} schlagen.`,sqs:[newHang.sq,newHang.by],fact:`${NAME[newHang.piece]} auf ${SQ(newHang.sq)} kann von Peters ${NAME[newHang.byPiece]} auf ${SQ(newHang.by)} geschlagen werden.`};
+    if(mateThreat){warn={text:this.family?`Uh-oh! Jetzt könnte ${this.opp()} dich mit einem einzigen Zug schachmatt setzen!`:'Uh-oh! Jetzt könnte ich dich mit einem einzigen Zug schachmatt setzen!',sqs:[mateThreat.from,mateThreat.to],fact:`Rokko könnte jetzt mit ${moveFacts(mateThreat,'peter')} mattsetzen.`};add('blunderMate','Matt in 1 für Rokko zugelassen');Skills.record('protect',false,1)}
+    else if(newHang){warn={text:`Oh oh! ${cap1(NOM_DEIN[newHang.piece])} auf ${SQ(newHang.sq)} ist in Gefahr. ${cap1(this.oN(newHang.byPiece))} auf ${SQ(newHang.by)} könnte ${PRON_A[newHang.piece]} schlagen.`,sqs:[newHang.sq,newHang.by],fact:`${NAME[newHang.piece]} auf ${SQ(newHang.sq)} kann von Rokkos ${NAME[newHang.byPiece]} auf ${SQ(newHang.by)} geschlagen werden.`};
       add('blunder',`${NAME[newHang.piece]} auf ${SQ(newHang.sq)} ungeschützt gelassen`,{piece:newHang.piece});Skills.record('protect',false,1)}
     if(before.check)Skills.record('escape',true,.5);
     /* Eröffnung und Spezialzüge */
@@ -3004,7 +3108,7 @@ const Game={
     if(this.family){await Peter.say(((a.warn?a.warn.text:a.comment)||'')+` ${this.opp()}, du bist dran.`,a.warn?'worry':a.mood||'smile');return this.autoListen(my)}
     await this.peterTurn(my,{m,kidFb:a.warn?a.warn.text:a.comment,mood:a.warn?'worry':a.mood,kidFact:a.warn?a.warn.fact:a.comment});
   },
-  /* Familienpartie: Zug von Mama/Papa. Peter sagt ihn an und coacht danach das Kind. */
+  /* Familienpartie: Zug von Mama/Papa. Rokko sagt ihn an und coacht danach das Kind. */
   async oppMove(m){
     const my=++this.flow;Ears.stop();Voice.stop();
     const pos=this.pos;
@@ -3036,16 +3140,16 @@ const Game={
     const ctx=this.blunderCtx;this.blunderCtx=null;
     if(yes){
       this.flow++;const m=this.pos.unmake();this.played.pop();this.keys.pop();
-      this.events.push({ply:this.played.length,kind:'takeback',text:'Zug nach Peters Warnung zurückgenommen'});this.persist();
+      this.events.push({ply:this.played.length,kind:'takeback',text:'Zug nach Rokkos Warnung zurückgenommen'});this.persist();
       this.state='human';this.refresh();
-      await Peter.say(pick([`Gute Entscheidung! Stell ${ACC_DEIN[m.piece]} zurück nach ${SQ(m.from)} und schau nochmal ganz genau.`,`Okay! ${cap1(NOM_DEIN[m.piece])} geht zurück nach ${SQ(m.from)}. Überleg nochmal in Ruhe.`]),'smile');
+      await Peter.say(pick([`Gute Entscheidung! Stell ${ACC_DEIN[m.piece]} zurück nach ${SQ(m.from)} und schau nochmal ganz genau.`,`Alles klar! ${cap1(NOM_DEIN[m.piece])} geht zurück nach ${SQ(m.from)}. Überleg nochmal in Ruhe.`]),'smile');
       return this.autoListen(this.flow);
     }
     if(!ctx||ctx.flow!==this.flow)return;
-    if(this.family){this.state='human';this.refresh();await Peter.say(`Okay, du bist mutig! ${this.opp()}, du bist dran.`,'smile');return this.autoListen(this.flow)}
-    await this.peterTurn(this.flow,{kidFb:'Okay, du bist mutig!',kidFact:'Das Kind wollte den Zug trotz Warnung nicht zurücknehmen. Sag kurz okay, mutig.'});
+    if(this.family){this.state='human';this.refresh();await Peter.say(`Gut, du bist mutig! ${this.opp()}, du bist dran.`,'smile');return this.autoListen(this.flow)}
+    await this.peterTurn(this.flow,{kidFb:'Gut, du bist mutig!',kidFact:'Das Kind wollte den Zug trotz Warnung nicht zurücknehmen. Sag kurz: gut, mutig.'});
   },
-  /* ---------- Peters Zug ---------- */
+  /* ---------- Rokkos Zug ---------- */
   async peterTurn(my,ctx){
     this.state='peter';Peter.mood('think');this.refresh();
     const t0=Date.now();await sleep(30);
@@ -3118,11 +3222,11 @@ const Game={
       if(this.variant==='standard'){g.w++;g.lossStreak=0;g.winsAt++;if(g.winsAt>=2&&g.level<5){g.level++;g.winsAt=0;lvlUp=true}p.stats.mates++}
       else p.stats.pawnWins++;
       title='Gewonnen!';msg=this.variant==='pawns'?`Du hast es geschafft! Dein Bauer ist ganz hinten angekommen. Gewonnen!`:`Schachmatt! Wahnsinn, ${p.name}, du hast gewonnen!`;
-      if(lvlUp)msg+=` Und weißt du was? Ab jetzt spiele ich stärker: ${LEVELS[g.level].name}!`;
+      if(lvlUp)msg+=` Und weißt du was? Ab jetzt spiele ich ${LEVELS[g.level].say}: Stärke ${g.level} von 5!`;
       sfx.win();UI.confetti(110);Peter.bounce();Rewards.addXP(60);p.stars+=3;
     }else if(res==='b'){
       if(this.variant==='standard'){g.l++;g.lossStreak++;if(g.lossStreak>=3&&g.level>1){g.level--;g.lossStreak=0;g.winsAt=0;lvlDown=true}}
-      title='Peter hat gewonnen';msg=(pre?pre+' ':'')+(this.variant==='pawns'?'Mein Bauer ist hinten angekommen. Diesmal habe ich gewonnen!':'Schachmatt! Diesmal habe ich gewonnen.')+' Aber du hast toll mitgespielt!';
+      title='Rokko hat gewonnen';msg=(pre?pre+' ':'')+(this.variant==='pawns'?'Mein Bauer ist hinten angekommen. Diesmal habe ich gewonnen!':'Schachmatt! Diesmal habe ich gewonnen.')+' Aber du hast toll mitgespielt!';
       if(lvlDown)msg+=' Beim nächsten Mal spiele ich etwas gemütlicher.';
       Rewards.addXP(25);
     }else{
@@ -3161,13 +3265,13 @@ const Game={
     if(this.state==='ask')return this.answerAsk(true);
     if(this.family&&this.state==='human'&&this.played.length){this.flow++;const a=this.pos.unmake();this.played.pop();this.keys.pop();this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.refresh();
       this.events.push({ply:this.played.length,kind:'takeback',text:'Zug zurückgenommen'});this.persist();
-      await Peter.say(`Okay, zurück! Stell ${a.color==='w'?ACC_DEIN[a.piece]:this.oA(a.piece)} wieder auf ${SQ(a.from)}. ${a.color==='w'?P().name+', du bist':this.opp()+' ist'} nochmal dran.`,'smile');return this.autoListen(this.flow)}
+      await Peter.say(`Alles klar, zurück! Stell ${a.color==='w'?ACC_DEIN[a.piece]:this.oA(a.piece)} wieder auf ${SQ(a.from)}. ${a.color==='w'?P().name+', du bist':this.opp()+' ist'} nochmal dran.`,'smile');return this.autoListen(this.flow)}
     if(this.state!=='human'||this.played.length<2)return Peter.say('Da gibt es noch nichts zurückzunehmen.');
     this.flow++;
     const a=this.pos.unmake();this.played.pop();this.keys.pop();const b=this.pos.unmake();this.played.pop();this.keys.pop();
     this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.refresh();
     this.events.push({ply:this.played.length,kind:'takeback',text:'Zug zurückgenommen'});this.persist();
-    await Peter.say(`Okay, zurückgespult! Stell ${a.piece===b.piece?'die beiden Figuren':ACC_MEIN[a.piece]+' und '+ACC_DEIN[b.piece]} so hin wie auf dem Handy. Du bist dran.`,'smile');
+    await Peter.say(`Alles klar, zurückgespult! Stell ${a.piece===b.piece?'die beiden Figuren':ACC_MEIN[a.piece]+' und '+ACC_DEIN[b.piece]} so hin wie auf dem Handy. Du bist dran.`,'smile');
     this.autoListen(this.flow);
   },
   askNew(btn){
@@ -3188,12 +3292,12 @@ const Game={
   setLevel(n){
     const g=P().game;if(n===g.level)return;g.level=n;g.winsAt=0;g.lossStreak=0;save();
     $$('.rung').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.lvl===n)));
-    Peter.say(n===1?'Alles klar, ich spiele ganz gemütlich.':`Alles klar, ich spiele jetzt wie ${LEVELS[n].name==='Meisterin Dame'?'eine Meisterin':'ein '+LEVELS[n].name}.`,'smile');
+    Peter.say(`Alles klar, ich spiele jetzt ${LEVELS[n].say}.`,'smile',{interrupt:true});
   }
 };
 
 /* ===================================================================
-   Peter-Schach · Ansichten: Start, Karte, Spielen, Training, Album, Eltern
+   Rokko-Schach · Ansichten: Start, Karte, Spielen, Training, Album, Eltern
    =================================================================== */
 const TABS=[
   {id:'home',label:'Start',icon:'home'},
@@ -3302,11 +3406,11 @@ const UI={
       rw.insertAdjacentHTML('beforeend',`<div class="reward">${CHEST(false)}<span>Eine Schatztruhe wartet unter „Ich“!</span></div>`);
       setTimeout(()=>this.confetti(70),1600);
     }
-    const said=r.friend?`Du hast ${r.lesson.world.acc} geschafft! ${r.friend.name} ist jetzt dein Freund.`:r.stars===3?pick(['Drei Sterne! Du bist ein Schach-Star!','Alles richtig! Ich bin stolz auf dich.']):pick(['Gut gemacht! Weiter so!','Super! Mit jeder Übung wirst du besser.']);
+    const said=r.friend?`Du hast ${r.lesson.world.acc} geschafft! ${r.friend.name} ist jetzt dein Freund.`:r.stars===3?pick(['Drei Sterne! Du bist ein echter Schach-Held!','Alles richtig! Ich bin stolz auf dich.']):pick(['Gut gemacht! Weiter so!','Super! Mit jeder Übung wirst du besser.']);
     setTimeout(()=>Peter.say(said,'wow'),400);
     view.firstElementChild.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;audioUnlock();
       if(a.dataset.act==='next')openLesson(nl);
-      if(a.dataset.act==='back')this.go(r.training?'train':'map');
+      if(a.dataset.act==='back'){UI.screens.map.wi=null;this.go(r.training?'train':'map')}
     });
   }
 };
@@ -3315,9 +3419,9 @@ const UI={
 /* ---------- Karte: natürliche Stimme laden ---------- */
 function voiceCardHTML(){
   const st=Piper.state;
-  if(st==='ready')return `<div class="card" id="pdl" style="border-color:var(--good)"><b>Peters neue Stimme ist da!</b><p class="small muted" style="margin:4px 0 0">Ab jetzt klingt Peter natürlicher.</p></div>`;
-  if(st==='loading')return `<div class="card" id="pdl"><b>Peters neue Stimme wird geladen …</b><div class="xpbar" style="margin-top:10px;height:14px"><i style="width:${Piper.progress}%"></i></div><p class="small muted" style="margin:6px 0 0">${Piper.progress} % · Bitte die App offen lassen.</p></div>`;
-  return `<div class="card" id="pdl" style="border:2.5px solid var(--sun)"><div style="display:flex;gap:12px;align-items:center"><span style="flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:var(--sun);color:var(--sun-ink);display:flex;align-items:center;justify-content:center">${ICON.speaker}</span><div style="flex:1;min-width:0"><b>${st==='error'?'Das Laden hat nicht geklappt':'Neue Stimme für Peter'}</b><p class="small muted" style="margin:2px 0 0">${st==='error'?'Prüfe die Internetverbindung und versuch es nochmal.':`Peter klingt damit viel natürlicher. Einmalig ca. ${Piper.SIZE_MB} MB, am besten im WLAN.`}</p></div></div>
+  if(st==='ready')return `<div class="card" id="pdl" style="border-color:var(--good)"><b>Rokkos neue Stimme ist da!</b><p class="small muted" style="margin:4px 0 0">Ab jetzt klingt Rokko natürlicher.</p></div>`;
+  if(st==='loading')return `<div class="card" id="pdl"><b>Rokkos neue Stimme wird geladen …</b><div class="xpbar" style="margin-top:10px;height:14px"><i style="width:${Piper.progress}%"></i></div><p class="small muted" style="margin:6px 0 0">${Piper.progress} % · Bitte die App offen lassen.</p></div>`;
+  return `<div class="card" id="pdl" style="border:2.5px solid var(--sun)"><div style="display:flex;gap:12px;align-items:center"><span style="flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:var(--sun);color:var(--sun-ink);display:flex;align-items:center;justify-content:center">${ICON.speaker}</span><div style="flex:1;min-width:0"><b>${st==='error'?'Das Laden hat nicht geklappt':'Neue Stimme für Rokko'}</b><p class="small muted" style="margin:2px 0 0">${st==='error'?'Prüfe die Internetverbindung und versuch es nochmal.':`Rokko klingt damit viel natürlicher. Einmalig ca. ${Piper.SIZE_MB} MB, am besten im WLAN.`}</p></div></div>
     <div class="row" style="margin-top:10px"><button class="big sunbtn" data-act="piperload">${st==='error'?'Nochmal versuchen':'Jetzt laden'}</button>${st==='error'?'':'<button class="big ghost" data-act="piperlater">Später</button>'}</div></div>`;
 }
 Piper.listeners.push(()=>{const el=$('#pdl');if(el)el.outerHTML=voiceCardHTML();const ps=$('#psetting');if(ps)ps.outerHTML=Parents.naturalRow();if(Piper.state==='ready'&&UI.current==='home')setTimeout(()=>Peter.say('Hallo '+P().name+'! So klinge ich jetzt. Gefällt dir meine neue Stimme?','wow'),300)});
@@ -3327,8 +3431,9 @@ function hudHTML(){
   const p=P(),rk=rankInfo(p.xp);
   return `<div class="hud">
     <button class="avatar" data-act="profiles" aria-label="Spieler wechseln">${avatarSVG(p.avatar)}</button>
-    <div class="hud-main"><div class="hud-name">${esc(p.name)}</div><div class="hud-rank">Level ${rk.lvl} · ${esc(rk.title)}</div><div class="xpbar" aria-label="${rk.into} von ${rk.need} Punkten"><i style="width:${rk.pct}%"></i></div></div>
-    <div class="chips"><span class="chip" title="Tage in Folge">${FLAME}${p.streak.count}</span><span class="chip" title="Sterne">${STARCHIP}${p.stars}</span></div>
+    <button class="hud-main" data-act="level" aria-label="Level ${rk.lvl}: ${esc(rk.title)}. Alle Level ansehen"><span class="hud-name">${esc(p.name)}</span><span class="hud-rank">Level ${rk.lvl} · ${esc(rk.title)}</span>
+      <span class="hud-sub"><span class="xpbar" aria-hidden="true"><i style="width:${rk.pct}%"></i></span><span class="chip sm" title="Tage in Folge">${FLAME}${p.streak.count}</span><span class="chip sm" title="Sterne">${STARCHIP}${p.stars}</span></span></button>
+    ${muteBtnHTML()}
   </div>`;
 }
 function openLesson(l,resume){
@@ -3353,10 +3458,10 @@ UI.screens.home={
     const hero=L?`<button class="hero" data-act="${rl?'resume':'lesson'}" style="--wc:${L.world.c};--wdark:${L.world.dark}">
         <span class="hero-txt"><span class="eyebrow">${rl?'Weitermachen':esc(L.world.name)}</span><h2>${esc(L.name)}</h2>
         <span class="cta">${ICON.play} ${rl?'Weiter':'Los geht’s'}</span></span><span class="glyph">${friendSVG(L.world.fig,'w')}</span></button>`
-      :`<button class="hero" data-act="play" style="--wc:#4F46E5"><span class="hero-txt"><span class="eyebrow">Alle Welten geschafft</span><h2>Fordere Peter heraus!</h2><span class="cta">${ICON.play} Partie starten</span></span></button>`;
+      :`<button class="hero" data-act="play" style="--wc:#4F46E5"><span class="hero-txt"><span class="eyebrow">Alle Welten geschafft</span><h2>Fordere Rokko heraus!</h2><span class="cta">${ICON.play} Partie starten</span></span></button>`;
     return `<div class="view home">
       ${hudHTML()}
-      <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Peter">${peterSVG(p.outfit)}</button>
+      <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Rokko">${peterSVG(p.outfit)}</button>
       <div class="bubble"><p class="say" data-live>${greet}, ${esc(p.name)}!</p><button class="speak" data-act="repeat" aria-label="Vorlesen">${ICON.speaker}</button></div></div>
       ${hero}
       ${Piper.allowed()&&!['ready','broken'].includes(Piper.state)&&!(p.settings.naturalLater===today())?voiceCardHTML():''}
@@ -3375,14 +3480,14 @@ UI.screens.home={
     el.addEventListener('click',e=>{audioUnlock();
       const mi=e.target.closest('[data-mission]');if(mi){const t=Rewards.daily().tasks[+mi.dataset.mission];sfx.tap();
         if(t.have>=t.goal){Voice.speak('Geschafft! '+t.label,{interrupt:true});return}
-        Voice.speak(t.label,{interrupt:true});
-        setTimeout(()=>{if(t.id==='skill')trainingForSkill(t.skill)();else if(t.id==='lesson'){const l=resumeLesson()||nextLesson();if(l)openLesson(l)}else if(t.id==='game')UI.go('playhub')},600);return}
+        if(t.id==='skill')trainingForSkill(t.skill)();else if(t.id==='lesson'){const l=resumeLesson()||nextLesson();if(l)openLesson(l)}else if(t.id==='game'){UI.go('playhub');Voice.speak(t.label,{interrupt:true})}return}
       const a=e.target.closest('[data-act]');if(!a)return;const act=a.dataset.act;
       if(act==='lesson')openLesson(nextLesson());
       if(act==='resume'){const l=resumeLesson();if(l)openLesson(l,P().resume)}
       if(act==='play')UI.go('playhub');
       if(act==='train')UI.go('train');
       if(act==='profiles')Profiles.open();
+      if(act==='level'){UI.screens.me.tab='way';UI.go('me')}
       if(act==='repeat')Peter.repeat();
       if(act==='peter'){Peter.bounce();sfx.boing();Peter.say(pick(['Hihi, das kitzelt!','Weißt du was? Der Springer ist die einzige Figur, die springen kann!','Ich freu mich so, dass du da bist!','Der Turm fährt gerade wie ein Zug auf Schienen.','Die Dame steht am Anfang immer auf ihrer Farbe.']),'wow',{interrupt:true})}
       if(act==='chest')Album.claimDaily();
@@ -3396,34 +3501,41 @@ UI.screens.home={
   }
 };
 
-/* ---------- Abenteuer: eine Welt pro Seite, wischen oder Pfeile ---------- */
+/* ---------- Abenteuer: Wisch-Karussell, eine Welt pro Seite ----------
+   Die Seiten liegen nebeneinander und rasten beim Wischen ein (native Scroll-Snap).
+   Beim Blättern wird nichts neu aufgebaut und Rokko bleibt still. */
+function worldPageHTML(w,wi,nl){
+  const unl=worldUnlocked(w),got=worldStars(w),max=w.lessons.length*3,fr=FRIENDS.find(f=>f.world===w.id),rl=resumeLesson();
+  const pos=[[1,1],[1,2],[2,2],[2,1]];
+  const nodes=w.lessons.map((l,li)=>{
+    const st=P().lessons[l.id]||0,u=lessonUnlocked(l),cur=(rl||nl)===l;
+    const [r,c]=pos[li]||[3,1];
+    return `<button class="lnode ${u?'':'locked'} ${cur?'current':''} ${st?'done':''}" data-l="${l.id}" style="grid-row:${r};grid-column:${c}" aria-label="${esc(l.name)}${u?'':' (verschlossen)'}">
+      <span class="disc">${u?lessonIcon(l):ICON.lock}${l.real?`<span class="realb" title="Am echten Brett">${ICON.board}</span>`:''}${cur?'<span class="nowp">'+ICON.play+'</span>':''}</span>
+      <span class="st">${[1,2,3].map(i=>STAR(i<=st)).join('')}</span>
+      <span class="lbl">${esc(l.name)}</span></button>`}).join('');
+  return `<section class="wpage ${unl?'':'locked'}" data-wi="${wi}" style="--wc:${w.c};--wsoft:${w.soft};--wdark:${w.dark};--wink:${w.ink}" aria-label="${esc(w.name)}">
+    <div class="wtop">
+      <div class="wtitle"><span class="eyebrow">Welt ${wi+1} von ${WORLDS.length}</span><h2>${esc(w.name)}</h2><p>${esc(w.desc)}</p></div>
+      <button class="wfig" data-say="${wi}" aria-label="${esc(w.name)} vorlesen">${friendSVG(w.fig,'w')}<span class="wspk">${ICON.speaker}</span></button>
+    </div>
+    <div class="wprog"><span class="wst">${STARCHIP}<b>${got}</b>/${max}</span><span class="bar"><i style="width:${Math.round(got/max*100)}%"></i></span>${worldDone(w)&&fr?`<span class="wfr" title="${esc(fr.name)}">${ICON.check}</span>`:''}</div>
+    <div class="lpath"><svg class="lconn" aria-hidden="true"></svg>${nodes}</div>
+    ${unl?'':`<p class="wlock">${ICON.lock}<span>Schaff zuerst ${esc(WORLDS[wi-1].acc)}!</span></p>`}
+  </section>`;
+}
 UI.screens.map={
   wi:null,
   render(){
     const nl=nextLesson();
-    if(this.wi==null)this.wi=nl?nl.wi:WORLDS.length-1;
-    const wi=this.wi,w=WORLDS[wi],unl=worldUnlocked(w),got=worldStars(w),max=w.lessons.length*3,fr=FRIENDS.find(f=>f.world===w.id);
+    if(this.wi==null){const rl=resumeLesson();this.wi=rl?rl.wi:nl?nl.wi:WORLDS.length-1}
+    const wi=this.wi;
     const strip=WORLDS.map((x,i)=>{const u=worldUnlocked(x),d=worldDone(x);
-      return `<button class="wdot ${i===wi?'on':''} ${u?'':'locked'}" data-w="${i}" style="--wc:${x.c}" aria-label="${esc(x.name)}" aria-current="${i===wi}">${u?friendSVG(x.fig,'w'):ICON.lock}${d?`<span class="wok">${ICON.check}</span>`:''}</button>`}).join('');
-    const pos=[[1,1],[1,2],[2,2],[2,1]];
-    const nodes=w.lessons.map((l,li)=>{
-      const st=P().lessons[l.id]||0,u=lessonUnlocked(l),cur=nl===l||(resumeLesson()===l);
-      const [r,c]=pos[li]||[3,1];
-      return `<button class="lnode ${u?'':'locked'} ${cur?'current':''} ${st?'done':''}" data-l="${l.id}" style="grid-row:${r};grid-column:${c}" aria-label="${esc(l.name)}${u?'':' (verschlossen)'}">
-        <span class="disc">${u?lessonIcon(l):ICON.lock}${l.real?`<span class="realb" title="Am echten Brett">${ICON.board}</span>`:''}${cur?'<span class="nowp">'+ICON.play+'</span>':''}</span>
-        <span class="st">${[1,2,3].map(i=>STAR(i<=st)).join('')}</span>
-        <span class="lbl">${esc(l.name)}</span></button>`}).join('');
-    return `<div class="view advent" style="--wc:${w.c};--wsoft:${w.soft};--wdark:${w.dark};--wink:${w.ink}">
-      <div class="wstrip" role="tablist" aria-label="Welten">${strip}</div>
-      <section class="wpage ${unl?'':'locked'}" aria-live="polite">
-        <div class="wtop">
-          <button class="wtitle" data-act="say" aria-label="Vorlesen"><span class="eyebrow">Welt ${wi+1} von ${WORLDS.length}</span><h1>${esc(w.name)}</h1><p>${esc(w.desc)}</p></button>
-          <div class="wfig">${friendSVG(w.fig,'w')}</div>
-        </div>
-        <div class="wprog"><span class="wst">${STARCHIP}<b>${got}</b>/${max}</span><span class="bar"><i style="width:${Math.round(got/max*100)}%"></i></span>${worldDone(w)&&fr?`<span class="wfr" title="${esc(fr.name)}">${ICON.check}</span>`:''}</div>
-        <div class="lpath"><svg class="lconn" aria-hidden="true"></svg>${nodes}</div>
-        ${unl?'':`<p class="wlock">${ICON.lock}<span>Schaff zuerst ${esc(WORLDS[wi-1].acc)}!</span></p>`}
-      </section>
+      return `<button class="wdot ${i===wi?'on':''} ${u?'':'locked'}" data-w="${i}" style="--wc:${x.c}" aria-label="${esc(x.name)}">${u?friendSVG(x.fig,'w'):ICON.lock}${d?`<span class="wok">${ICON.check}</span>`:''}</button>`}).join('');
+    return `<div class="view advent" style="--wc:${WORLDS[wi].c}">
+      ${topbarHTML('Abenteuer')}
+      <div class="wstrip" aria-label="Welten">${strip}</div>
+      <div class="wcar" id="wcar">${WORLDS.map((w,i)=>worldPageHTML(w,i,nl)).join('')}</div>
       <div class="wnav">
         <button class="navbtn" data-nav="-1" ${wi===0?'disabled':''} aria-label="Vorherige Welt">${ICON.back}</button>
         <span class="wdots">${WORLDS.map((x,i)=>`<i class="${i===wi?'on':''}"></i>`).join('')}</span>
@@ -3431,36 +3543,46 @@ UI.screens.map={
       </div>
     </div>`;
   },
-  go(i,speak){
-    i=clamp(i,0,WORLDS.length-1);if(i===this.wi)return;
-    const dir=i>this.wi?1:-1;this.wi=i;sfx.tap();UI.go('map');
-    const pg=$('.wpage');if(pg)pg.classList.add(dir>0?'in-r':'in-l');
-    if(speak){const w=WORLDS[i];Voice.speak(w.name+'. '+w.desc,{interrupt:true})}
+  step(car){const pg=car.querySelector('.wpage');if(!pg)return car.clientWidth;return pg.getBoundingClientRect().width+parseFloat(getComputedStyle(car).columnGap||0)},
+  scrollTo(i,smooth){
+    const car=$('#wcar');if(!car)return;i=clamp(i,0,WORLDS.length-1);
+    car.scrollTo({left:i*this.step(car),behavior:smooth&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'auto'});
   },
-  drawPath(el){
-    const lp=$('.lpath',el),svg=$('.lconn',el);if(!lp||!svg)return;
-    const box=lp.getBoundingClientRect();const pts=$$('.lnode .disc',lp).map(d=>{const r=d.getBoundingClientRect();return[r.left+r.width/2-box.left,r.top+r.height/2-box.top]});
+  /* Nur Markierungen umschalten – kein Neuaufbau, kein Springen */
+  setActive(i){
+    if(i===this.wi&&this._init)return;this.wi=i;this._init=true;
+    const el=$('.advent');if(!el)return;
+    el.style.setProperty('--wc',WORLDS[i].c);
+    $$('.wdot',el).forEach((b,k)=>b.classList.toggle('on',k===i));
+    $$('.wdots i',el).forEach((d,k)=>d.classList.toggle('on',k===i));
+    const [pv,nx]=$$('.navbtn',el);if(pv)pv.disabled=i===0;if(nx)nx.disabled=i===WORLDS.length-1;
+    const st=$('.wstrip',el),b=$$('.wdot',el)[i];
+    if(st&&b){const left=b.offsetLeft-st.clientWidth/2+b.clientWidth/2;st.scrollTo({left,behavior:'smooth'})}
+  },
+  drawPath(page){
+    const lp=$('.lpath',page),svg=$('.lconn',page);if(!lp||!svg)return;
+    const box=lp.getBoundingClientRect();if(!box.width)return;
+    const pts=$$('.lnode .disc',lp).map(d=>{const r=d.getBoundingClientRect();return[r.left+r.width/2-box.left,r.top+r.height/2-box.top]});
     if(pts.length<2){svg.innerHTML='';return}
     svg.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);
-    let d=`M${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i];d+=y0===y1?` L${x1} ${y1}`:` C${x0+(x0<box.width/2?-60:60)} ${y0} ${x1+(x1<box.width/2?-60:60)} ${y1} ${x1} ${y1}`}
+    let d=`M${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i];d+=Math.abs(y0-y1)<2?` L${x1} ${y1}`:` C${x0+(x0<box.width/2?-60:60)} ${y0} ${x1+(x1<box.width/2?-60:60)} ${y1} ${x1} ${y1}`}
     svg.innerHTML=`<path d="${d}" fill="none" stroke="var(--wdark)" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 14" opacity=".35"/>`;
   },
   mount(el){
+    const car=$('#wcar',el);this._init=false;
     el.addEventListener('click',e=>{audioUnlock();
-      const wd=e.target.closest('[data-w]');if(wd){this.go(+wd.dataset.w,true);return}
-      const nv=e.target.closest('[data-nav]');if(nv){this.go(this.wi+(+nv.dataset.nav),true);return}
-      if(e.target.closest('[data-act="say"]')){const w=WORLDS[this.wi];Voice.speak(w.name+'. '+w.desc,{interrupt:true});return}
+      const wd=e.target.closest('[data-w]');if(wd){sfx.tap();this.scrollTo(+wd.dataset.w,true);return}
+      const nv=e.target.closest('[data-nav]');if(nv){sfx.tap();this.scrollTo(this.wi+(+nv.dataset.nav),true);return}
+      const sy=e.target.closest('[data-say]');if(sy){const w=WORLDS[+sy.dataset.say];sfx.tap();Voice.speak(w.name+'. '+w.desc,{interrupt:true,force:true});return}
       const n=e.target.closest('.lnode');if(!n)return;
       const l=LESSONS.find(x=>x.id===n.dataset.l);
       if(!lessonUnlocked(l)){sfx.nope();n.classList.add('shake');setTimeout(()=>n.classList.remove('shake'),400);Voice.speak('Diese Lektion ist noch verschlossen. Schaff zuerst die davor!',{interrupt:true});return}
       sfx.tap();openLesson(l)});
-    /* Wischen zwischen den Welten */
-    let sx=null,sy=null;
-    el.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});
-    el.addEventListener('touchend',e=>{if(sx==null)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;sx=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)this.go(this.wi+(dx<0?1:-1),true)},{passive:true});
-    requestAnimationFrame(()=>this.drawPath(el));
-    const on=$('.wdot.on',el);if(on)on.scrollIntoView({inline:'center',block:'nearest'});
-    if(!this._rs){this._rs=true;addEventListener('resize',()=>{if(UI.current==='map')this.drawPath($('.advent'))})}
+    let raf=0;
+    car.addEventListener('scroll',()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const i=clamp(Math.round(car.scrollLeft/this.step(car)),0,WORLDS.length-1);this.setActive(i)})},{passive:true});
+    const start=this.wi;
+    requestAnimationFrame(()=>{this.scrollTo(start,false);this._init=false;this.setActive(start);$$('.wpage',el).forEach(p=>this.drawPath(p))});
+    if(!this._rs){this._rs=true;addEventListener('resize',()=>{if(UI.current==='map'){$$('.wpage').forEach(p=>this.drawPath(p));this.scrollTo(this.wi,false)}})}
   }
 };
 
@@ -3468,22 +3590,22 @@ UI.screens.map={
 UI.screens.playhub={
   render(){
     const g=P().game,cur=g.current&&g.current.moves&&g.current.moves.length?g.current:null;
-    const vn={pawns:'Bauernschlacht',family:'Familienpartie',standard:'Partie gegen Peter'};
+    const vn={pawns:'Bauernschlacht',family:'Familienpartie',standard:'Partie gegen Rokko'};
     return `<div class="view">
-      <h1 class="ptitle">Spielen am echten Brett</h1>
+      ${topbarHTML('Spielen am echten Brett')}
       <div class="talkrow"><button class="peter" data-live data-mood="smile">${peterSVG(P().outfit)}</button>
       <div class="bubble"><p class="say" data-live>Stell dein Schachbrett auf und leg das Handy daneben. Ich sage dir meine Züge!</p></div></div>
       ${cur?`<button class="hero" data-act="resume" style="--wc:#0E8C7E"><span class="hero-txt"><span class="eyebrow">Angefangene Partie</span><h2>${vn[cur.variant]||vn.standard} weiterspielen</h2><span class="cta">${ICON.play} Weiter</span></span></button>`:''}
       <div class="modes">
-        <button class="mode" data-act="standard" style="--mc:#0E8C7E"><span class="mart">${peterSVG(P().outfit)}</span><span class="mtx"><b>Gegen Peter</b><span>Peter spielt Schwarz · Stufe „${esc(LEVELS[g.level].name)}“</span></span>${ICON.next}</button>
-        <button class="mode" data-act="family" style="--mc:#7A5CFF"><span class="mart fam">${ICON.parent}</span><span class="mtx"><b>Familienpartie</b><span>Gegen ${esc(P().settings.familyName||'Mama oder Papa')} · Peter hilft dir</span></span>${ICON.next}</button>
+        <button class="mode" data-act="standard" style="--mc:#0E8C7E"><span class="mart">${peterSVG(P().outfit)}</span><span class="mtx"><b>Gegen Rokko</b><span>Rokko spielt Schwarz · Stärke ${g.level} von 5</span></span>${ICON.next}</button>
+        <button class="mode" data-act="family" style="--mc:#7A5CFF"><span class="mart fam">${ICON.parent}</span><span class="mtx"><b>Familienpartie</b><span>Gegen ${esc(P().settings.familyName||'Mama oder Papa')} · Rokko hilft dir</span></span>${ICON.next}</button>
         <button class="mode" data-act="pawns" style="--mc:#C2501B"><span class="mart">${friendSVG('p','w')}</span><span class="mtx"><b>Bauernschlacht</b><span>Nur Bauern: Wer zuerst hinten ist, gewinnt</span></span>${ICON.next}</button>
       </div>
       <details class="card howto"><summary>So geht’s</summary>
         <ol>
           <li>${ICON.board}<span>Brett aufbauen, Weiß vor dir. Unten rechts ist ein helles Feld.</span></li>
           <li>${ICON.mic}<span>Zug am Brett machen und sagen, zum Beispiel „Springer nach F3“. Oder auf dem Handy antippen.</span></li>
-          <li>${ICON.speaker}<span>Peter sagt seinen Zug. Du machst ihn für Peter auf dem echten Brett.</span></li>
+          <li>${ICON.speaker}<span>Rokko sagt seinen Zug. Du machst ihn für Rokko auf dem echten Brett.</span></li>
         </ol>
       </details>
     </div>`;
@@ -3498,21 +3620,31 @@ UI.screens.playhub={
   }
 };
 
-/* ---------- Training ---------- */
+/* ---------- Training: jede Fähigkeit genau einmal, mit ihren Sternen ---------- */
+function skillIcon(id){return SKILLS[id].fig?pieceSVG('w',SKILLS[id].fig,'i'):ICON[SKILLS[id].icon]}
+function skillColor(id){const f=SKILLS[id].fig;if(f){const w=WORLDS.find(x=>x.fig===f&&x.id!=='brett');return w?w.c:'#0D8376'}const t=TRAININGS.find(x=>x.id===SKILLS[id].train);return t?t.c:'#0D8376'}
+function skillTileHTML(id){const sk=P().skills[id];return `<button class="ttile ${sk?'':'new'}" data-skill="${id}" style="--tc:${skillColor(id)}"><span class="ti">${skillIcon(id)}</span><b>${esc(SKILLS[id].name)}</b>${sk?masteryStars(id):'<span class="mastery q">neu</span>'}</button>`}
 UI.screens.train={
   render(){
-    const w=Skills.weakest();
+    const w=Skills.weakest(),ids=g=>Object.keys(SKILLS).filter(k=>SKILLS[k].group===g);
+    const real=['realmate','pawnbattle'].map(id=>TRAININGS.find(t=>t.id===id));
     return `<div class="view">
-      <h1 class="ptitle">Training</h1>
-      ${w?`<button class="tip" data-skill="${w}"><span class="ti">${SKILLS[w].fig?pieceSVG('w',SKILLS[w].fig,'i'):ICON[SKILLS[w].icon]}</span><div><b class="tiph">Peters Tipp: ${esc(SKILLS[w].name)}</b><div class="small muted">${esc(SKILLS[w].desc)}</div></div><span class="tipgo">${ICON.play}</span></button>`
-        :`<div class="tip"><span class="ti">${ICON.bulb}</span><div><b class="tiph">Peter lernt dich kennen</b><div class="small muted">Spiel ein paar Lektionen oder eine Partie. Dann weiß Peter, was ihr üben solltet.</div></div></div>`}
-      <div class="trainlist">${TRAININGS.map(t=>`<button class="ttile" data-t="${t.id}" style="--tc:${t.c}"><span class="ti">${ICON[t.icon]}</span><b>${esc(t.name)}</b>${t.skill?masteryStars(t.skill):'<span class="mastery"></span>'}</button>`).join('')}</div>
+      ${topbarHTML('Training')}
+      ${w?`<button class="tip" data-skill="${w}"><span class="ti">${skillIcon(w)}</span><div><b class="tiph">Rokkos Tipp: ${esc(SKILLS[w].name)}</b><div class="small muted">${esc(SKILLS[w].desc)}</div></div><span class="tipgo">${ICON.play}</span></button>`
+        :`<div class="tip"><span class="ti">${ICON.bulb}</span><div><b class="tiph">Rokko lernt dich kennen</b><div class="small muted">Spiel ein paar Lektionen oder eine Partie. Dann weiß Rokko, was ihr üben solltet.</div></div></div>`}
+      <h2 class="sect">${ICON.moves}Figuren</h2>
+      <div class="trainlist">${ids('figuren').map(skillTileHTML).join('')}</div>
+      <h2 class="sect">${ICON.sparkle}Brett und Tricks</h2>
+      <div class="trainlist">${[...ids('brett'),...ids('tricks')].map(skillTileHTML).join('')}</div>
+      <h2 class="sect">${ICON.board}Am echten Brett</h2>
+      <div class="trainlist two">${real.map(t=>`<button class="ttile real" data-t="${t.id}" style="--tc:${t.c}"><span class="ti">${ICON[t.icon]}</span><b>${esc(t.name)}</b><span class="tdesc">${esc(t.desc)}</span></button>`).join('')}</div>
+      <p class="hint-line">Die Sterne zeigen, wie gut du es schon kannst: fünf Sterne sind das Ziel.</p>
     </div>`;
   },
   mount(el){
     el.addEventListener('click',e=>{audioUnlock();
       const s=e.target.closest('[data-skill]');if(s){sfx.tap();trainingForSkill(s.dataset.skill)();return}
-      const t=e.target.closest('[data-t]');if(t){sfx.tap();const tr=TRAININGS.find(x=>x.id===t.dataset.t);if(tr)Voice.speak(tr.name+'. '+tr.desc,{interrupt:true});startTraining(t.dataset.t)}});
+      const t=e.target.closest('[data-t]');if(t){sfx.tap();startTraining(t.dataset.t)}});
   }
 };
 
@@ -3527,32 +3659,38 @@ const Album={
   openChest(){
     const prize=Rewards.openChest();sfx.chest();UI.confetti(60);
     const art=prize.kind==='hat'?peterSVG({...P().outfit,hat:prize.id}):prize.kind==='color'?peterSVG({...P().outfit,color:prize.id}):STARCHIP;
-    UI.sheet(`<div class="center" style="display:flex;flex-direction:column;gap:12px;align-items:center"><div style="width:96px">${CHEST(true)}</div><div style="width:110px">${art}</div><h2>${esc(prize.name)}!</h2><p class="muted" style="margin:0">${prize.kind==='xp'?'Bonuspunkte für dich.':'Zieh es Peter unter „Ich“ an!'}</p><button class="big go wide" data-ok>Super!</button></div>`,(s,close)=>{$('[data-ok]',s).onclick=()=>{close();if(['me','home'].includes(UI.current))UI.go(UI.current)}});
+    UI.sheet(`<div class="center" style="display:flex;flex-direction:column;gap:12px;align-items:center"><div style="width:96px">${CHEST(true)}</div><div style="width:110px">${art}</div><h2>${esc(prize.name)}!</h2><p class="muted" style="margin:0">${prize.kind==='xp'?'Bonuspunkte für dich.':'Zieh es Rokko unter „Ich“ an!'}</p><button class="big go wide" data-ok>Super!</button></div>`,(s,close)=>{$('[data-ok]',s).onclick=()=>{close();if(['me','home'].includes(UI.current))UI.go(UI.current)}});
     Voice.speak(prize.kind==='hat'?`Juhu! Ein neuer ${prize.name} für mich!`:prize.kind==='color'?'Juhu, eine neue Farbe für mich!':'Bonuspunkte für dich!');
     Rewards.checkBadges();
   }
 };
 
-/* ---------- Ich: mein Können, meine Sammlung, Peter anziehen ---------- */
+/* ---------- Ich: mein Können, meine Sammlung, Rokko anziehen ---------- */
 const RESULT_ICON={w:ICON.trophy,b:ICON.refresh,d:ICON.heart,x:ICON.close};
+function rankMedal(i,state){const a=RANK_ART[i];return `<span class="rmedal ${state}" style="--rc:${a.c}">${state==='todo'?ICON.lock:a.fig?friendSVG(a.fig,'w'):ICON[a.icon]}<b>${i+1}</b>${state==='done'?`<i class="rok">${ICON.check}</i>`:''}</span>`}
 UI.screens.me={
-  tab:'skills',
+  tab:'way',
   render(){
     const p=P(),t=this.tab,rk=rankInfo(p.xp);
     let body='';
-    if(t==='skills'){
+    if(t==='way'){
       const week=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');week.push({k,on:((p.stats.daySecs||{})[k]||0)>=60,wd:'SMDMDFS'[d.getDay()],today:i===0})}
-      const w=Skills.weakest();
-      const tiles=Object.keys(SKILLS).map(id=>{const sk=p.skills[id],n=Skills.stars(id);
-        return `<button class="sktile ${sk?'':'new'}" data-sk="${id}" aria-label="${esc(SKILLS[id].name)}: ${n} von 5 Sternen"><span class="skic">${SKILLS[id].fig?pieceSVG('w',SKILLS[id].fig,'i'):ICON[SKILLS[id].icon]}</span><span class="skn">${esc(SKILLS[id].name)}</span>${sk?masteryStars(id):'<span class="mastery q">?</span>'}</button>`}).join('');
-      const games=p.games.filter(g=>g.result!=='x').slice(0,6);
-      body=`<div class="card week"><div class="wk-h"><h3>Diese Woche</h3><span class="chip">${FLAME}${p.streak.count}</span></div>
+      const games=p.games.filter(g=>g.result!=='x').slice(0,5);
+      const cur=Math.min(rk.lvl,RANKS.length),nextT=RANKS[Math.min(RANKS.length-1,rk.lvl)];
+      const left=rk.need-rk.into;
+      body=`<div class="card lvlcard">
+          <div class="lvlnow">${rankMedal(cur-1,'now')}<div><span class="eyebrow-ink">Dein Level</span><h2>Level ${rk.lvl}: ${esc(rk.title)}</h2>
+          <div class="xpbar xl"><i style="width:${rk.pct}%"></i></div>
+          <p class="small muted" style="margin:4px 0 0">${rk.lvl>=RANKS.length?`${rk.into} Punkte im Großmeister-Level. Du hast alle Level geschafft!`:`Noch <b>${left}</b> Punkte bis Level ${rk.lvl+1}: ${esc(nextT)}`}</p></div></div>
+          <div class="road" aria-label="Alle Level">${RANKS.map((r,i)=>`<button class="rstep" data-rank="${i}" aria-label="Level ${i+1}: ${esc(r)}">${rankMedal(i,i+1<rk.lvl?'done':i+1===rk.lvl?'now':'todo')}<span>${esc(r)}</span></button>`).join('')}</div>
+        </div>
+        <div class="card"><h3>So sammelst du Punkte</h3><div class="xprules">${XP_RULES.map(x=>`<div class="xpr"><span class="xpi">${x.star?STARCHIP:x.chest?CHEST(false):ICON[x.icon]}</span><span class="xpt">${esc(x.t)}</span><b>+${x.xp}</b></div>`).join('')}</div></div>
+        <div class="card week"><div class="wk-h"><h3>Diese Woche</h3><span class="chip">${FLAME}${p.streak.count}</span></div>
           <div class="wk">${week.map(d=>`<span class="wkd ${d.on?'on':''} ${d.today?'today':''}"><span class="wkc">${d.on?FLAME:''}</span><small>${d.wd}</small></span>`).join('')}</div></div>
-        ${w?`<button class="tip" data-skill="${w}"><span class="ti">${SKILLS[w].fig?pieceSVG('w',SKILLS[w].fig,'i'):ICON[SKILLS[w].icon]}</span><div><b class="tiph">Das üben wir: ${esc(SKILLS[w].name)}</b><div class="small muted">${esc(SKILLS[w].desc)}</div></div><span class="tipgo">${ICON.play}</span></button>`:''}
-        <div class="card"><h3>Das kann ich schon</h3><div class="skgrid">${tiles}</div></div>
         <div class="card"><div class="wk-h"><h3>Meine Partien</h3><span class="score"><span class="sc w">${ICON.trophy}${p.game.w}</span><span class="sc d">${ICON.heart}${p.game.d}</span><span class="sc l">${ICON.refresh}${p.game.l}</span></span></div>
-          ${games.length?`<div class="glist">${games.map(g=>{const i=p.games.indexOf(g);const d=new Date(g.date);return `<button class="gtile r-${g.result}" data-game="${i}"><span class="gi">${RESULT_ICON[g.result]||ICON.board}</span><span class="gm"><b>${g.result==='w'?'Gewonnen':g.result==='b'?(g.variant==='family'?'Verloren':'Peter gewinnt'):'Unentschieden'}</b><span>${d.toLocaleDateString('de-DE',{day:'numeric',month:'short'})} · ${Math.ceil(g.plies/2)} Züge</span></span>${ICON.play}</button>`}).join('')}</div>`
-          :`<p class="muted small" style="margin:6px 0 0">Noch keine Partie. Spiel gegen Peter am echten Brett!</p>`}</div>`;
+          ${games.length?`<div class="glist">${games.map(g=>{const i=p.games.indexOf(g);const d=new Date(g.date);return `<button class="gtile r-${g.result}" data-game="${i}"><span class="gi">${RESULT_ICON[g.result]||ICON.board}</span><span class="gm"><b>${g.result==='w'?'Gewonnen':g.result==='b'?(g.variant==='family'?'Verloren':'Rokko gewinnt'):'Unentschieden'}</b><span>${d.toLocaleDateString('de-DE',{day:'numeric',month:'short'})} · ${Math.ceil(g.plies/2)} Züge${g.variant==='family'&&g.opp?' · gegen '+esc(g.opp):''}</span></span>${ICON.play}</button>`}).join('')}</div>`
+          :`<p class="muted small" style="margin:6px 0 0">Noch keine Partie. Spiel gegen Rokko am echten Brett!</p>`}</div>
+        <button class="linkcard" data-go="train"><span class="ti">${ICON.target}</span><span><b>Was kann ich schon?</b><span class="small muted">Deine Sterne für jede Figur und jeden Trick stehen im Training.</span></span>${ICON.next}</button>`;
     }
     if(t==='collect'){
       body=`<div class="cards">${FRIENDS.map(f=>{const w=WORLDS.find(x=>x.id===f.world);const on=worldDone(w);
@@ -3569,8 +3707,8 @@ UI.screens.me={
     return `<div class="view me">
       <div class="mehead"><button class="avatar lg" data-act="profiles" aria-label="Spieler wechseln">${avatarSVG(p.avatar)}</button>
         <div class="hud-main"><div class="hud-name">${esc(p.name)}</div><div class="hud-rank">Level ${rk.lvl} · ${esc(rk.title)}</div><div class="xpbar"><i style="width:${rk.pct}%"></i></div></div>
-        <button class="parentbtn" data-act="parents" aria-label="Für Eltern">${ICON.gear}<span>Eltern</span></button></div>
-      <div class="seg"><button data-tab="skills" aria-pressed="${t==='skills'}">${ICON.target}Können</button><button data-tab="collect" aria-pressed="${t==='collect'}">${ICON.album}Sammlung</button><button data-tab="peter" aria-pressed="${t==='peter'}"><span class="segpeter">${peterSVG(p.outfit)}</span>Peter</button></div>
+        ${muteBtnHTML()}<button class="parentbtn" data-act="parents" aria-label="Für Eltern">${ICON.gear}<span>Eltern</span></button></div>
+      <div class="seg"><button data-tab="way" aria-pressed="${t==='way'}">${ICON.trophy}Mein Weg</button><button data-tab="collect" aria-pressed="${t==='collect'}">${ICON.album}Sammlung</button><button data-tab="peter" aria-pressed="${t==='peter'}"><span class="segpeter">${peterSVG(p.outfit)}</span>Rokko</button></div>
       ${body}</div>`;
   },
   mount(el){
@@ -3580,10 +3718,10 @@ UI.screens.me={
       if(a&&a.dataset.act==='parents'){Parents.gate();return}
       if(a&&a.dataset.act==='profiles'){Profiles.open();return}
       if(a&&a.dataset.act==='openchest'){p.chestsOpened=(p.chestsOpened||0)+1;save();Album.openChest();return}
-      const sk=e.target.closest('[data-skill]');if(sk){sfx.tap();trainingForSkill(sk.dataset.skill)();return}
-      const st=e.target.closest('[data-sk]');if(st){const id=st.dataset.sk,n=Skills.stars(id);sfx.tap();
-        Voice.speak(`${SKILLS[id].name}: ${p.skills[id]?n+(n===1?' Stern':' Sterne')+' von fünf.':'Noch nicht geübt.'} ${n>=5?'Super!':'Komm, wir üben!'}`,{interrupt:true});
-        if(n<5)setTimeout(()=>{if(UI.current==='me')trainingForSkill(id)()},2600);return}
+      const gt=e.target.closest('[data-go]');if(gt){sfx.tap();UI.go(gt.dataset.go);return}
+      const rs=e.target.closest('[data-rank]');if(rs){const i=+rs.dataset.rank,rk=rankInfo(p.xp);sfx.tap();
+        const msg=i+1<rk.lvl?`Level ${i+1}: ${RANKS[i]}. Geschafft!`:i+1===rk.lvl?`Level ${i+1}: ${RANKS[i]}. Das bist du gerade!`:`Level ${i+1}: ${RANKS[i]}. Dafür brauchst du noch ${rankStart(i+1)-p.xp} Punkte.`;
+        UI.toast(rankMedal(i,i+1<rk.lvl?'done':i+1===rk.lvl?'now':'todo'),msg);Voice.speak(msg,{interrupt:true});return}
       const gb=e.target.closest('[data-game]');if(gb){Parents.replay(p.games[+gb.dataset.game]);return}
       const f=e.target.closest('[data-f]');if(f){const fr=FRIENDS.find(x=>x.fig===f.dataset.f);const w=WORLDS.find(x=>x.id===fr.world);if(worldDone(w))Voice.speak(fr.name+'. '+fr.text,{interrupt:true});else Voice.speak('Diese Karte ist noch geheim. Schaff '+w.acc+'!',{interrupt:true});sfx.tap();return}
       const b=e.target.closest('[data-b]');if(b){const bd=BADGES.find(x=>x.id===b.dataset.b);UI.toast(badgeMedal(bd),bd.name+': '+bd.desc+(p.badges[bd.id]?'':' (noch nicht geschafft)'));Voice.speak(bd.name+'. '+bd.desc,{interrupt:true});return}
@@ -3622,14 +3760,14 @@ const Profiles={
 };
 
 /* ===================================================================
-   Peter-Schach · Elternbereich: Auswertung, Schwächen, Partien, Einstellungen
+   Rokko-Schach · Elternbereich: Auswertung, Schwächen, Partien, Einstellungen
    =================================================================== */
 const Parents={
   naturalRow(){
     if(!Piper.allowed())return '<div id="psetting" hidden></div>';
     const st=Piper.state;
-    if(st==='ready')return `<div class="setting" id="psetting"><div><label for="sNatural">Natürliche Stimme (Thorsten)</label><small>Aus: Peter nutzt die Stimme des iPhones.</small></div><input type="checkbox" class="toggle" id="sNatural" ${P().settings.natural!==false?'checked':''}></div>`;
-    if(st==='broken')return `<div class="setting" id="psetting"><div><label>Natürliche Stimme (Thorsten)</label><small>Funktioniert auf diesem Gerät leider nicht. Peter nutzt die Stimme des iPhones.</small></div></div>`;
+    if(st==='ready')return `<div class="setting" id="psetting"><div><label for="sNatural">Natürliche Stimme (Thorsten)</label><small>Aus: Rokko nutzt die Stimme des iPhones.</small></div><input type="checkbox" class="toggle" id="sNatural" ${P().settings.natural!==false?'checked':''}></div>`;
+    if(st==='broken')return `<div class="setting" id="psetting"><div><label>Natürliche Stimme (Thorsten)</label><small>Funktioniert auf diesem Gerät leider nicht. Rokko nutzt die Stimme des iPhones.</small></div></div>`;
     if(st==='loading')return `<div class="setting" id="psetting"><div style="flex:1"><label>Natürliche Stimme wird geladen</label><div class="xpbar" style="margin-top:6px"><i style="width:${Piper.progress}%"></i></div></div><span class="small muted">${Piper.progress} %</span></div>`;
     return `<div class="setting" id="psetting"><div><label>Natürliche Stimme (Thorsten)</label><small>Einmalig ca. ${Piper.SIZE_MB} MB laden. Klingt viel weniger nach Roboter.</small></div><button class="big sunbtn" style="min-height:44px;font-size:1rem" data-act="piperload">Laden</button></div>`;
   },
@@ -3658,8 +3796,8 @@ const Parents={
     const name=p.name;
     if(recent.length){
       const bl=gamesWith('blunder')+gamesWith('blunderMate');
-      if(bl>=Math.ceil(recent.length/2))out.push({c:'#D6402F',t:`${name} lässt oft Figuren ungeschützt stehen (in ${bl} von ${recent.length} Partien). Vor jedem Zug fragen: „Was greift Peter an?“`,train:'rescue'});
-      const mc=count('missedCapture');if(mc>=2)out.push({c:'#E8743B',t:`${mc}-mal stand eine Figur von Peter frei und wurde nicht geschlagen. Das Adlerauge-Training übt genau das.`,train:'capture'});
+      if(bl>=Math.ceil(recent.length/2))out.push({c:'#D6402F',t:`${name} lässt oft Figuren ungeschützt stehen (in ${bl} von ${recent.length} Partien). Vor jedem Zug fragen: „Was greift Rokko an?“`,train:'rescue'});
+      const mc=count('missedCapture');if(mc>=2)out.push({c:'#E8743B',t:`${mc}-mal stand eine Figur von Rokko frei und wurde nicht geschlagen. Das Adlerauge-Training übt genau das.`,train:'capture'});
       const mm=count('missedMate');if(mm>=1)out.push({c:'#4F46E5',t:`${mm}-mal war ein Matt in einem Zug möglich und wurde übersehen. Matt-Blick hilft dabei.`,train:'mate'});
       const eq=gamesWith('earlyQueen');if(eq>=2)out.push({c:'#D99A00',t:`Die Dame kommt oft sehr früh ins Spiel. Besser zuerst Springer und Läufer entwickeln.`,train:'castle'});
       const cs=gamesWith('castle');if(recent.length>=3&&cs===0)out.push({c:'#C8553D',t:`In den letzten Partien wurde nie rochiert. Die Rochade bringt den König in Sicherheit.`,train:'castle'});
@@ -3693,12 +3831,12 @@ const Parents={
           <div class="stat"><b>${p.streak.count}</b><span>Tage in Folge (${p.stats.days} gesamt)</span></div>
           <div class="stat"><b>${lessonsDone}/${LESSONS.length}</b><span>Lektionen geschafft</span></div>
           <div class="stat"><b>${p.stats.puzzlesOk}</b><span>Rätsel gelöst (${rate} % sofort)</span></div>
-          <div class="stat"><b>${g.w}–${g.d}–${g.l}</b><span>Siege, Remis, Niederlagen gegen Peter</span></div>
-          <div class="stat"><b>${g.level}</b><span>Peters Stufe (${esc(LEVELS[g.level].name)})</span></div>
+          <div class="stat"><b>${g.w}–${g.d}–${g.l}</b><span>Siege, Remis, Niederlagen gegen Rokko</span></div>
+          <div class="stat"><b>${g.level}</b><span>Rokkos Stärke von 5 (${esc(LEVELS[g.level].name)})</span></div>
         </div></div>
-      <div class="card"><h2>Peters Einschätzung</h2>
+      <div class="card"><h2>Rokkos Einschätzung</h2>
         ${ins.length?ins.map(o=>`<div class="insight"><span class="dotc" style="background:${o.c}"></span><div style="flex:1;min-width:0"><div>${esc(o.t)}</div>${o.train||o.trainSkill?`<button class="big ghost" style="min-height:40px;font-size:.95rem;margin-top:6px" data-train="${o.train||''}" data-tskill="${o.trainSkill||''}">${ICON.target} Jetzt üben</button>`:''}</div></div>`).join('')
-        :`<p class="muted" style="margin:8px 0 0">Noch zu wenig gespielt. Nach ein paar Lektionen und Partien zeigt Peter hier, was gut klappt und was ihr üben solltet.</p>`}
+        :`<p class="muted" style="margin:8px 0 0">Noch zu wenig gespielt. Nach ein paar Lektionen und Partien zeigt Rokko hier, was gut klappt und was ihr üben solltet.</p>`}
       </div>
       <div class="card"><h2>Spielzeit, 14 Tage</h2>
         <svg viewBox="0 0 280 110" style="width:100%;margin-top:10px" role="img" aria-label="Minuten pro Tag">
@@ -3711,26 +3849,26 @@ const Parents={
       body=`<div class="card"><h2>Alle Partien</h2>
         ${p.games.length?`<ul class="gamelist">${p.games.slice(0,40).map((gm,i)=>{const d=new Date(gm.date);const col=gm.result==='w'?'var(--good)':gm.result==='b'?'var(--danger)':'var(--muted)';const lab=gm.result==='w'?'S':gm.result==='b'?'N':gm.result==='d'?'R':'–';
           const bad=gm.events.filter(e=>/blunder|missed/.test(e.kind)).length,good=gm.events.filter(e=>/good|castle|fork|saved/.test(e.kind)).length;
-          const vn=gm.variant==='pawns'?'Bauernschlacht':gm.variant==='family'?'Familienpartie'+(gm.opp?' gegen '+esc(gm.opp):''):'Gegen Peter';
-          return `<li><button data-game="${i}"><span class="res" style="background:${col}">${lab}</span><span class="meta"><b>${vn} · ${d.toLocaleDateString('de-DE',{day:'numeric',month:'short'})}</b><span>${Math.ceil(gm.plies/2)} Züge${gm.variant==='family'?'':' · Stufe '+gm.level} · ${good} gute Momente · ${bad} Fehler</span></span>${ICON.next.replace('<svg','<svg width="20" height="20"')}</button></li>`}).join('')}</ul>`:'<p class="muted" style="margin:8px 0 0">Noch keine Partie gespielt.</p>'}
-        <p class="small muted" style="margin:10px 0 0">Antippen zum Nachspielen. Peter zeigt wichtige Momente und bessere Züge mit einem gelben Pfeil.</p></div>`;
+          const vn=gm.variant==='pawns'?'Bauernschlacht':gm.variant==='family'?'Familienpartie'+(gm.opp?' gegen '+esc(gm.opp):''):'Gegen Rokko';
+          return `<li><button data-game="${i}"><span class="res" style="background:${col}">${lab}</span><span class="meta"><b>${vn} · ${d.toLocaleDateString('de-DE',{day:'numeric',month:'short'})}</b><span>${Math.ceil(gm.plies/2)} Züge${gm.variant==='family'?'':' · Stärke '+gm.level} · ${good} gute Momente · ${bad} Fehler</span></span>${ICON.next.replace('<svg','<svg width="20" height="20"')}</button></li>`}).join('')}</ul>`:'<p class="muted" style="margin:8px 0 0">Noch keine Partie gespielt.</p>'}
+        <p class="small muted" style="margin:10px 0 0">Antippen zum Nachspielen. Rokko zeigt wichtige Momente und bessere Züge mit einem gelben Pfeil.</p></div>`;
     }
     if(t==='settings'){
       const voices=Voice.list();
-      body=`<div class="card"><h2>Peter</h2>
+      body=`<div class="card"><h2>Rokko</h2>
         <div class="setting" style="flex-wrap:wrap"><div><label for="voiceSel">Stimme</label><small>Stimmen mit ★ klingen am natürlichsten.</small></div>
           <div class="voice-row" style="width:100%"><select class="field" id="voiceSel">${voices.length?voices.map(v=>`<option value="${esc(v.id)}" ${v.id===p.settings.voice?'selected':''}>${esc(v.name)}${v.good?' ★':''}</option>`).join(''):'<option value="">Standardstimme</option>'}</select><button class="big go" style="min-height:50px" data-act="testvoice">Probe</button></div></div>
         ${Parents.naturalRow()}
         <div class="setting"><div><label for="rate">Sprechtempo</label><small>${p.settings.speechRate<0.95?'langsam':p.settings.speechRate>1.05?'schnell':'normal'}</small></div><input type="range" id="rate" min="0.8" max="1.2" step="0.05" value="${p.settings.speechRate||1}" style="width:140px"></div>
-        <div class="setting"><div><label for="sHands">Zuhören nach jedem Zug</label><small>${Ears.available()?'Peter hört automatisch zu, wenn das Kind dran ist.':'Auf diesem Gerät nur mit der iPhone-App möglich.'}</small></div><input type="checkbox" class="toggle" id="sHands" ${p.settings.handsFree?'checked':''}></div>
-        ${Brain.fn?`<div class="setting"><div><label for="sAi">Peter plaudert frei</label><small>Claude formuliert Peters Sätze in Partien und beantwortet Fragen.</small></div><input type="checkbox" class="toggle" id="sAi" ${p.settings.ai?'checked':''}></div>`:''}
+        <div class="setting"><div><label for="sHands">Zuhören nach jedem Zug</label><small>${Ears.available()?'Rokko hört automatisch zu, wenn das Kind dran ist.':'Auf diesem Gerät nur mit der iPhone-App möglich.'}</small></div><input type="checkbox" class="toggle" id="sHands" ${p.settings.handsFree?'checked':''}></div>
+        ${Brain.fn?`<div class="setting"><div><label for="sAi">Rokko plaudert frei</label><small>Claude formuliert Rokkos Sätze in Partien und beantwortet Fragen.</small></div><input type="checkbox" class="toggle" id="sAi" ${p.settings.ai?'checked':''}></div>`:''}
         <div class="setting"><div><label for="sSound">Töne und Stimme</label></div><input type="checkbox" class="toggle" id="sSound" ${p.settings.sound?'checked':''}></div>
         <div class="setting"><div><label for="sNames">Feldnamen auf dem Brett</label><small>Hilft beim Lernen der Koordinaten.</small></div><input type="checkbox" class="toggle" id="sNames" ${p.settings.names?'checked':''}></div>
       </div>
       <div class="card"><h2>Spielzeit</h2>
-        <div class="setting" style="flex-wrap:wrap"><div><label>Spielzeit-Wecker</label><small>Peter sagt freundlich „Pause!“, wenn die Zeit für heute um ist. Weiterspielen geht nur mit der Elternrechnung.</small></div>
+        <div class="setting" style="flex-wrap:wrap"><div><label>Spielzeit-Wecker</label><small>Rokko sagt freundlich „Pause!“, wenn die Zeit für heute um ist. Weiterspielen geht nur mit der Elternrechnung.</small></div>
           <div class="seg seg5" style="width:100%">${[0,15,20,30,45].map(m=>`<button data-limit="${m}" aria-pressed="${(p.settings.dayLimit||0)===m}">${m?m+' Min':'Aus'}</button>`).join('')}</div></div>
-        <div class="setting"><div><label for="famName">Familienpartie: Gegner</label><small>So nennt Peter den Gegner am Brett.</small></div><input class="field" id="famName" maxlength="16" value="${esc(p.settings.familyName||'')}" placeholder="Papa" style="max-width:140px"></div>
+        <div class="setting"><div><label for="famName">Familienpartie: Gegner</label><small>So nennt Rokko den Gegner am Brett.</small></div><input class="field" id="famName" maxlength="16" value="${esc(p.settings.familyName||'')}" placeholder="Papa" style="max-width:140px"></div>
       </div>
       <div class="card"><h2>Profil</h2>
         <div class="setting"><div><label>${esc(p.name)}</label><small>Level ${rk.lvl} · ${esc(rk.title)}</small></div><button class="big ghost" style="min-height:44px;font-size:1rem" data-act="editprofile">Ändern</button></div>
@@ -3742,9 +3880,9 @@ const Parents={
         <div class="row" style="margin-top:10px"><button class="big go" data-act="export">${ICON.share} Sichern</button><button class="big ghost" data-act="import">${ICON.refresh} Wiederherstellen</button></div>
       </div>
       <div class="card"><h2>Als App auf dem iPhone</h2>
-        <p style="margin:8px 0 0">${Native.ok?'Du nutzt die iPhone-App. Peter spricht mit der Systemstimme und hört über das Mikrofon zu.':'Diese Seite in Safari öffnen, dann auf Teilen und „Zum Home-Bildschirm“ tippen. So startet Peter wie eine App.'}</p>
+        <p style="margin:8px 0 0">${Native.ok?'Du nutzt die iPhone-App. Rokko spricht mit der Systemstimme und hört über das Mikrofon zu.':'Diese Seite in Safari öffnen, dann auf Teilen und „Zum Home-Bildschirm“ tippen. So startet Rokko wie eine App.'}</p>
       </div>
-      <p class="hint-line">Keine Werbung, keine Käufe, kein Konto. Alle Daten bleiben auf diesem Gerät.</p>`;
+      <p class="hint-line">Keine Werbung, keine Käufe, kein Konto. Alle Daten bleiben auf diesem Gerät. <a href="https://2f6kgp6fj4-web.github.io/peter-schach/datenschutz.html" target="_blank" rel="noopener">Datenschutz</a></p>`;
     }
     return `<div class="view">
       <div class="phead"><button class="iconbtn" data-act="back" aria-label="Zurück">${ICON.back}</button><div style="flex:1;min-width:0"><h1>Für Eltern</h1><div class="small muted">${esc(p.name)} · Level ${rk.lvl}</div></div><span class="avatar">${avatarSVG(p.avatar)}</span></div>
@@ -3765,7 +3903,7 @@ const Parents={
       if(act==='editprofile')Profiles.create(true);
       if(act==='piperload')Piper.download();
       if(act==='newprofile')Profiles.create(false);
-      if(act==='testvoice'){Voice.speak(`Hallo ${p.name}! Ich bin Peter. Wollen wir eine Runde Schach spielen?`,{interrupt:true})}
+      if(act==='testvoice'){Voice.speak(`Hallo ${p.name}! Ich bin Rokko. Wollen wir eine Runde Schach spielen?`,{interrupt:true})}
       if(act==='reset')UI.confirm('Wirklich zurücksetzen?',`Alle Sterne, Lektionen und Partien von ${p.name} werden gelöscht.`,'Abbrechen','Ja, löschen').then(keep=>{if(keep)return;const np=newProfile(p.name,p.avatar);np.id=p.id;Store.data.profiles[p.id]=np;save();UI.go('parents')});
     });
     const bind=(id,fn)=>{const x=$('#'+id,el);if(x)x.addEventListener('change',fn)};
@@ -3786,13 +3924,13 @@ const Parents={
       <button class="big ghost" data-x>Schließen</button>`,(s,close)=>{
       $('[data-x]',s).onclick=close;
       $('[data-copy]',s).onclick=()=>{const t=$('#expCode',s);navigator.clipboard&&navigator.clipboard.writeText(code).then(()=>UI.toast(ICON.check,'Kopiert!'),()=>{t.select()})||t.select()};
-      const sh=$('[data-share]',s);if(sh)sh.onclick=()=>{navigator.share({title:'Schach mit Peter – Spielstand',text:code}).catch(()=>{})};
+      const sh=$('[data-share]',s);if(sh)sh.onclick=()=>{navigator.share({title:'Schach mit Rokko – Spielstand',text:code}).catch(()=>{})};
     });
   },
   importSheet(){
     UI.sheet(`<h2>Spielstand wiederherstellen</h2><p class="muted" style="margin:0">Füge den gesicherten Code ein. Der jetzige Spielstand wird vorher noch einmal gesichert.</p>
       ${navigator.clipboard&&navigator.clipboard.readText?'<button class="big" data-paste>Aus Zwischenablage einfügen</button>':''}
-      <textarea class="field" id="impCode" rows="5" placeholder="PETER1:…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="font-size:.8rem;font-family:ui-monospace,monospace;word-break:break-all"></textarea>
+      <textarea class="field" id="impCode" rows="5" placeholder="ROKKO1:…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="font-size:.8rem;font-family:ui-monospace,monospace;word-break:break-all"></textarea>
       <div class="row"><button class="big go" data-ok>Übernehmen</button><button class="big ghost" data-x>Abbrechen</button></div>`,(s,close)=>{
       $('[data-x]',s).onclick=close;
       const ta=$('#impCode',s);
@@ -3820,7 +3958,7 @@ const Parents={
         if(m)b.mark('last',[m.from,m.to]);
         if(ev)best={from:sqIdx(ev.best.slice(0,2)),to:sqIdx(ev.best.slice(2,4)),kind:'hint'};
         b.arrows(best?[best]:[]).render();
-        $('#rply',s).textContent=ply?`Zug ${Math.ceil(ply/2)}${ply%2?' (Weiß)':' (Peter)'}: ${moveText(m)}`:'Anfangsstellung';
+        $('#rply',s).textContent=ply?`Zug ${Math.ceil(ply/2)}${ply%2?' (Weiß)':' (Rokko)'}: ${moveText(m)}`:'Anfangsstellung';
         if(ev)$('#rply',s).textContent+=' · Gelber Pfeil: besserer Zug';
         $$('[data-ev]',s).forEach(x=>{const k=keyEv[+x.dataset.ev];x.setAttribute('aria-pressed',String(k.best?k.ply===ply:k.ply===ply-1))});
       };
@@ -3834,19 +3972,19 @@ UI.screens.parents=Parents;
 UI.refreshVoiceSelect=()=>{if(UI.current==='parents'){const sel=$('#voiceSel');if(sel){const v=Voice.list();sel.innerHTML=v.length?v.map(x=>`<option value="${esc(x.id)}" ${x.id===P().settings.voice?'selected':''}>${esc(x.name)}${x.good?' ★':''}</option>`).join(''):'<option value="">Standardstimme</option>'}}};
 
 /* ===================================================================
-   Peter-Schach · Start
+   Rokko-Schach · Start
    =================================================================== */
 function splash(){
   const d=Store.data,list=Object.values(d.profiles),p=P();
   const el=$('#splash');el.hidden=false;
   el.innerHTML=`<div class="splash-in">
     <div class="peter" data-mood="smile">${peterSVG(p.outfit)}</div>
-    <h1>Schach mit Peter</h1>
-    <p class="muted" style="margin:0">Lernen, rätseln und am echten Brett gegen Peter spielen.</p>
+    <h1>Schach mit Rokko</h1>
+    <p class="muted" style="margin:0">Lernen, rätseln und am echten Brett gegen Rokko spielen.</p>
     ${list.length>1?`<div class="profiles">${list.map(x=>`<button data-p="${x.id}"><span class="avatar" style="${x.id===d.current?'border-color:var(--sun)':''}">${avatarSVG(x.avatar)}</span>${esc(x.name)}</button>`).join('')}</div>`
       :`<button class="big go wide" data-go style="min-height:66px;font-size:1.35rem">${ICON.play} Los geht's, ${esc(p.name)}!</button>
         <button class="big ghost" data-other style="min-height:44px;font-size:1rem">Jemand anderes spielt</button>`}
-    <p class="hint-line">Ton an! Peter spricht mit dir.</p>
+    <p class="hint-line">Ton an! Rokko spricht mit dir.</p>
   </div>`;
   el.onclick=e=>{
     const b=e.target.closest('[data-p],[data-go],[data-other]');if(!b)return;

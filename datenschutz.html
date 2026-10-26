@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Datenschutz – Schach mit Rokko</title>
+<style>
+  :root{--bg:#E9F2F4;--surface:#FFFFFF;--ink:#14232C;--muted:#56707C;--peter:#0D8376;--line:#C9DAE0}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0F1A20;--surface:#1B2A32;--ink:#E8F1F4;--muted:#9DB4BE;--peter:#3CC6B3;--line:#2D414B}}
+  :root[data-theme="dark"]{--bg:#0F1A20;--surface:#1B2A32;--ink:#E8F1F4;--muted:#9DB4BE;--peter:#3CC6B3;--line:#2D414B}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+  main{max-width:680px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 24px) 16px 48px}
+  h1{font-size:1.8rem;margin:0 0 4px}
+  h2{font-size:1.15rem;margin:28px 0 6px}
+  p,li{color:var(--ink)}
+  .muted{color:var(--muted)}
+  .card{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px 16px;margin-top:16px}
+  a{color:var(--peter)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Datenschutz</h1>
+  <p class="muted">Schach mit Rokko · Stand: 26. Oktober 2026</p>
+
+  <div class="card"><strong>Kurz gesagt:</strong> Schach mit Rokko sammelt keine persönlichen Daten, hat keine Werbung, kein Tracking, keine Analyse-Werkzeuge, kein Benutzerkonto und keine Käufe. Alles, was das Spiel speichert, bleibt auf dem Gerät.</div>
+
+  <h2>Was gespeichert wird</h2>
+  <p>Das Spiel speichert den Spielstand (Name des Kindes, Fortschritt, Sterne, Partien, Einstellungen) im lokalen Speicher des Geräts. Diese Daten verlassen das Gerät nicht und werden an niemanden übertragen. Eltern können den Spielstand im Elternbereich als Code sichern; diesen Code gibt nur der Nutzer selbst weiter.</p>
+
+  <h2>Mikrofon und Spracherkennung</h2>
+  <p>Damit das Kind seine Züge ansagen kann, nutzt das Spiel das Mikrofon. In der iPhone-App erkennt die Spracherkennung von Apple die Sprache, wenn möglich direkt auf dem Gerät. Ist das nicht möglich, verarbeitet Apple die Aufnahme nach den Datenschutzbestimmungen von Apple. Schach mit Rokko selbst speichert keine Aufnahmen. Im Browser verwendet das Spiel die Spracherkennung des Browsers.</p>
+
+  <h2>Verbindungen ins Internet</h2>
+  <ul>
+    <li><strong>iPhone-App:</strong> keine. Das Spiel ist vollständig in der App enthalten.</li>
+    <li><strong>Web-Version:</strong> Beim Aufruf lädt der Browser das Spiel von GitHub Pages (GitHub, Inc.). Dabei verarbeitet GitHub technisch die IP-Adresse, wie bei jedem Webseitenaufruf.</li>
+    <li><strong>Natürliche Stimme (nur Web-Version, freiwillig):</strong> Tippen Eltern auf „Stimme laden“, lädt der Browser einmalig ein Sprachmodell von externen Servern (jsDelivr und Hugging Face). Danach läuft die Stimme offline auf dem Gerät.</li>
+  </ul>
+
+  <h2>Kinder</h2>
+  <p>Das Spiel richtet sich an Kinder ab fünf Jahren. Einstellungen und Auswertungen sind durch eine Rechenaufgabe für Eltern geschützt. Es gibt keine Chats, keine Kontakte zu anderen Nutzern und keine Links nach außen im Kinderbereich.</p>
+
+  <h2>Löschen</h2>
+  <p>Den Spielstand löschen Eltern im Elternbereich unter „Fortschritt zurücksetzen“ oder indem sie die App beziehungsweise die Website-Daten im Browser löschen.</p>
+
+  <h2>Verantwortlich</h2>
+  <p>[Name, Anschrift und E-Mail-Adresse der verantwortlichen Person vor der Veröffentlichung im App Store hier eintragen]</p>
+</main>
+</body>
+</html>
