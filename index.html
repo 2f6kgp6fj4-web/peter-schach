@@ -710,6 +710,32 @@ button.hud-main .xpbar{display:block}
 .status .turn{flex:1;min-width:0;font-size:1rem;padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .status .chip{flex:0 1 auto;min-width:0;font-size:.9rem;white-space:nowrap;overflow:hidden}
 
+/* ---------- v7: Ton-Hilfe, Brett prüfen, Vor-Knopf, Fortsetzen ---------- */
+.act.off{opacity:.42}
+.soundhelp{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:2.5px solid var(--sun);background:var(--surface)}
+.soundhelp .sh-ic{width:40px;height:40px;border-radius:12px;background:var(--sun);color:var(--sun-ink);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.soundhelp .sh-ic svg{width:24px;height:24px}
+.soundhelp .sh-tx{flex:1 1 150px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.soundhelp .big{flex:1 1 100%}
+.soundhelp.float{position:fixed;left:12px;right:12px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:45;max-width:480px;margin-inline:auto;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.soundhelp.float .iconbtn{position:absolute;top:8px;right:8px;width:36px;height:36px}
+.awakevid{position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:-1}
+.resume{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.resume-board{width:min(62vw,240px);pointer-events:none}
+.resume-board .board{border-width:4px}
+.resume-board .nm,.resume-board .cr,.resume-board .cf{display:none}
+.cbstep{display:flex;gap:10px;justify-content:center}
+.cbstep .big{flex:0 0 72px;min-height:56px}
+.cbply{text-align:center;font-family:var(--font-display);font-weight:700;margin:0;min-height:1.4em}
+.plylist{display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-height:132px;overflow:auto;padding:2px}
+.plyno{font-family:var(--font-display);font-weight:700;color:var(--muted);font-size:.8rem;margin-left:6px}
+.plychip{display:inline-flex;align-items:center;gap:3px;border:1.5px solid var(--line);border-radius:999px;padding:3px 9px 3px 5px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600;font-size:.85rem;min-height:34px}
+.plychip svg{width:20px;height:20px}
+.plychip[aria-pressed="true"]{border-color:var(--peter);background:var(--peter-soft);box-shadow:0 0 0 2px var(--peter) inset}
+.moregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.moregrid .act{min-height:84px;font-size:.95rem}
+.diaglog{white-space:pre-wrap;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px;max-height:220px;overflow:auto;margin:0}
+
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="px-head" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>
 <linearGradient id="px-visor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E3843"/><stop offset="1" stop-color="#0A1820"/></linearGradient>
@@ -1357,6 +1383,7 @@ if(typeof module!=='undefined')module.exports=T;else root.Trainer=T;
 /* ===================================================================
    Rokko-Schach · Grundlagen: Symbole, Speicher, Profile, Töne, Stimme
    =================================================================== */
+window.ROKKO_VERSION='7';
 const $=(s,el)=>(el||document).querySelector(s);
 const $$=(s,el)=>[...(el||document).querySelectorAll(s)];
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1400,6 +1427,9 @@ const ICON={
   speaker:I('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7"/><path d="M19.5 6a8.5 8.5 0 0 1 0 12"/>'),
   bulb:I('<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>'),
   undo:I('<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
+  redo:I('<path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/>'),
+  dots:I('<circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/>'),
+  wrench:I('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3.5 17.3a1.8 1.8 0 0 0 2.5 2.5l5.8-5.8a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>'),
   plus:I('<path d="M12 5v14M5 12h14"/>'),
   refresh:I('<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>'),
   ear:I('<path d="M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a3 3 0 0 1-5.5 1.6"/><path d="M10 9.5a2 2 0 0 1 4 0c0 1.2-1 1.6-1.5 2.5"/>'),
@@ -1557,9 +1587,51 @@ function newProfile(name,avatar){
 const P=()=>Store.data.profiles[Store.data.current];
 function save(){Store.save()}
 
-/* ---------- Töne ---------- */
+/* ---------- Fehlerprotokoll: hilft, Abstürze und Tonausfälle später nachzuvollziehen ---------- */
+const Diag={
+  KEY:'rokko.diag',
+  list(){try{return JSON.parse(localStorage.getItem(this.KEY)||'[]')}catch(e){return []}},
+  log(k,m){
+    try{
+      m=String(m==null?'':m).slice(0,220);const l=this.list(),last=l[l.length-1];
+      if(last&&last.k===k&&last.m===m&&Date.now()-last.t<60000){last.n=(last.n||1)+1;last.t=Date.now()}
+      else l.push({t:Date.now(),k,m});
+      while(l.length>120)l.shift();
+      localStorage.setItem(this.KEY,JSON.stringify(l));
+    }catch(e){}
+  },
+  clear(){try{localStorage.removeItem(this.KEY)}catch(e){}},
+  text(){
+    const env=`${navigator.userAgent}\nVersion ${window.ROKKO_VERSION||'?'} · ${Native.ok?'iPhone-App':(navigator.standalone||matchMedia('(display-mode: standalone)').matches)?'Home-Bildschirm':'Browser'}`;
+    return env+'\n\n'+this.list().map(e=>new Date(e.t).toLocaleString('de-DE')+' · '+e.k+(e.m?' · '+e.m:'')+(e.n>1?` (${e.n}×)`:'')).join('\n');
+  }
+};
+window.addEventListener('error',e=>Diag.log('Fehler',(e.message||'')+' @'+String(e.filename||'').split('/').pop()+':'+(e.lineno||'')));
+window.addEventListener('unhandledrejection',e=>{const r=e.reason;Diag.log('Fehler',r&&r.message?r.message:String(r))});
+
+/* ---------- Töne ----------
+   iOS kann den Ton unterwegs verlieren: nach dem Zuhören (Mikrofon), nach Anrufen, Siri oder dem Sperrbildschirm.
+   Deshalb wird der Ton bei jeder Berührung neu freigegeben und vor jedem Satz geprüft. */
 let ac=null;
-function audioUnlock(){try{if(navigator.audioSession&&navigator.audioSession.type!=='playback')navigator.audioSession.type='playback'}catch(e){}try{if(!ac){const C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C()}if(ac&&ac.state!=='running')ac.resume()}catch(e){}}
+function setSession(t){try{if(navigator.audioSession&&navigator.audioSession.type!==t)navigator.audioSession.type=t}catch(e){}}
+function newAC(){
+  try{if(ac&&ac.state!=='closed')ac.close().catch(()=>{})}catch(e){}
+  ac=null;
+  try{const C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C()}catch(e){ac=null}
+  return ac;
+}
+function audioUnlock(){
+  if(!(typeof Ears!=='undefined'&&Ears.on))setSession('playback');
+  try{if(!ac||ac.state==='closed')newAC();if(ac&&ac.state!=='running'){const r=ac.resume();if(r&&r.catch)r.catch(()=>{})}}catch(e){}
+}
+/* wartet kurz, bis der Ton wirklich läuft; false heißt: gerade kein Ton möglich */
+async function audioReady(ms){
+  audioUnlock();if(!ac)return false;if(ac.state==='running')return true;
+  const t0=Date.now();while(Date.now()-t0<(ms||500)){await sleep(50);if(ac&&ac.state==='running')return true}
+  return false;
+}
+/* nach dem Zuhören: Ausgabe wieder auf den Lautsprecher legen */
+function audioAfterMic(){setSession('auto');setTimeout(()=>{if(!Ears.on){setSession('playback');try{if(ac&&ac.state!=='running')ac.resume().catch(()=>{})}catch(e){}}},120)}
 function tone(f,d,type,when,g){if(!ac||(P()&&!P().settings.sound))return;try{const t=ac.currentTime+(when||0),o=ac.createOscillator(),v=ac.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,t);v.gain.setValueAtTime(0.0001,t);v.gain.exponentialRampToValueAtTime(g||.25,t+.01);v.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(v);v.connect(ac.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
 const sfx={
   tap(){tone(660,.04,'sine',0,.12)},
@@ -1610,15 +1682,20 @@ const Piper={
     }catch(e){this.state='error';this.emit()}
   },
   /* Die Stimme rechnet in einem eigenen Hintergrund-Thread, immer nur ein Satz auf einmal.
-     Nach einigen Sätzen wird der Thread neu gestartet, damit der Speicher frei bleibt. */
-  worker:null,wcount:0,busy:false,q:[],reqId:0,
+     Wichtig fürs iPhone: Die Bibliothek legt für JEDEN Satz das ganze Sprachmodell (63 MB) neu im Speicher an
+     und gibt es nie wieder frei. Nach ein paar Sätzen wird der Speicher so knapp, dass iOS die App beendet
+     (zurück zum Startbildschirm). Darum bekommt jeder Satz einen frischen Thread, der danach sofort
+     beendet wird – so wird der Speicher jedes Mal komplett frei. */
+  worker:null,wcount:0,busy:false,q:[],reqId:0,PER_WORKER:1,
   makeWorker(){
     if(this.worker)return this.worker;
     try{
-      const src=`let t=null;onmessage=async e=>{const d=e.data;try{if(!t)t=await import(d.lib);const b=await t.predict({text:d.text,voiceId:d.voice});const buf=await b.arrayBuffer();postMessage({id:d.id,buf},[buf])}catch(err){postMessage({id:d.id,err:String(err&&err.message||err)})}}`;
-      this.worker=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})),{type:'module'});
+      const src=`let t=null;onmessage=async e=>{const d=e.data;try{if(!t)t=await import(d.lib);if(d.warm){postMessage({id:d.id,warm:1});return}const b=await t.predict({text:d.text,voiceId:d.voice});const buf=await b.arrayBuffer();postMessage({id:d.id,buf},[buf])}catch(err){postMessage({id:d.id,err:String(err&&err.message||err)})}}`;
+      if(!this.wurl)this.wurl=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
+      this.worker=new Worker(this.wurl,{type:'module'});
+      this.worker.onerror=e=>{Diag.log('Stimme','Thread-Fehler '+(e&&e.message||''));this.killWorker()};
       this.wcount=0;
-    }catch(e){this.worker=null}
+    }catch(e){this.worker=null;Diag.log('Stimme','Thread ging nicht: '+(e&&e.message||e))}
     return this.worker;
   },
   killWorker(){if(this.worker){try{this.worker.terminate()}catch(e){}this.worker=null}},
@@ -1636,26 +1713,28 @@ const Piper={
     this.busy=true;
     try{
       audioUnlock();if(!ac)throw new Error('kein Audio');
-      let data;
       const w=this.makeWorker();
-      if(w){
-        data=await new Promise((res,rej)=>{
-          const id=++this.reqId;
-          const to=setTimeout(()=>{w.removeEventListener('message',on);this.killWorker();rej(new Error('Zeit'))},15000);
-          const on=e=>{if(e.data.id!==id)return;clearTimeout(to);w.removeEventListener('message',on);e.data.err?rej(new Error(e.data.err)):res(e.data.buf)};
-          w.addEventListener('message',on);
-          w.postMessage({id,text:it.text,voice:this.VOICE,lib:this.LIB});
-        });
-        if(++this.wcount>=15)this.killWorker();
-      }else{
-        const t=await this.lib();data=await (await t.predict({text:it.text,voiceId:this.VOICE})).arrayBuffer();
-      }
+      if(!w)throw new Error('kein Thread');
+      const data=await new Promise((res,rej)=>{
+        const id=++this.reqId;
+        const to=setTimeout(()=>{w.removeEventListener('message',on);this.killWorker();rej(new Error('Zeit'))},15000);
+        const on=e=>{if(e.data.id!==id)return;clearTimeout(to);w.removeEventListener('message',on);e.data.err?rej(new Error(e.data.err)):res(e.data.buf)};
+        w.addEventListener('message',on);
+        w.postMessage({id,text:it.text,voice:this.VOICE,lib:this.LIB});
+      });
+      if(++this.wcount>=this.PER_WORKER)this.killWorker();
       const buf=await ac.decodeAudioData(data);
-      if(it.text.length<=60){this.cache.set(it.text,buf);if(this.cache.size>40)this.cache.delete(this.cache.keys().next().value)}
+      if(it.text.length<=60){this.cache.set(it.text,buf);if(this.cache.size>24)this.cache.delete(this.cache.keys().next().value)}
       it.res(buf);
-    }catch(e){it.rej(e)}
-    finally{this.busy=false;this.pump()}
+    }catch(e){this.killWorker();if(e&&e.message!=='alt')Diag.log('Stimme','Satz ging nicht: '+(e&&e.message||e));it.rej(e)}
+    finally{this.busy=false;if(this.q.length)this.pump();else this.warm()}
   },
+  /* den nächsten Thread schon mal vorbereiten (lädt nur die Bibliothek, nicht das Modell) */
+  warm(){
+    if(this.worker||!this.usable())return;
+    clearTimeout(this.warmT);this.warmT=setTimeout(()=>{if(this.worker||this.busy||!this.usable())return;const w=this.makeWorker();if(w)try{w.postMessage({id:-1,warm:1,lib:this.LIB})}catch(e){}},400);
+  },
+  reset(){this.killWorker();this.q.forEach(x=>x.rej(new Error('alt')));this.q=[];this.busy=false;this.fails=0;if(this.state==='broken')this.state='ready';this.emit()},
   /* einzelne Sätze, damit Rokko schon spricht, während der nächste Satz entsteht */
   sentences(t){return (t.match(/[^.!?…]+[.!?…]*/g)||[t]).map(x=>x.trim()).filter(Boolean)},
   usable(){return this.state==='ready'&&P().settings.natural!==false&&P().settings.sound}
@@ -1667,7 +1746,7 @@ const Voice={
   init(){
     if(Native.ok){
       Native.on('speechEnd',m=>{const r=this.pending[m.id];if(r){delete this.pending[m.id];r()}Peter.talking(false)});
-      Native.on('speechStart',()=>{this.ok=true;Peter.talking(true)});
+      Native.on('speechStart',m=>{const f=this.started[m.id];if(f)f();this.okNow();Peter.talking(true)});
       Native.on('voices',m=>{this.nativeVoices=m.list||[];UI.refreshVoiceSelect&&UI.refreshVoiceSelect()});
       Native.post({type:'voices'});
       return;
@@ -1738,12 +1817,32 @@ const Voice={
     const s=P().settings;
     if(!s.sound||(s.muted&&!(it&&it.opt&&it.opt.force)))return sleep(Math.min(1800,300+text.length*22));
     if(Native.ok){
+      /* Startet die iPhone-Stimme zweimal hintereinander nicht, wird der Ton in der App neu aufgesetzt */
       return (async()=>{const my=this.pseq,parts=Piper.sentences(this.spoken(text));
-        for(let i=0;i<parts.length;i++){if(my!==this.pseq||this.cutHere(it,i))return;const id=++this.seq,sp=parts[i];
-          await new Promise(res=>{this.pending[id]=res;Native.post({type:'speak',id,text:sp,voice:s.voice||'',rate:s.speechRate||1});setTimeout(()=>{if(this.pending[id]){delete this.pending[id];res()}},this.est(sp))})}})();
+        for(let i=0;i<parts.length;i++){if(my!==this.pseq||this.cutHere(it,i))return;const id=++this.seq,sp=parts[i];let started=false;
+          await new Promise(res=>{this.pending[id]=res;this.started[id]=()=>{started=true};Native.post({type:'speak',id,text:sp,voice:s.voice||'',rate:s.speechRate||1});
+            setTimeout(()=>{if(this.pending[id]){delete this.pending[id];res()}},this.est(sp))});
+          delete this.started[id];
+          if(started){this.nQuiet=0;this.okNow()}
+          else if(my===this.pseq&&(this.nQuiet=(this.nQuiet||0)+1)>=2){this.nQuiet=0;Native.post({type:'repairAudio'});this.trouble('iPhone-Stimme startet nicht');break}
+        }})();
     }
-    if(Piper.usable())return this.speakNatural(text,it).then(()=>{Piper.fails=0},e=>{if(e&&e.message==='alt')return;Piper.fails=(Piper.fails||0)+1;if(Piper.fails>=3){Piper.state='broken';Piper.emit()}return this.speakWeb(text,it)});
+    if(Piper.usable()&&!(this.natPause>Date.now()))return this.speakNatural(text,it).then(()=>{Piper.fails=0},e=>{
+      const msg=e&&e.message||'';
+      if(msg==='alt')return;
+      if(msg==='stumm'){this.natPause=Date.now()+20000;Diag.log('Ton','Natürliche Stimme blieb stumm, nehme Systemstimme');}
+      else{Piper.fails=(Piper.fails||0)+1;if(Piper.fails>=3){Piper.state='broken';Piper.emit();Diag.log('Stimme','Natürliche Stimme vorerst aus')}}
+      return this.speakWeb(text,it,e&&e.done);
+    });
     return this.speakWeb(text,it);
+  },
+  started:{},
+  okNow(){this.ok=true;this.failed=false;this.badSince=0;if(this.troubled){this.troubled=false;$$('#soundHelp').forEach(h=>h.hidden=true)}},
+  /* Ton ist weg: merken, ins Protokoll schreiben und die Hilfe mit dem Reparieren-Knopf zeigen */
+  trouble(why){
+    if(!this.badSince)this.badSince=Date.now();
+    Diag.log('Ton',why);
+    this.troubled=true;UI.soundHint&&UI.soundHint();
   },
   async speakNatural(text,it){
     const s=P().settings;
@@ -1756,47 +1855,82 @@ const Voice={
       const buf=i===0?first:await next;
       if(my!==this.pseq)return;
       if(i+1<parts.length)next=Piper.synth(parts[i+1]);
-      await new Promise(res=>{
+      /* läuft der Ton überhaupt? Sonst lieber gleich mit der Systemstimme weitersprechen */
+      if(!(await audioReady(600))){const er=new Error('stumm');er.done=i;throw er}
+      const played=await new Promise(res=>{
         const src=ac.createBufferSource();src.buffer=buf;src.playbackRate.value=s.speechRate||1;src.connect(ac.destination);
-        this.src=src;this.pdone=res;
-        const safety=setTimeout(res,buf.duration*1000/(s.speechRate||1)+1500);
-        src.onended=()=>{clearTimeout(safety);if(this.src===src)this.src=null;this.pdone=null;res()};
-        this.ok=true;this.failed=false;Peter.talking(true);src.start();
+        this.src=src;this.pdone=()=>res(true);
+        const t0=ac.currentTime;
+        const safety=setTimeout(()=>res(true),buf.duration*1000/(s.speechRate||1)+1500);
+        /* nach einer halben Sekunde muss die Audio-Uhr weitergelaufen sein, sonst ist der Ton hängen geblieben */
+        const watch=setTimeout(()=>{if(this.src===src&&ac&&ac.currentTime-t0<0.15){clearTimeout(safety);try{src.onended=null;src.stop()}catch(e){}this.src=null;this.pdone=null;res(false)}},650);
+        src.onended=()=>{clearTimeout(safety);clearTimeout(watch);if(this.src===src)this.src=null;this.pdone=null;res(true)};
+        Peter.talking(true);src.start();
       });
+      if(!played){const er=new Error('stumm');er.done=i;throw er}
+      this.okNow();
     }
     if(my===this.pseq)Peter.talking(false);
   },
   /* Browser-Stimme: Satz für Satz (Safari und Chrome brechen lange Äußerungen sonst gern ab).
-     Die Äußerung bleibt referenziert, sonst räumt Safari sie weg und das Ende-Signal fehlt. */
-  async speakWeb(text,it){
+     Die Äußerung bleibt referenziert, sonst räumt Safari sie weg und das Ende-Signal fehlt.
+     Startet ein Satz nicht, wird die Sprachausgabe zurückgesetzt und der Satz noch einmal versucht. */
+  async speakWeb(text,it,from){
     const s=P().settings,synth=window.speechSynthesis;
-    if(!synth||!window.SpeechSynthesisUtterance){this.failed=true;UI.soundHint&&UI.soundHint();return sleep(Math.min(2000,500+text.length*30))}
-    if(this.failed&&!this.ok)return sleep(Math.min(2200,400+text.length*30)); /* keine Stimme da: nicht ewig warten */
+    if(!synth||!window.SpeechSynthesisUtterance){this.failed=true;this.trouble('keine Sprachausgabe im Browser');return sleep(Math.min(2000,500+text.length*30))}
+    /* gerade erst ohne Erfolg versucht: nicht bei jedem Satz neu warten, aber nach 20 Sekunden wieder probieren */
+    if(this.failed&&this.failedAt&&Date.now()-this.failedAt<20000)return sleep(Math.min(2200,400+text.length*30));
     const my=this.pseq;
     const parts=Piper.sentences(this.spoken(text));
-    for(let i=0;i<parts.length;i++){
+    for(let i=from||0;i<parts.length;i++){
       if(my!==this.pseq||this.cutHere(it,i))break;
-      await new Promise(res=>{
-        let finished=false;const done=()=>{if(finished)return;finished=true;if(this.wdone===done)this.wdone=null;res()};
-        this.wdone=done;
-        try{
-          synth.resume();
-          const u=new SpeechSynthesisUtterance(parts[i]);this.utt=u;
-          u.lang=this.voice?this.voice.lang:'de-DE';if(this.voice)u.voice=this.voice;u.rate=s.speechRate||1;u.pitch=1.05;u.volume=1;
-          let started=false;
-          u.onstart=()=>{started=true;this.ok=true;this.failed=false;Peter.talking(true)};
-          u.onend=done;u.onerror=()=>{if(!started&&i===0){this.failed=true;UI.soundHint&&UI.soundHint()}done()};
-          synth.speak(u);
-          setTimeout(()=>{if(!started&&!this.ok){this.failed=true;UI.soundHint&&UI.soundHint();done()}},3000);
-          /* iOS pausiert die Sprachausgabe manchmal still – sanft wieder anstoßen */
-          const kick=setInterval(()=>{if(finished){clearInterval(kick);return}try{if(synth.paused)synth.resume()}catch(e){}},1000);
-          setTimeout(()=>{clearInterval(kick);done()},this.est(parts[i]));
-        }catch(e){done()}
-      });
+      let ok=await this.webOnce(parts[i],s,synth,my);
+      if(ok==='nostart'&&my===this.pseq){try{synth.cancel()}catch(e){}await sleep(150);if(my!==this.pseq)break;ok=await this.webOnce(parts[i],s,synth,my)}
+      if(ok==='nostart'){this.failed=true;this.failedAt=Date.now();this.trouble('Systemstimme startet nicht');break}
     }
     if(my===this.pseq)Peter.talking(false);
+  },
+  webOnce(part,s,synth,my){
+    return new Promise(res=>{
+      let finished=false,started=false;
+      const done=r=>{if(finished)return;finished=true;clearInterval(kick);if(this.wdone===done)this.wdone=null;res(r||'ok')};
+      this.wdone=done;let kick=null;
+      try{
+        if(synth.paused)synth.resume();
+        const u=new SpeechSynthesisUtterance(part);this.utt=u;
+        u.lang=this.voice?this.voice.lang:'de-DE';if(this.voice)u.voice=this.voice;u.rate=s.speechRate||1;u.pitch=1.05;u.volume=1;
+        u.onstart=()=>{started=true;this.okNow();Peter.talking(true)};
+        u.onend=()=>done(started?'ok':'nostart');u.onerror=e=>{const er=e&&e.error||'';if(er==='interrupted'||er==='canceled')return done('ok');if(!started)Diag.log('Ton','Systemstimme Fehler: '+er);done(started?'ok':'nostart')};
+        synth.speak(u);
+        setTimeout(()=>{if(!started&&!finished)done('nostart')},2600);
+        /* iOS pausiert die Sprachausgabe manchmal still – sanft wieder anstoßen */
+        kick=setInterval(()=>{try{if(synth.paused)synth.resume()}catch(e){}},1000);
+        setTimeout(()=>done('ok'),this.est(part));
+      }catch(e){done('nostart')}
+    });
   }
 };
+
+/* ---------- Ton reparieren: alles rund um den Ton neu starten (muss aus einem Tippen heraus kommen) ---------- */
+function repairAudio(){
+  Diag.log('Ton','Ton reparieren gedrückt');
+  Voice.stop();
+  try{if(window.speechSynthesis){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}}catch(e){}
+  setSession('auto');setSession('playback');
+  newAC();try{ac&&ac.resume().catch(()=>{})}catch(e){}
+  Piper.reset();
+  Voice.failed=false;Voice.failedAt=0;Voice.natPause=0;Voice.badSince=0;Voice.troubled=false;
+  const s=P().settings;let note='';
+  if(s.muted){s.muted=false;note=' Ich war stumm geschaltet.'}
+  if(!s.sound){s.sound=true;note=' Die Töne waren aus.'}
+  save();$$('[data-mute]').forEach(b=>{b.outerHTML=muteBtnHTML()});
+  if(Native.ok)Native.post({type:'repairAudio'});
+  $$('#soundHelp').forEach(h=>h.hidden=true);
+  sfx.star();
+  setTimeout(()=>Voice.speak('Hallo! Hörst du mich wieder?'+note,{force:true,again:true}),250);
+}
+function soundHelpHTML(){return `<div class="card soundhelp" id="soundHelp" hidden><span class="sh-ic">${ICON.speaker}</span><div class="sh-tx"><b>Kein Ton?</b><span class="small">Lauter stellen, Stummschalter an der Seite prüfen, dann antippen:</span></div><button class="big sunbtn" data-fixsound>${ICON.refresh} Ton reparieren</button></div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-fixsound]');if(b){e.stopPropagation();repairAudio()}},true);
 
 /* ---------- Stummschalter: Rokkos Stimme aus/an, in jeder Ansicht erreichbar ---------- */
 function muteBtnHTML(){const m=!!P().settings.muted;return `<button class="mutebtn ${m?'on':''}" data-mute aria-pressed="${m}" aria-label="${m?'Rokko ist stumm. Antippen, damit er wieder spricht':'Rokko stumm schalten'}">${m?ICON.mute:ICON.speaker}</button>`}
@@ -1828,14 +1962,15 @@ const Ears={
     try{
       const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
       if(this.rec)try{this.rec.abort()}catch(e){}
+      setSession('auto'); /* Mikrofon braucht eine andere Ton-Einstellung; danach wieder zurück auf Lautsprecher */
       const r=new SR();this.rec=r;r.lang='de-DE';r.interimResults=true;r.maxAlternatives=4;
       r.onresult=e=>{const res=e.results[e.results.length-1];const alts=[...res].map(a=>a.transcript);UI.heard&&UI.heard(alts[0],res.isFinal);if(res.isFinal&&this.cb)this.cb(alts[0],alts)};
-      r.onerror=e=>{if(/not-allowed|service-not-allowed|audio-capture/.test(e.error)){this.blocked=true;UI.listenBlocked&&UI.listenBlocked()}};
-      r.onend=()=>{this.on=false;this.rec=null;UI.listenState&&UI.listenState(false)};
+      r.onerror=e=>{if(/not-allowed|service-not-allowed|audio-capture/.test(e.error)){this.blocked=true;UI.listenBlocked&&UI.listenBlocked()}if(e.error&&!/no-speech|aborted/.test(e.error))Diag.log('Zuhören',e.error)};
+      r.onend=()=>{if(this.rec===r){this.on=false;this.rec=null;UI.listenState&&UI.listenState(false)}audioAfterMic()};
       r.start();this.on=true;UI.listenState&&UI.listenState(true);return true;
-    }catch(e){this.blocked=true;return false}
+    }catch(e){this.blocked=true;Diag.log('Zuhören','Start ging nicht: '+(e&&e.message||e));audioAfterMic();return false}
   },
-  stop(){this.cb=null;if(this.native)Native.post({type:'stopListen'});else if(this.rec)try{this.rec.abort()}catch(e){}this.on=false;UI.listenState&&UI.listenState(false)}
+  stop(){const was=this.on||!!this.rec;this.cb=null;if(this.native)Native.post({type:'stopListen'});else if(this.rec)try{this.rec.abort()}catch(e){}this.on=false;UI.listenState&&UI.listenState(false);if(was&&!this.native)audioAfterMic()}
 };
 
 /* ---------- Claude formuliert Rokkos Sätze (nur im Claude-Artefakt) ---------- */
@@ -2252,7 +2387,7 @@ const Runner={
       <div class="prog" aria-hidden="true"><i style="width:0%"></i></div>${muteBtnHTML()}</div>
       <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Rokko">${peterSVG(P().outfit)}</button>
       <div class="bubble"><p class="say" data-live aria-live="polite"></p><button class="speak" data-act="repeat" aria-label="Nochmal vorlesen">${ICON.speaker}</button></div></div>
-      <div class="card" id="soundHelp" hidden style="border-color:var(--sun)"><b>Rokko ist stumm?</b> <span class="small">Lautstärke hochdrehen. Am iPhone den Stummschalter an der Seite auf „laut“ stellen.</span></div>
+      <div id="soundSlot"></div>
       <div id="stage" style="display:flex;flex-direction:column;gap:12px"></div></div>`;
   },
   mount(el){
@@ -2758,6 +2893,8 @@ function parseSpeech(raw){
     else if(/^ ?(nein|nee|ne|nö|weiter|lass) /.test(s))out.cmd='no';
     else if(/tipp|tip |hilfe|hilf mir|was soll ich/.test(s))out.cmd='hint';
     else if(/neues spiel|von vorne|von vorn|nochmal spielen|noch mal spielen|neu anfangen/.test(s))out.cmd='new';
+    else if(/wieder vor|vorwärts|vorwaerts|nach vorne| vor $/.test(s))out.cmd='redo';
+    else if(/brett prüfen|prüfen|pruefen|stimmt nicht|brett stimmt|kontrollier/.test(s))out.cmd='check';
     else if(/wiederhol|nochmal sagen|noch mal sagen|was hast du gesagt|nicht verstanden|was hast du gezogen|wohin hast du|welchen zug|was war dein zug/.test(s))out.cmd='repeat';
     else if(/aufhören|aufhoeren|stopp|stop|pause|hör auf/.test(s))out.cmd='stop';
   }
@@ -2831,7 +2968,7 @@ function fbPeterMove(m){
 /* ---------- Die Partie ---------- */
 const Game={
   pos:null,played:[],keys:[],state:'idle',sel:-1,pending:null,hint:null,danger:[],flow:0,
-  variant:'standard',lessonCb:null,events:[],tipsSaid:{},blunderCtx:null,board:null,newArmed:null,
+  variant:'standard',lessonCb:null,events:[],tipsSaid:{},blunderCtx:null,board:null,fwd:[],
   start(opt){
     opt=opt||{};Voice.stop();
     this.lessonCb=opt.lessonCb||null;
@@ -2840,9 +2977,10 @@ const Game={
     else this.reset(opt.variant||'standard');
     if(P().game.current)P().game.current.lesson=opt.lesson||null;
     this.family=this.variant==='family';
-    this.state=this.family||this.pos.turn==='w'?'human':'peter';
+    this.state=opt.resumed||this.family||this.pos.turn==='w'?'human':'peter';
     UI.go('play');
     const my=++this.flow;
+    if(opt.resumed)return this.resumeTalk(my);
     if(this.played.length===0)setTimeout(()=>this.greet(my),250);
     else if(this.pos.turn==='b'&&!this.family)this.peterTurn(my,{});
     else if(this.family)Peter.say(this.pos.turn==='w'?`Weiter geht's! ${P().name}, du bist dran.`:`Weiter geht's! ${this.opp()} ist dran.`,'smile').then(()=>this.autoListen(my));
@@ -2850,15 +2988,61 @@ const Game={
   },
   reset(variant){
     this.variant=variant;this.family=variant==='family';this.pos=new Pos(variant==='pawns'?PAWNS_FEN:START_FEN);this.played=[];this.keys=[this.pos.key()];
-    this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.events=[];this.tipsSaid={};this.startedAt=Date.now();
-    P().game.current={variant,moves:[],events:[],level:P().game.level,started:Date.now()};save();
+    this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.events=[];this.tipsSaid={};this.startedAt=Date.now();this.fwd=[];this.endSnap=null;
+    P().game.current={variant,moves:[],events:[],fwd:[],level:P().game.level,started:Date.now()};save();
   },
   restore(cur){
     this.variant=cur.variant||'standard';this.family=this.variant==='family';this.pos=new Pos(this.variant==='pawns'?PAWNS_FEN:START_FEN);this.played=[];this.keys=[this.pos.key()];
     for(const u of cur.moves){const m=this.pos.legal().find(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')===u);if(!m)break;m.color=this.pos.turn;this.pos.make(m);this.played.push(m);this.keys.push(this.pos.key())}
     this.events=cur.events||[];this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.tipsSaid={};this.startedAt=cur.started||Date.now();
+    this.fwd=Array.isArray(cur.fwd)?cur.fwd.slice():[];this.endSnap=null;
   },
-  persist(){const c=P().game.current||(P().game.current={});c.variant=this.variant;c.moves=this.played.map(m=>sqName(m.from)+sqName(m.to)+(m.promo||''));c.events=this.events;save()},
+  persist(){const c=P().game.current||(P().game.current={variant:this.variant,started:this.startedAt||Date.now(),level:P().game.level});c.variant=this.variant;c.moves=this.played.map(m=>this.uci(m));c.events=this.events;c.fwd=this.fwd.slice(-60);save()},
+  uci(m){return sqName(m.from)+sqName(m.to)+(m.promo||'')},
+  /* ---------- Zurück und Vor ----------
+     Zurückgenommene Züge landen auf einem Stapel. „Vor“ holt sie wieder.
+     Ein neuer, anderer Zug leert den Stapel; derselbe Zug nimmt ihn einfach mit. */
+  back(n){
+    const out=[];
+    for(let i=0;i<n&&this.played.length;i++){this.pos.unmake();const m=this.played.pop();this.keys.pop();this.fwd.push(this.uci(m));out.push(m)}
+    this.sel=-1;this.pending=null;this.hint=null;this.danger=[];
+    return out;
+  },
+  forward(n){
+    const out=[];
+    for(let i=0;i<n&&this.fwd.length;i++){
+      const u=this.fwd[this.fwd.length-1];const m=this.pos.legal().find(x=>this.uci(x)===u);
+      if(!m){this.fwd=[];break}
+      this.fwd.pop();m.color=this.pos.turn;this.pos.make(m);this.played.push(m);this.keys.push(this.pos.key());out.push(m);
+    }
+    this.sel=-1;this.pending=null;this.hint=null;this.danger=[];
+    return out;
+  },
+  noteMove(m){const u=this.uci(m);if(this.fwd.length&&this.fwd[this.fwd.length-1]===u)this.fwd.pop();else this.fwd=[]},
+  /* Wer ist wer, und wie heißt die Figur im Satz (Familienpartie: weiß/schwarz) */
+  whoOf(c){return this.family?(c==='w'?P().name:this.opp()):(c==='w'?'Du':'Ich')},
+  accOf(c,t){
+    if(this.family)return (c==='w'?{p:'den weißen Bauern',n:'den weißen Springer',b:'den weißen Läufer',r:'den weißen Turm',q:'die weiße Dame',k:'den weißen König'}:{p:'den schwarzen Bauern',n:'den schwarzen Springer',b:'den schwarzen Läufer',r:'den schwarzen Turm',q:'die schwarze Dame',k:'den schwarzen König'})[t];
+    return c==='w'?ACC_DEIN[t]:ACC_MEIN[t];
+  },
+  moveSay(m){
+    if(m.flag==='k'||m.flag==='q')return (m.flag==='k'?'kurze':'lange')+' Rochade';
+    let t=`${NAME[m.piece]} von ${SQ(m.from)} nach ${SQ(m.to)}`;
+    if(m.cap)t+=` und schlägt ${this.accOf(m.color==='w'?'b':'w',m.cap)}`;
+    if(m.promo)t+=`, wird zur ${m.promo==='q'?'Dame':NAME[m.promo]}`;
+    return t;
+  },
+  fwdText(m){return `${this.whoOf(m.color)}: ${this.moveSay(m)}.`},
+  /* genau sagen, was man auf dem echten Brett zurückstellen muss – auch geschlagene Figuren */
+  backText(m){
+    let t;
+    if(m.flag==='k'||m.flag==='q'){const r=m.color==='w'?1:8;t=`Stell ${this.accOf(m.color,'k')} zurück auf E${r} und ${this.accOf(m.color,'r')} zurück auf ${m.flag==='k'?'H':'A'}${r}.`}
+    else if(m.promo)t=`Nimm ${this.accOf(m.color,m.promo)} von ${SQ(m.to)} weg und stell wieder einen Bauern auf ${SQ(m.from)}.`;
+    else t=`Stell ${this.accOf(m.color,m.piece)} von ${SQ(m.to)} zurück auf ${SQ(m.from)}.`;
+    if(m.cap){const cs=m.flag==='e'?m.to+(m.color==='w'?-16:16):m.to;t+=` Und stell ${this.accOf(m.color==='w'?'b':'w',m.cap)} wieder auf ${SQ(cs)}.`}
+    return t;
+  },
+  shortMove(m){return m.flag==='k'?'O-O':m.flag==='q'?'O-O-O':SQ(m.from)+(m.cap?'×':'–')+SQ(m.to)},
   opp(){return P().settings.familyName||'Papa'},
   /* gegnerische Figur benennen: Rokko sagt „mein“, in der Familienpartie „der schwarze“ */
   oN(t){return this.family?{p:'der schwarze Bauer',n:'der schwarze Springer',b:'der schwarze Läufer',r:'der schwarze Turm',q:'die schwarze Dame',k:'der schwarze König'}[t]:NOM_MEIN[t]},
@@ -2892,7 +3076,7 @@ const Game={
     return `<div class="view">
       <div class="talkrow"><button class="peter" data-live data-mood="smile" data-act="peter" aria-label="Rokko">${peterSVG(P().outfit)}</button>
       <div class="bubble"><p class="say" data-live aria-live="polite">${esc(Peter.last||'')}</p><button class="speak" id="earBtn" data-act="ear" aria-label="${Ears.available()?'Zuhören':'Nochmal vorlesen'}">${Ears.available()?ICON.mic:ICON.speaker}</button></div></div>
-      <div class="card" id="soundHelp" hidden style="border-color:var(--sun)"><b>Rokko ist stumm?</b> <span class="small">Lautstärke hochdrehen. Am iPhone den Stummschalter an der Seite auf „laut“ stellen.</span><div class="row" style="margin-top:8px"><button class="big sunbtn" data-act="testsound">Ton testen</button></div></div>
+      <div id="soundSlot"></div>
       <div class="status">${muteBtnHTML()}<span class="turn" id="turnPill"><span class="dot"></span><span id="turnText"></span></span>
       <span class="chip" title="${this.family?'Familienpartie':'Rokkos Stärke: '+esc(L.name)}">${this.family?ICON.parent:(this.variant==='pawns'?pieceSVG('b','p','i')+' Bauernschlacht':strengthBars(P().game.level))}</span></div>
       <div id="gboard"></div>
@@ -2903,16 +3087,15 @@ const Game={
       <p class="hint-line" id="heard">Figur antippen, dann das Ziel. Oder deinen Zug sagen.</p>
       <div class="actions">
         <button class="act" data-act="hint">${ICON.bulb}Tipp</button>
-        <button class="act" data-act="undo">${ICON.undo}Zurück</button>
-        <button class="act ${s.handsFree&&Ears.available()?'on':''}" data-act="hands" ${Ears.available()?'':'hidden'}>${ICON.ear}Zuhören</button>
-        <button class="act" data-act="new" id="newBtn">${ICON.plus}<span>Neu</span></button>
-        <button class="act" data-act="names">${ICON.grid}Namen</button>
+        <button class="act" data-act="undo" id="undoBtn">${ICON.undo}Zurück</button>
+        <button class="act" data-act="redo" id="redoBtn">${ICON.redo}Vor</button>
+        <button class="act" data-act="check">${ICON.board}Prüfen</button>
+        <button class="act" data-act="more">${ICON.dots}Mehr</button>
       </div>
       ${this.family?'':`<details class="card"><summary>Rokkos Stärke</summary>
         <div class="level-pick" style="margin-top:10px">${[1,2,3,4,5].map(n=>`<button class="rung" data-lvl="${n}" aria-pressed="${n===P().game.level}"><b class="rn">${n}</b>${esc(LEVELS[n].name)}</button>`).join('')}</div>
         <p class="small muted" style="margin:10px 0 0">Rokko passt sich an: Nach zwei Siegen spielt er stärker, nach drei Niederlagen gemütlicher.</p>
       </details>`}
-      <details class="card"><summary>Alle Züge</summary><ol id="mlist" style="margin:10px 0 0;padding-left:1.4em;columns:2;font-variant-numeric:tabular-nums"></ol></details>
     </div>`;
   },
   mount(el){
@@ -2923,12 +3106,11 @@ const Game={
       if(act==='peter'){Peter.bounce();sfx.boing();if(this.state!=='peter')Peter.say(pick(['Hihi, das kitzelt!','Ich freu mich, dass wir spielen!','Weißt du, wie der Springer springt? Wie ein L!','Denk dran: Schau immer, was ich angreife!']),'wow')}
       if(act==='ear'){if(Ears.available()){if(Ears.on)Ears.stop();else this.listenNow()}else Peter.repeat()}
       if(act==='mic')this.listenNow();
-      if(act==='testsound'){sfx.star();Voice.speak('Hallo! Kannst du mich hören?')}
       if(act==='hint')this.giveHint();
       if(act==='undo')this.undo();
-      if(act==='hands'){P().settings.handsFree=!P().settings.handsFree;save();a.classList.toggle('on',P().settings.handsFree);UI.toast(ICON.ear,P().settings.handsFree?'Rokko hört nach jedem Zug zu.':'Zuhören nur auf Knopfdruck.');if(P().settings.handsFree)this.autoListen(this.flow)}
-      if(act==='names'){P().settings.names=!P().settings.names;save();this.board.setNames(P().settings.names?true:'edge')}
-      if(act==='new')this.askNew(a);
+      if(act==='redo')this.redo();
+      if(act==='check')this.checkBoard();
+      if(act==='more')this.moreSheet();
       if(act==='askyes')this.answerAsk(true);
       if(act==='askno')this.answerAsk(false);
       if(act==='again'){if(this.lessonCb)return;this.reset(this.variant);this.state='human';$('#endCard').hidden=true;this.refresh();const my=++this.flow;this.greet(my)}
@@ -2951,7 +3133,8 @@ const Game={
     const capW=[],capB=[];for(const m of this.played){if(m.cap)(m.color==='w'?capW:capB).push(m.cap)}
     const ord='qrbnp',srt=a=>a.sort((x,y)=>ord.indexOf(x)-ord.indexOf(y));
     const tr=$('#trays');if(tr)tr.innerHTML=(capW.length?`<span>Du hast:</span>${srt(capW).map(c=>pieceSVG('b',c,'i')).join('')}`:'')+(capB.length?`<span style="margin-left:auto">${this.family?esc(this.opp()):'Rokko'} hat:</span>${srt(capB).map(c=>pieceSVG('w',c,'i')).join('')}`:'');
-    const ml=$('#mlist');if(ml){let h='';for(const m of this.played)h+=`<li>${moveText(m)}</li>`;ml.innerHTML=h}
+    const rb=$('#redoBtn');if(rb)rb.classList.toggle('off',!this.fwd.length);
+    const ub=$('#undoBtn');if(ub)ub.classList.toggle('off',!this.played.length);
     const pill=$('#turnPill'),tt=$('#turnText');if(!pill)return;
     pill.classList.remove('peter-turn');
     if(this.state==='peter'){pill.classList.add('peter-turn');tt.textContent='Rokko überlegt …'}
@@ -3011,14 +3194,16 @@ const Game={
     if(r.cmd==='repeat'){await Peter.repeat();return this.autoListen(my)}
     if(r.cmd==='stop'){Ears.stop();P().settings.handsFree=false;save();return Peter.say('Gut, ich höre erst wieder zu, wenn du auf das Mikrofon tippst.')}
     if(r.cmd==='new')return this.newGame();
-    if(this.state==='over'){if(r.cmd==='yes')return this.newGame();return Peter.say('Sag „Neues Spiel“, dann spielen wir nochmal!')}
+    if(r.cmd==='check')return this.checkBoard();
+    if(this.state==='over'){if(r.cmd==='yes')return this.newGame();if(r.cmd==='undo')return this.undo();return Peter.say('Sag „Neues Spiel“, dann spielen wir nochmal!')}
     if(this.state!=='human')return Peter.say('Moment, ich überlege noch!','think');
     if(r.cmd==='hint')return this.giveHint();
     if(r.cmd==='undo')return this.undo();
+    if(r.cmd==='redo')return this.redo();
     if(r.squares.length||r.castle||r.piece){
       const res=resolveMove(this.pos,r,this.pending&&this.pending.type==='from'?this.pending.from:null);
-      if(res.move)return this.humanMove(res.move);
-      if(this.pending&&this.pending.type==='which'&&r.squares.length===1){const f=sqIdx(r.squares[0]);const c=this.pos.legal().filter(m=>m.from===f&&m.to===this.pending.to);if(c.length)return this.humanMove(pickPromo(c,r.promo))}
+      if(res.move)return this.humanMove(res.move,'voice');
+      if(this.pending&&this.pending.type==='which'&&r.squares.length===1){const f=sqIdx(r.squares[0]);const c=this.pos.legal().filter(m=>m.from===f&&m.to===this.pending.to);if(c.length)return this.humanMove(pickPromo(c,r.promo),'voice')}
       if(res.select!=null){this.sel=res.select;this.pending={type:'from',from:this.sel};this.hint=null;sfx.select();this.refresh();const pt=this.pos.board[this.sel][1];await Peter.say(pick([`Und wohin soll ${ART[pt]} ${NAME[pt]}? Die Punkte zeigen es dir.`,'Gute Wahl! Und wohin damit?']),'smile');return this.autoListen(my)}
       if(res.which){this.pending={type:'which',froms:res.which,to:res.to};this.sel=-1;this.refresh();await Peter.say('Da können mehrere Figuren hin. Welche meinst du? Sag mir, wo sie steht, oder tipp sie an.','think');return this.autoListen(my)}
       sfx.nope();
@@ -3083,35 +3268,39 @@ const Game={
     if(m.cap){P().stats.captures++;if(!comment&&VAL[m.cap]>=300){comment=this.family?`Stark, ${this.oA(m.cap)} geschlagen!`:`Oh nein, ${NOM_MEIN[m.cap]}! Gut geschlagen.`;mood='wow'}}
     return{warn,comment,mood,star,ev};
   },
-  async humanMove(m){
+  async humanMove(m,src){
     if(this.family&&this.pos.turn==='b')return this.oppMove(m);
     const my=++this.flow;Ears.stop();Voice.stop();
     const pos=this.pos;
     const before={mates:this.variant==='pawns'?[]:allMatesInOne(pos),free:this.variant==='pawns'?[]:Trainer.freeCaptures(pos),threat:this.variant==='pawns'?[]:threatsAgainst(pos,'w').filter(h=>h.value>=300),check:pos.inCheck()};
+    this.noteMove(m);
     pos.make(m);m.color='w';this.played.push(m);this.keys.push(pos.key());
+    /* gesagte Züge kurz bestätigen: so fällt ein falsch verstandener Zug sofort auf */
+    const echo=src==='voice'?`Verstanden: ${this.moveSay(m)}.`:'';
     this.sel=-1;this.pending=null;this.hint=null;this.danger=[];
     this.refresh();this.board.animate(m.from,m.to);
     m.cap?sfx.capture():sfx.move();
     const a=this.analyzeKid(m,before);
     this.events.push(...a.ev);this.persist();
     if(a.star){P().stars++;Rewards.addXP(5);sfx.star();Peter.bounce();save()}
-    const st=this.status();if(st)return this.endGame(st,m);
+    const st=this.status();if(st)return this.endGame(st,m,echo);
     if(a.warn&&(this.family||P().game.level<=3)){
       this.state='ask';this.danger=a.warn.sqs;this.refresh();sfx.bad();this.blunderCtx={flow:my,warn:a.warn};
       $('#askText').textContent='Willst du den Zug zurücknehmen?';$('#ask').hidden=false;
       Peter.show('…','worry');
       const ai=await Brain.ask(`Das Kind hat gerade gezogen: ${moveFacts(m,'kid')}.\nGefahr: ${a.warn.fact}\nWarne es lieb und aufgeregt in ein bis zwei kurzen Sätzen, nenne die Felder, und frag dann, ob es den Zug lieber zurücknehmen möchte. Es soll Ja oder Nein sagen.`,4500,t=>/\?/.test(t));
       if(my!==this.flow||this.state!=='ask')return;
-      await Peter.say(ai?ai+' Roter Knopf heißt zurück.':a.warn.text+' Willst du den Zug lieber zurücknehmen? Dann tipp auf den roten Knopf.','worry');
+      await Peter.say((echo?echo+' ':'')+(ai?ai+' Roter Knopf heißt zurück.':a.warn.text+' Willst du den Zug lieber zurücknehmen? Dann tipp auf den roten Knopf.'),'worry');
       return this.autoListen(my);
     }
-    if(this.family){await Peter.say(((a.warn?a.warn.text:a.comment)||'')+` ${this.opp()}, du bist dran.`,a.warn?'worry':a.mood||'smile');return this.autoListen(my)}
-    await this.peterTurn(my,{m,kidFb:a.warn?a.warn.text:a.comment,mood:a.warn?'worry':a.mood,kidFact:a.warn?a.warn.fact:a.comment});
+    if(this.family){await Peter.say((echo?echo+' ':'')+((a.warn?a.warn.text:a.comment)||'')+` ${this.opp()}, du bist dran.`,a.warn?'worry':a.mood||'smile');return this.autoListen(my)}
+    await this.peterTurn(my,{m,echo,kidFb:a.warn?a.warn.text:a.comment,mood:a.warn?'worry':a.mood,kidFact:a.warn?a.warn.fact:a.comment});
   },
   /* Familienpartie: Zug von Mama/Papa. Rokko sagt ihn an und coacht danach das Kind. */
   async oppMove(m){
     const my=++this.flow;Ears.stop();Voice.stop();
     const pos=this.pos;
+    this.noteMove(m);
     pos.make(m);m.color='b';this.played.push(m);this.keys.push(pos.key());
     this.sel=-1;this.pending=null;this.hint=null;this.danger=[];
     const check=pos.inCheck();let warn=null,look=false;
@@ -3139,10 +3328,10 @@ const Game={
     $('#ask').hidden=true;this.danger=[];
     const ctx=this.blunderCtx;this.blunderCtx=null;
     if(yes){
-      this.flow++;const m=this.pos.unmake();this.played.pop();this.keys.pop();
+      this.flow++;const [m]=this.back(1);
       this.events.push({ply:this.played.length,kind:'takeback',text:'Zug nach Rokkos Warnung zurückgenommen'});this.persist();
       this.state='human';this.refresh();
-      await Peter.say(pick([`Gute Entscheidung! Stell ${ACC_DEIN[m.piece]} zurück nach ${SQ(m.from)} und schau nochmal ganz genau.`,`Alles klar! ${cap1(NOM_DEIN[m.piece])} geht zurück nach ${SQ(m.from)}. Überleg nochmal in Ruhe.`]),'smile');
+      await Peter.say(pick(['Gute Entscheidung!','Alles klar!'])+' '+this.backText(m)+' '+pick(['Und dann schau nochmal ganz genau.','Überleg nochmal in Ruhe.']),'smile');
       return this.autoListen(this.flow);
     }
     if(!ctx||ctx.flow!==this.flow)return;
@@ -3154,7 +3343,9 @@ const Game={
     this.state='peter';Peter.mood('think');this.refresh();
     const t0=Date.now();await sleep(30);
     const pos=this.pos,lvl=P().game.level;
-    const m=this.variant==='pawns'?choosePawnMove(pos,lvl):chooseMove(pos,lvl);
+    /* gleicher Zug wie vor dem Zurücknehmen? Dann spielt Rokko auch wieder seinen alten Zug – so bleibt alles wie auf dem Brett */
+    const again=this.fwd.length?pos.legal().find(x=>this.uci(x)===this.fwd[this.fwd.length-1]):null;
+    const m=again||(this.variant==='pawns'?choosePawnMove(pos,lvl):chooseMove(pos,lvl));
     if(!m)return;
     pos.make(m);
     const check=pos.inCheck(),st=this.status();let warn=null,look=false;
@@ -3180,6 +3371,7 @@ const Game={
     const minWait=lvl>=4?450:1100;
     const ai=await aiP;const rest=minWait-(Date.now()-t0);if(rest>0)await sleep(rest);
     if(my!==this.flow)return;
+    this.noteMove(m);
     pos.make(m);m.color='b';this.played.push(m);this.keys.push(pos.key());
     this.state='human';if(warn)this.danger=[warn.sq,warn.by];
     this.refresh();this.board.animate(m.from,m.to);this.persist();
@@ -3194,6 +3386,7 @@ const Game={
       if(first&&!st)parts.push('Mach meinen Zug bitte auch auf dem Brett.');
       text=parts.join(' ');
     }
+    if(ctx.echo)text=ctx.echo+' '+text;
     if(st)return this.endGame(st,m,text);
     await Peter.say(text,check||m.cap?'wow':warn?'think':'smile');
     this.autoListen(my);
@@ -3212,6 +3405,8 @@ const Game={
   async endGame(st,m,pre){
     this.state='over';$('#ask')&&($('#ask').hidden=true);Ears.stop();
     const p=P(),g=p.game,res=st.winner==='w'?'w':st.winner==='b'?'b':'d';
+    /* falls der letzte Zug falsch verstanden war: alles merken, damit „Zurück“ die Partie wieder öffnen kann */
+    this.endSnap=this.lessonCb?null:{g:{level:g.level,winsAt:g.winsAt,lossStreak:g.lossStreak,w:g.w,l:g.l,d:g.d},stars:p.stars,cur:JSON.parse(JSON.stringify(p.game.current||{}))};
     let msg,title;let lvlUp=false,lvlDown=false;
     if(this.family){
       const o=this.opp();
@@ -3221,7 +3416,7 @@ const Game={
     }else if(res==='w'){
       if(this.variant==='standard'){g.w++;g.lossStreak=0;g.winsAt++;if(g.winsAt>=2&&g.level<5){g.level++;g.winsAt=0;lvlUp=true}p.stats.mates++}
       else p.stats.pawnWins++;
-      title='Gewonnen!';msg=this.variant==='pawns'?`Du hast es geschafft! Dein Bauer ist ganz hinten angekommen. Gewonnen!`:`Schachmatt! Wahnsinn, ${p.name}, du hast gewonnen!`;
+      title='Gewonnen!';msg=(pre&&/^Verstanden/.test(pre)?pre+' ':'')+(this.variant==='pawns'?`Du hast es geschafft! Dein Bauer ist ganz hinten angekommen. Gewonnen!`:`Schachmatt! Wahnsinn, ${p.name}, du hast gewonnen!`);
       if(lvlUp)msg+=` Und weißt du was? Ab jetzt spiele ich ${LEVELS[g.level].say}: Stärke ${g.level} von 5!`;
       sfx.win();UI.confetti(110);Peter.bounce();Rewards.addXP(60);p.stars+=3;
     }else if(res==='b'){
@@ -3235,12 +3430,12 @@ const Game={
     }
     /* Partie für die Eltern-Auswertung speichern */
     const summary={date:new Date().toISOString(),variant:this.variant,opp:this.family?this.opp():undefined,level:p.game.level,result:res,moves:this.played.map(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')),events:this.events.slice(0,60),plies:this.played.length,minutes:Math.max(1,Math.round((Date.now()-(this.startedAt||Date.now()))/60000))};
-    p.games.unshift(summary);if(p.games.length>40)p.games.pop();
+    p.games.unshift(summary);if(p.games.length>40)p.games.pop();if(this.endSnap)this.endSnap.summary=summary;
     p.game.current=null;Rewards.progress('game');Skills.snapshot();save();
     this.lastResult={res,title,msg};
     this.refresh();this.showEnd(this.lastResult);
     Rewards.checkBadges();
-    if(res==='w'&&this.variant==='standard'&&!this.family){Peter.show('Schachmatt! Du hast gewonnen!','wow');const ai=await Brain.ask(`Das Kind hat dich gerade mit ${moveFacts(m,'kid')} schachmatt gesetzt und gewonnen! Freu dich riesig mit ihm.${lvlUp?` Verrate, dass du ab jetzt stärker spielst: ${LEVELS[g.level].name}.`:''} Höchstens drei kurze Sätze. Frag am Ende, ob es noch eine Runde spielen will.`,5000);await Peter.say(ai||msg,'wow')}
+    if(res==='w'&&this.variant==='standard'&&!this.family&&!(pre&&/^Verstanden/.test(pre))){Peter.show('Schachmatt! Du hast gewonnen!','wow');const ai=await Brain.ask(`Das Kind hat dich gerade mit ${moveFacts(m,'kid')} schachmatt gesetzt und gewonnen! Freu dich riesig mit ihm.${lvlUp?` Verrate, dass du ab jetzt stärker spielst: ${LEVELS[g.level].name}.`:''} Höchstens drei kurze Sätze. Frag am Ende, ob es noch eine Runde spielen will.`,5000);await Peter.say(ai||msg,'wow')}
     else await Peter.say(msg,res==='w'?'wow':'smile');
     if(this.lessonCb){const cb=this.lessonCb;this.lessonCb=null;setTimeout(()=>cb(res),600)}
   },
@@ -3261,24 +3456,140 @@ const Game={
     else t=pick([`Psst, wie wäre es mit ${DAT_DEIN[m.piece]} von ${SQ(m.from)} nach ${SQ(m.to)}?`,`Mein Tipp: ${NAME[m.piece]} von ${SQ(m.from)} nach ${SQ(m.to)}. Der gelbe Pfeil zeigt es dir.`]);
     await Peter.say(t,'smile');this.autoListen(this.flow);
   },
+  /* Partie nach dem Ende wieder öffnen (z. B. wenn der Matt-Zug falsch verstanden wurde) */
+  reopen(){
+    const sn=this.endSnap;if(!sn)return false;
+    const p=P();Object.assign(p.game,sn.g);p.stars=sn.stars;
+    const i=p.games.indexOf(sn.summary);if(i>=0)p.games.splice(i,1);
+    p.game.current=sn.cur;this.endSnap=null;this.lastResult=null;
+    $('#endCard')&&($('#endCard').hidden=true);
+    this.state='human';save();return true;
+  },
   async undo(){
     if(this.state==='ask')return this.answerAsk(true);
-    if(this.family&&this.state==='human'&&this.played.length){this.flow++;const a=this.pos.unmake();this.played.pop();this.keys.pop();this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.refresh();
-      this.events.push({ply:this.played.length,kind:'takeback',text:'Zug zurückgenommen'});this.persist();
-      await Peter.say(`Alles klar, zurück! Stell ${a.color==='w'?ACC_DEIN[a.piece]:this.oA(a.piece)} wieder auf ${SQ(a.from)}. ${a.color==='w'?P().name+', du bist':this.opp()+' ist'} nochmal dran.`,'smile');return this.autoListen(this.flow)}
-    if(this.state!=='human'||this.played.length<2)return Peter.say('Da gibt es noch nichts zurückzunehmen.');
-    this.flow++;
-    const a=this.pos.unmake();this.played.pop();this.keys.pop();const b=this.pos.unmake();this.played.pop();this.keys.pop();
-    this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.refresh();
+    if(this.state==='peter')return Peter.say('Moment, ich überlege noch!','think');
+    if(this.state==='over'){if(!this.reopen())return Peter.say('Das Spiel ist schon vorbei. Sag „Neues Spiel“, dann spielen wir nochmal!')}
+    if(this.state!=='human'||!this.played.length)return Peter.say('Da gibt es noch nichts zurückzunehmen.');
+    this.flow++;Ears.stop();Voice.stop();
+    /* gegen Rokko: so weit zurück, bis Weiß wieder dran ist (meist dein Zug und meiner) */
+    let n=1;if(!this.family){n=this.pos.turn==='w'?2:1;if(n>this.played.length)n=this.played.length}
+    const undone=this.back(n);
     this.events.push({ply:this.played.length,kind:'takeback',text:'Zug zurückgenommen'});this.persist();
-    await Peter.say(`Alles klar, zurückgespult! Stell ${a.piece===b.piece?'die beiden Figuren':ACC_MEIN[a.piece]+' und '+ACC_DEIN[b.piece]} so hin wie auf dem Handy. Du bist dran.`,'smile');
+    this.state='human';this.refresh();
+    const who=this.family?(this.pos.turn==='w'?P().name+', du bist':this.opp()+' ist'):'Du bist';
+    await Peter.say(`Zurück! ${undone.map(m=>this.backText(m)).join(' ')} ${who} dran.`,'smile');
+    if(!this.family&&this.pos.turn==='b'){return this.peterTurn(this.flow,{})}
     this.autoListen(this.flow);
   },
-  askNew(btn){
-    if(!this.played.length||this.state==='over')return this.newGame();
-    if(this.newArmed){clearTimeout(this.newArmed);this.newArmed=null;return this.newGame()}
-    btn.classList.add('armed');btn.querySelector('span').textContent='Sicher?';
-    this.newArmed=setTimeout(()=>{this.newArmed=null;btn.classList.remove('armed');btn.querySelector('span').textContent='Neu'},3500);
+  async redo(){
+    if(this.state==='ask'||this.state==='peter')return Peter.say('Moment, gleich!','think');
+    if(this.state==='over')return;
+    if(!this.fwd.length)return Peter.say('Da gibt es nichts zum Vorspulen. Vor geht nur, wenn du vorher zurück getippt hast.');
+    this.flow++;const my=this.flow;Ears.stop();Voice.stop();
+    const n=this.family?1:(this.fwd.length>=2?2:1);
+    const done=this.forward(n);if(!done.length)return;
+    this.events.push({ply:this.played.length,kind:'redo',text:'Wieder vor'});this.persist();
+    this.state='human';this.refresh();const last=done[done.length-1];this.board.animate(last.from,last.to);sfx.move();
+    const st=this.status();
+    const say=`Wieder vor! ${done.map(m=>this.fwdText(m)).join(' ')} Stell das auf dem Brett auch so.`;
+    if(st)return this.endGame(st,last,say);
+    if(!this.family&&this.pos.turn==='b'){await Peter.say(say,'smile');if(my!==this.flow)return;return this.peterTurn(my,{})}
+    const who=this.family?(this.pos.turn==='w'?P().name+', du bist':this.opp()+' ist'):'Du bist';
+    await Peter.say(`${say} ${who} dran.`,'smile');
+    this.autoListen(my);
+  },
+  /* ---------- Brett prüfen: Partie Zug für Zug ansehen und ab einer Stelle weiterspielen ---------- */
+  checkBoard(opt){
+    opt=opt||{};
+    if(this.state==='peter')return Peter.say('Moment, ich überlege noch!','think');
+    if(this.state==='ask')return Peter.say('Sag erst Ja oder Nein: Willst du den Zug zurücknehmen?','think');
+    Ears.stop();this.flow++;
+    const g=new Pos(this.variant==='pawns'?PAWNS_FEN:START_FEN),fens=[g.fen()],mv=[];
+    for(const m of this.played){const x=g.legal().find(y=>this.uci(y)===this.uci(m));if(!x)break;x.color=g.turn;g.make(x);fens.push(g.fen());mv.push(x)}
+    const last=fens.length-1;let ply=last;
+    const chips=mv.map((m,i)=>`${i%2===0?`<span class="plyno">${i/2+1}</span>`:''}<button class="plychip ${m.color}" data-ply="${i+1}">${pieceSVG(m.color,m.piece,'i')}${esc(this.shortMove(m))}</button>`).join('');
+    UI.sheet(`<div style="display:flex;align-items:center;gap:10px"><h2 style="flex:1">${opt.resume?'Stimmt dein Brett noch?':'Brett prüfen'}</h2><button class="iconbtn" data-x aria-label="Schließen">${ICON.close}</button></div>
+      <p class="small muted" style="margin:0">Sieht dein Brett genauso aus? Wenn nicht: mit den Pfeilen zurückgehen, bis es passt, dann „Ab hier weiter“ tippen.</p>
+      <div id="cbBoard"></div>
+      <div class="cbstep"><button class="big ghost" data-prev aria-label="Einen Zug zurück">${ICON.back}</button><button class="big ghost" data-say aria-label="Vorlesen">${ICON.speaker}</button><button class="big ghost" data-next aria-label="Einen Zug vor">${ICON.next}</button></div>
+      <p class="cbply" id="cbPly"></p>
+      ${mv.length?`<div class="plylist">${chips}</div>`:''}
+      <div class="row"><button class="big go" data-ok>${ICON.check} Stimmt so</button><button class="big sunbtn" data-here hidden>${ICON.undo} Ab hier weiter</button></div>`,(sh,close)=>{
+      const b=new Board($('#cbBoard',sh),{names:'edge'});
+      const label=()=>ply?`Zug ${Math.ceil(ply/2)} · ${this.whoOf(mv[ply-1].color)}: ${this.moveSay(mv[ply-1])}`:'Anfangsstellung';
+      const show=speak=>{
+        b.clearMarks();b.setPos(new Pos(fens[ply]));const m=mv[ply-1];if(m)b.mark('last',[m.from,m.to]).arrows([{from:m.from,to:m.to,kind:m.color==='w'?'hint':''}]);b.render();
+        $('#cbPly',sh).textContent=label()+(ply===last?' · jetzt':'');
+        $$('.plychip',sh).forEach(c=>c.setAttribute('aria-pressed',String(+c.dataset.ply===ply)));
+        const cur=$(`.plychip[data-ply="${ply}"]`,sh);if(cur&&cur.scrollIntoView)try{cur.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}
+        $('[data-ok]',sh).hidden=ply!==last;$('[data-here]',sh).hidden=ply===last;
+        if(speak)Voice.speak(ply?`Zug ${Math.ceil(ply/2)}. ${this.fwdText(m)}`:'So fängt die Partie an.',{interrupt:true});
+      };
+      show(false);
+      let shut=false;const finish=()=>{if(shut)return;shut=true;close();this.afterCheck(opt)};
+      sh.parentElement.addEventListener('click',e=>{if(e.target===sh.parentElement)finish()});
+      sh.onclick=e=>{
+        audioUnlock();
+        if(e.target.closest('[data-x]')||e.target.closest('[data-ok]')){sfx.tap();return finish()}
+        if(e.target.closest('[data-prev]')&&ply>0){ply--;sfx.tap();show(true)}
+        if(e.target.closest('[data-next]')&&ply<last){ply++;sfx.tap();show(true)}
+        if(e.target.closest('[data-say]'))show(true);
+        const c=e.target.closest('[data-ply]');if(c){ply=+c.dataset.ply;sfx.tap();show(true)}
+        if(e.target.closest('[data-here]')){shut=true;close();this.rewindTo(ply)}
+      };
+    });
+    if(opt.resume){
+      const lm=this.played[this.played.length-1];
+      const turn=this.family?(this.pos.turn==='w'?`${P().name} ist dran.`:`${this.opp()} ist dran.`):(this.pos.turn==='w'?'Du bist dran.':'Ich bin dran.');
+      Peter.say(`Da sind wir wieder! Schau mal, ob dein Brett genauso aussieht wie auf dem Handy. ${lm?'Der letzte Zug war: '+this.fwdText(lm):''} ${turn}`,'smile');
+    }else Peter.say(pick(['Vergleich mal das Handy mit deinem Brett.','Schau mal: Sieht dein Brett genauso aus?']),'think');
+  },
+  afterCheck(opt){
+    const my=++this.flow;
+    if(this.state==='over')return;
+    if(!this.family&&this.pos.turn==='b')return Peter.say('Super, dann überlege ich jetzt meinen Zug.','smile').then(()=>{if(my===this.flow)this.peterTurn(my,{})});
+    if(opt.resume){const who=this.family?(this.pos.turn==='w'?P().name+', du bist':this.opp()+', du bist'):'Du bist';return Peter.say(`Prima! Weiter geht's. ${who} dran.`,'smile',{interrupt:true}).then(()=>this.autoListen(my))}
+    this.autoListen(my);
+  },
+  async rewindTo(ply){
+    if(this.state==='over'&&!this.reopen())return;
+    const n=this.played.length-ply;if(n<=0)return this.afterCheck({});
+    this.flow++;const my=this.flow;Voice.stop();
+    this.back(n);
+    this.events.push({ply:this.played.length,kind:'takeback',text:`Zurückgespult auf Zug ${Math.ceil(ply/2)||0}`});this.persist();
+    this.state='human';this.refresh();sfx.move();
+    const lm=this.played[this.played.length-1];
+    const base=`Alles klar, wir spielen ab hier weiter. ${lm?'Der letzte Zug war: '+this.fwdText(lm):'Alle Figuren stehen am Anfang.'}`;
+    const tip=' Mit dem Vor-Knopf kommst du wieder nach vorne.';
+    if(!this.family&&this.pos.turn==='b'){await Peter.say(base+tip+' Jetzt bin ich dran.','smile');if(my===this.flow)this.peterTurn(my,{});return}
+    const who=this.family?(this.pos.turn==='w'?P().name+', du bist':this.opp()+' ist'):'Du bist';
+    await Peter.say(`${base}${tip} ${who} dran.`,'smile');
+    this.autoListen(my);
+  },
+  resumeTalk(my){
+    if(this.state==='over')return;
+    setTimeout(()=>{if(my===this.flow&&UI.current==='play')this.checkBoard({resume:true})},350);
+  },
+  /* ---------- Mehr: seltenere Knöpfe ---------- */
+  moreSheet(){
+    const s=P().settings,ears=Ears.available();
+    UI.sheet(`<div style="display:flex;align-items:center;gap:10px"><h2 style="flex:1">Mehr</h2><button class="iconbtn" data-x aria-label="Schließen">${ICON.close}</button></div>
+      <div class="moregrid">
+        ${ears?`<button class="act ${s.handsFree?'on':''}" data-m="hands">${ICON.ear}Zuhören</button>`:''}
+        <button class="act ${s.names?'on':''}" data-m="names">${ICON.grid}Feldnamen</button>
+        <button class="act" data-m="sound">${ICON.wrench}Ton reparieren</button>
+        <button class="act" data-m="new">${ICON.plus}Neues Spiel</button>
+      </div>`,(sh,close)=>{
+      sh.onclick=e=>{
+        audioUnlock();
+        if(e.target.closest('[data-x]'))return close();
+        const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m;
+        if(m==='hands'){s.handsFree=!s.handsFree;save();b.classList.toggle('on',s.handsFree);UI.toast(ICON.ear,s.handsFree?'Rokko hört nach jedem Zug zu.':'Zuhören nur auf Knopfdruck.');if(s.handsFree){close();this.autoListen(this.flow)}else Ears.stop()}
+        if(m==='names'){s.names=!s.names;save();b.classList.toggle('on',s.names);this.board&&this.board.setNames(s.names?true:'edge')}
+        if(m==='sound'){close();repairAudio()}
+        if(m==='new'){close();if(!this.played.length||this.state==='over')return this.newGame();UI.confirm('Neues Spiel?','Die jetzige Partie wird beendet.','Ja, neu','Weiterspielen',{yesIcon:'plus',noIcon:'play'}).then(y=>{if(y)this.newGame()})}
+      };
+    });
   },
   newGame(){
     if(this.lessonCb)return Peter.say('Spiel diese Partie zu Ende, dann geht es auf der Karte weiter.');
@@ -3371,7 +3682,14 @@ const UI={
     this.sheet(`<div class="center" style="display:flex;flex-direction:column;gap:12px;align-items:center"><div class="badge"><span class="medal" style="--bc:#F6B91F;width:96px;height:96px">${ICON[icon]||ICON.trophy}</span></div><h2>${esc(title)}</h2><p class="muted" style="margin:0">${esc(text)}</p><button class="big go wide" data-ok>Juhu!</button></div>`,(s,close)=>{$('[data-ok]',s).onclick=close});
     Voice.speak(title+' '+text);
   },
-  soundHint(){const h=$('#soundHelp');if(h)h.hidden=false},
+  /* Ton-Hilfe: in der Ansicht, wenn sie Platz dafür hat, sonst als kleine Karte unten */
+  soundHint(){
+    let h=$('#soundHelp');
+    if(!h){const slot=$('#soundSlot');const w=document.createElement('div');w.innerHTML=soundHelpHTML();h=w.firstElementChild;
+      if(slot)slot.appendChild(h);else if(navigator.webdriver)return; /* automatische Tests: keine schwebende Karte */
+      else{h.classList.add('float');h.insertAdjacentHTML('beforeend',`<button class="iconbtn" data-shx aria-label="Schließen">${ICON.close}</button>`);document.body.appendChild(h);$('[data-shx]',h).onclick=()=>h.remove()}}
+    h.hidden=false;
+  },
   heard(text,final){const h=$('#heard');if(h)h.textContent=(final?'Gehört: „':'Ich höre: „')+text+'“'},
   listenState(on){const b=$('#earBtn');if(b)b.classList.toggle('listening',on);$$('[data-act="mic"]').forEach(x=>x.classList.toggle('on',on));const h=$('#heard');if(h&&on&&!h.textContent.startsWith('Ich höre'))h.textContent='Ich höre zu … sag deinen Zug!';if(h&&!on&&h.textContent.startsWith('Ich höre zu'))h.textContent='Tippe auf das Mikrofon, wenn du etwas sagen willst.'},
   listenBlocked(){this.toast(ICON.mic,'Das Mikrofon ist hier gesperrt. Nimm das Mikrofon deiner Tastatur.');$$('[data-act="mic"],[data-act="hands"]').forEach(x=>x.hidden=true)},
@@ -3612,7 +3930,7 @@ UI.screens.playhub={
   },
   mount(el){
     el.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;audioUnlock();sfx.tap();
-      if(a.dataset.act==='resume')Game.start({});
+      if(a.dataset.act==='resume'){const c=P().game.current;Game.start(Game.pos?{}:{variant:c&&c.variant,resumed:true})} /* nach einem Neustart erst das Brett abgleichen */
       if(a.dataset.act==='standard')Game.start({variant:'standard',fresh:true});
       if(a.dataset.act==='pawns')Game.start({variant:'pawns',fresh:true});
       if(a.dataset.act==='family')Game.familySetup();
@@ -3864,6 +4182,7 @@ const Parents={
         ${Brain.fn?`<div class="setting"><div><label for="sAi">Rokko plaudert frei</label><small>Claude formuliert Rokkos Sätze in Partien und beantwortet Fragen.</small></div><input type="checkbox" class="toggle" id="sAi" ${p.settings.ai?'checked':''}></div>`:''}
         <div class="setting"><div><label for="sSound">Töne und Stimme</label></div><input type="checkbox" class="toggle" id="sSound" ${p.settings.sound?'checked':''}></div>
         <div class="setting"><div><label for="sNames">Feldnamen auf dem Brett</label><small>Hilft beim Lernen der Koordinaten.</small></div><input type="checkbox" class="toggle" id="sNames" ${p.settings.names?'checked':''}></div>
+        <div class="setting"><div><label>Kein Ton?</label><small>Startet Stimme und Ton neu. Hilft, wenn Rokko plötzlich stumm ist.</small></div><button class="big sunbtn" style="min-height:44px;font-size:1rem" data-fixsound>${ICON.wrench} Ton reparieren</button></div>
       </div>
       <div class="card"><h2>Spielzeit</h2>
         <div class="setting" style="flex-wrap:wrap"><div><label>Spielzeit-Wecker</label><small>Rokko sagt freundlich „Pause!“, wenn die Zeit für heute um ist. Weiterspielen geht nur mit der Elternrechnung.</small></div>
@@ -3881,6 +4200,12 @@ const Parents={
       </div>
       <div class="card"><h2>Als App auf dem iPhone</h2>
         <p style="margin:8px 0 0">${Native.ok?'Du nutzt die iPhone-App. Rokko spricht mit der Systemstimme und hört über das Mikrofon zu.':'Diese Seite in Safari öffnen, dann auf Teilen und „Zum Home-Bildschirm“ tippen. So startet Rokko wie eine App.'}</p>
+      </div>
+      <div class="card"><h2>Hilfe bei Problemen</h2>
+        <p class="small muted" style="margin:6px 0 0">Rokko schreibt Abstürze, Tonausfälle und Fehler in ein kleines Protokoll auf diesem Gerät. Wenn etwas schiefgeht: kopieren und an Claude schicken, dann lässt sich die Ursache finden.</p>
+        <details style="margin-top:10px"><summary>Protokoll ansehen (${Diag.list().length} Einträge)</summary><pre class="diaglog" id="diagLog">${esc(Diag.text())}</pre></details>
+        <div class="row" style="margin-top:10px"><button class="big go" data-act="diagcopy">${ICON.share} Kopieren</button><button class="big ghost" data-act="diagclear">${ICON.close} Leeren</button></div>
+        <p class="small muted" style="margin:8px 0 0">Version ${esc(window.ROKKO_VERSION||'')}</p>
       </div>
       <p class="hint-line">Keine Werbung, keine Käufe, kein Konto. Alle Daten bleiben auf diesem Gerät. <a href="https://2f6kgp6fj4-web.github.io/peter-schach/datenschutz.html" target="_blank" rel="noopener">Datenschutz</a></p>`;
     }
@@ -3903,6 +4228,8 @@ const Parents={
       if(act==='editprofile')Profiles.create(true);
       if(act==='piperload')Piper.download();
       if(act==='newprofile')Profiles.create(false);
+      if(act==='diagcopy'){const t=Diag.text();const ok=()=>UI.toast(ICON.check,'Protokoll kopiert');if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,()=>{this.showText(t)});else this.showText(t)}
+      if(act==='diagclear'){Diag.clear();UI.go('parents')}
       if(act==='testvoice'){Voice.speak(`Hallo ${p.name}! Ich bin Rokko. Wollen wir eine Runde Schach spielen?`,{interrupt:true})}
       if(act==='reset')UI.confirm('Wirklich zurücksetzen?',`Alle Sterne, Lektionen und Partien von ${p.name} werden gelöscht.`,'Abbrechen','Ja, löschen').then(keep=>{if(keep)return;const np=newProfile(p.name,p.avatar);np.id=p.id;Store.data.profiles[p.id]=np;save();UI.go('parents')});
     });
@@ -3941,6 +4268,7 @@ const Parents={
       $('[data-ok]',s).onclick=()=>apply(ta.value);
     });
   },
+  showText(t){UI.sheet(`<h2>Protokoll</h2><p class="small muted" style="margin:0">Text markieren und kopieren.</p><textarea class="field" style="min-height:240px;font:12px/1.4 ui-monospace,Menlo,monospace" readonly>${esc(t)}</textarea>`,(s)=>{const ta=$('textarea',s);ta.focus();ta.select()})},
   replay(gm){
     if(!gm)return;
     const start=new Pos(gm.variant==='pawns'?PAWNS_FEN:START_FEN);const fens=[start.fen()],moves=[];
@@ -3974,26 +4302,36 @@ UI.refreshVoiceSelect=()=>{if(UI.current==='parents'){const sel=$('#voiceSel');i
 /* ===================================================================
    Rokko-Schach · Start
    =================================================================== */
-function splash(){
+/* Läuft noch eine Partie? Dann kann man sie mit einem Tippen fortsetzen (auch nach einem Absturz). */
+function runningGame(){const c=P().game.current;return c&&c.moves&&(c.moves.length>0||c.variant==='family')&&!c.lesson?c:null}
+function splash(chosen){
   const d=Store.data,list=Object.values(d.profiles),p=P();
   const el=$('#splash');el.hidden=false;
+  const rg=list.length>1&&!chosen?null:runningGame();
   el.innerHTML=`<div class="splash-in">
     <div class="peter" data-mood="smile">${peterSVG(p.outfit)}</div>
     <h1>Schach mit Rokko</h1>
-    <p class="muted" style="margin:0">Lernen, rätseln und am echten Brett gegen Rokko spielen.</p>
+    ${rg?`<div class="resume"><div class="resume-board" id="resumeBoard" aria-hidden="true"></div>
+        <button class="big go wide" data-resume style="min-height:66px;font-size:1.3rem">${ICON.play} Partie weiterspielen</button></div>
+        <button class="big ghost" data-go style="min-height:48px;font-size:1.05rem">${ICON.home} Zum Start</button>`
+    :`<p class="muted" style="margin:0">Lernen, rätseln und am echten Brett gegen Rokko spielen.</p>
     ${list.length>1?`<div class="profiles">${list.map(x=>`<button data-p="${x.id}"><span class="avatar" style="${x.id===d.current?'border-color:var(--sun)':''}">${avatarSVG(x.avatar)}</span>${esc(x.name)}</button>`).join('')}</div>`
       :`<button class="big go wide" data-go style="min-height:66px;font-size:1.35rem">${ICON.play} Los geht's, ${esc(p.name)}!</button>
-        <button class="big ghost" data-other style="min-height:44px;font-size:1rem">Jemand anderes spielt</button>`}
+        <button class="big ghost" data-other style="min-height:44px;font-size:1rem">Jemand anderes spielt</button>`}`}
     <p class="hint-line">Ton an! Rokko spricht mit dir.</p>
   </div>`;
+  if(rg){try{const g=new Pos(rg.variant==='pawns'?PAWNS_FEN:START_FEN);for(const u of rg.moves){const m=g.legal().find(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')===u);if(!m)break;g.make(m)}
+    const b=new Board($('#resumeBoard',el),{names:false});b.setPos(g)}catch(e){}}
   el.onclick=e=>{
-    const b=e.target.closest('[data-p],[data-go],[data-other]');if(!b)return;
-    audioUnlock();
-    if(b.dataset.p)d.current=b.dataset.p;
+    const b=e.target.closest('[data-p],[data-go],[data-other],[data-resume]');if(!b)return;
+    audioUnlock();Awake.on();
+    if(b.dataset.p){d.current=b.dataset.p;if(runningGame()){save();splash(true);return}}
     if(b.hasAttribute('data-other')){el.hidden=true;Profiles.create(false);boot();return}
     save();Voice.pickVoice();
+    sfx.star();
+    if(b.hasAttribute('data-resume')){el.hidden=true;Rewards.touchDay();Game.start({variant:rg.variant,resumed:true});return}
     /* iOS gibt die Stimme nur nach einem Tippen frei: sofort ein kurzes Wort sprechen */
-    sfx.star();Voice.speak('Hallo!');
+    Voice.speak('Hallo!');
     el.hidden=true;boot();
   };
 }
@@ -4032,15 +4370,64 @@ const Pause={
     $('[data-more]',o).onclick=()=>Parents.gateThen(()=>{const p=P();const ex=p.stats.limitExtra&&p.stats.limitExtra.d===today()?p.stats.limitExtra.m:0;p.stats.limitExtra={d:today(),m:ex+15};save();o.remove();Voice.stop()},'15 Minuten mehr?');
   }
 };
-async function keepAwake(){try{if('wakeLock' in navigator&&document.visibilityState==='visible')await navigator.wakeLock.request('screen')}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAwake()});
+/* ---------- Bildschirm wach halten ----------
+   Geht der Bildschirm aus, beendet iOS eine Web-App im Hintergrund gern ganz – dann startet sie neu.
+   Darum: Wake Lock bei jeder Berührung erneuern und auf dem iPhone zusätzlich ein winziges,
+   stummes Video laufen lassen (das hält den Bildschirm auch dort an, wo Wake Lock nicht greift). */
+const AWAKE_MP4='data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAANFbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAD6AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAm90cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAD6AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAA+gAAAAAAABAAAAAAHnbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAABAABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABkm1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAVJzdGJsAAAAunN0c2QAAAAAAAAAAQAAAKphdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAABAAEABIAAAASAAAAAAAAAABFUxhdmM2MC4zMS4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAAMGF2Y0MBQsAe/+EAF2dCwB6mEXsBEAAAAwAQAAADAEDxYuEYAQAGaMhCAZSyAAAAEHBhc3AAAAABAAAAAQAAABRidHJ0AAAAAAAABZYAAAWWAAAAGHN0dHMAAAAAAAAAAQAAAAgAACAAAAAAFHN0c3MAAAAAAAAAAQAAAAEAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAgAAAABAAAANHN0c3oAAAAAAAAAAAAAAAgAAAKFAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAACgAAABRzdGNvAAAAAAAAAAEAAAN1AAAAYnVkdGEAAABabWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAAAAAAtaWxzdAAAACWpdG9vAAAAHWRhdGEAAAABAAAAAExhdmY2MC4xNi4xMDAAAAAIZnJlZQAAAtNtZGF0AAACcgYF//9u3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE2NCByMzEwOCAzMWUxOWY5IC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAyMyAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTAgcmVmPTE2IGRlYmxvY2s9MTowOjAgYW5hbHlzZT0weDE6MHgxMzEgbWU9dW1oIHN1Ym1lPTEwIHBzeT0xIHBzeV9yZD0xLjAwOjAuMDAgbWl4ZWRfcmVmPTEgbWVfcmFuZ2U9MjQgY2hyb21hX21lPTEgdHJlbGxpcz0yIDh4OGRjdD0wIGNxbT0wIGRlYWR6b25lPTIxLDExIGZhc3RfcHNraXA9MSBjaHJvbWFfcXBfb2Zmc2V0PS0yIHRocmVhZHM9MSBsb29rYWhlYWRfdGhyZWFkcz0xIHNsaWNlZF90aHJlYWRzPTAgbnI9MCBkZWNpbWF0ZT0xIGludGVybGFjZWQ9MCBibHVyYXlfY29tcGF0PTAgY29uc3RyYWluZWRfaW50cmE9MCBiZnJhbWVzPTAgd2VpZ2h0cD0wIGtleWludD0yNTAga2V5aW50X21pbj0yIHNjZW5lY3V0PTQwIGludHJhX3JlZnJlc2g9MCByY19sb29rYWhlYWQ9NjAgcmM9Y3JmIG1idHJlZT0xIGNyZj01MS4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAAC2WIggK+TFAAEJHAAAAABkGaHAV9QAAAAAZBmioBX1AAAAAGQZo7AV9QAAAABkGaSQBT1AAAAAZBmllAU9QAAAAGQZppgFPUAAAABkGaecBL1A==';
+const Awake={
+  lock:null,vid:null,warned:false,
+  ios(){return /iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)},
+  async on(){
+    if(Native.ok||document.visibilityState!=='visible')return;
+    if('wakeLock' in navigator&&(!this.lock||this.lock.released)){
+      try{this.lock=await navigator.wakeLock.request('screen');this.lock.addEventListener('release',()=>{this.lock=null})}
+      catch(e){this.lock=null;if(!this.warned){this.warned=true;Diag.log('Bildschirm','Wach halten ging nicht: '+(e&&e.name||e))}}
+    }
+    if(this.ios()||!('wakeLock' in navigator))this.video();
+  },
+  video(){
+    try{
+      if(!this.vid){const v=document.createElement('video');v.className='awakevid';v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;
+        v.setAttribute('muted','');v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');v.setAttribute('disablepictureinpicture','');v.src=AWAKE_MP4;
+        document.body.appendChild(v);this.vid=v}
+      if(this.vid.paused){const p=this.vid.play();if(p&&p.catch)p.catch(()=>{})}
+    }catch(e){}
+  }
+};
+/* ---------- Absturz erkennen ----------
+   Alle paar Sekunden ein Lebenszeichen. Fehlt beim nächsten Start das „ordentlich beendet“,
+   wurde die App unterwegs beendet: das kommt ins Protokoll, und die Partie wird zum Fortsetzen angeboten. */
+const Alive={
+  KEY:'rokko.alive',
+  read(){try{return JSON.parse(localStorage.getItem(this.KEY)||'null')}catch(e){return null}},
+  write(o){try{localStorage.setItem(this.KEY,JSON.stringify(o))}catch(e){}},
+  beat(){if(document.visibilityState==='visible')this.write({t:Date.now(),scr:UI.current||'',vis:1,v:window.ROKKO_VERSION})},
+  away(){this.write({t:Date.now(),scr:UI.current||'',vis:0,v:window.ROKKO_VERSION})},
+  check(){
+    const a=this.read();if(!a)return;
+    const gap=Math.round((Date.now()-a.t)/1000);
+    if(a.vis&&gap<900)Diag.log('Neustart',`App wurde unerwartet neu gestartet (zuletzt in „${a.scr||'?'}“, vor ${gap} s)`);
+    else if(!a.vis&&a.scr)Diag.log('Start',`Neu geöffnet (vorher im Hintergrund in „${a.scr}“)`);
+  }
+};
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'){Awake.on();Alive.beat();audioUnlock()}
+  else{Alive.away();if(['play','lesson'].includes(UI.current))Diag.log('Hintergrund','App verlassen in „'+UI.current+'“')}
+});
+window.addEventListener('pagehide',()=>Alive.away());
+window.addEventListener('pageshow',e=>{if(e.persisted)Alive.beat()});
 
 (function init(){
   Store.load();
   Voice.init();Ears.init();Brain.init();Piper.init();
   UI.tabs();
   trackTime();
-  document.addEventListener('pointerdown',()=>{audioUnlock();keepAwake()},{once:true});
+  Alive.check();Alive.beat();setInterval(()=>Alive.beat(),4000);
+  { const go=UI.go.bind(UI);UI.go=function(id,arg){const r=go(id,arg);Alive.beat();return r} }
+  /* bei jeder Berührung: Ton freigeben und Bildschirm wach halten (iOS verliert beides gern unterwegs) */
+  let lastTouch=0;
+  document.addEventListener('pointerdown',()=>{audioUnlock();const n=Date.now();if(n-lastTouch>3000){lastTouch=n;Awake.on()}},true);
   splash();
 })();
 
