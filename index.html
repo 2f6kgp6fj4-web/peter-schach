@@ -5140,7 +5140,7 @@ ${sq.join('')}
     Voice.speak(`Eine Urkunde für dich, ${P().name}! Du ${I.line1.replace(/^hat /,'hast ').replace('erreicht','erreicht')}: ${I.line2}.`,{interrupt:true});
     UI.sheet(`<div style="display:flex;align-items:center;gap:10px"><h2 style="flex:1">Deine Urkunde</h2><button class="iconbtn" data-x aria-label="Schließen">${ICON.close}</button></div>
       <div class="certprev">${svg}</div>
-      <div class="row"><button class="big go" data-save>${ICON.share} Sichern</button><button class="big ghost" data-print>${ICON.print} Drucken</button></div>
+      <div class="row">${window.claude?'':`<button class="big go" data-save>${ICON.share} Sichern</button>`}<button class="big ghost" data-print>${ICON.print} Drucken</button></div>
       <p class="small muted" style="margin:0">Tipp für Eltern: Ausgedruckt am Kühlschrank wirkt sie Wunder.</p>`,(sh,close)=>{
       sh.onclick=e=>{
         if(e.target.closest('[data-x]'))return close();
