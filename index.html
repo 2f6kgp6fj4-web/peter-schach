@@ -2070,6 +2070,7 @@ const Diag={
       while(l.length>120)l.shift();
       localStorage.setItem(this.KEY,JSON.stringify(l));
     }catch(e){}
+    try{if(Native.ok)Native.post({type:'log',k,m})}catch(e){}
   },
   clear(){try{localStorage.removeItem(this.KEY)}catch(e){}},
   text(){

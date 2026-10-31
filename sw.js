@@ -1,5 +1,5 @@
 /* Schach mit Rokko: funktioniert nach dem ersten Öffnen auch ohne Internet */
-const CACHE='rokko-v8c';
+const CACHE='rokko-v8d';
 /* Bibliotheken der natürlichen Stimme: eigener Speicher, der bei Updates erhalten bleibt (sonst wäre die Stimme nach jedem Update offline weg) */
 const LIBS='rokko-libs';
 const FILES=['./','./index.html','./manifest.webmanifest','./datenschutz.html','./icon-180.png','./icon-192.png','./icon-512.png'];
