@@ -879,6 +879,27 @@ body.pthemed .pb .sil{fill:var(--pc-b)}
 .mixcard.rally .ti{background:#C2410C}
 .mixcard.rally .rnum b{color:#C2410C}
 
+/* ---------- Online-Partie ---------- */
+.seg.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.seg .segb{flex-direction:row;justify-content:center;gap:6px;min-height:48px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg .segb svg.i{width:22px;height:22px}
+.osub{margin:6px 0 0;font-family:var(--font-display);font-size:1.05rem}
+.netbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:8px 12px}
+.netdot{width:12px;height:12px;border-radius:50%;background:var(--muted);flex:0 0 auto}
+.netdot.online{background:var(--good)}
+.netdot.waiting,.netdot.connecting{background:var(--sun);animation:netpulse 1.4s ease-in-out infinite}
+@keyframes netpulse{50%{opacity:.35}}
+@media (prefers-reduced-motion: reduce){.netdot.waiting,.netdot.connecting{animation:none}}
+.nettxt{display:flex;flex-direction:column;flex:1 1 160px;min-width:0;line-height:1.2}
+.nettxt b{font-family:var(--font-display);font-size:1rem}
+.nettxt span{font-size:.85rem;color:var(--muted)}
+.netb{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:6px 12px;min-height:44px;font-family:var(--font-display);font-weight:600;font-size:.95rem;cursor:pointer}
+.netb svg{width:18px;height:18px}
+.netb.hot{background:var(--sun);border-color:var(--sun);color:#3A2A00}
+.phrases{display:flex;flex-direction:column;gap:8px}
+.phrases .big{justify-content:flex-start}
+.status .chip>svg:not(.i){width:20px;height:20px}
+
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="px-head" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>
 <linearGradient id="px-visor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E3843"/><stop offset="1" stop-color="#0A1820"/></linearGradient>
@@ -1846,7 +1867,7 @@ if(typeof module!=='undefined')module.exports=T;else root.Trainer=T;
 /* ===================================================================
    Rokko-Schach · Grundlagen: Symbole, Speicher, Profile, Töne, Stimme
    =================================================================== */
-window.ROKKO_VERSION='8';
+window.ROKKO_VERSION='9';
 const $=(s,el)=>(el||document).querySelector(s);
 const $$=(s,el)=>[...(el||document).querySelectorAll(s)];
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1923,6 +1944,9 @@ const ICON={
   mute:I('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/>'),
   user:I('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>'),
   moon:I('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'),
+  globe:I('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9s1.2-6.4 3.8-9z"/>'),
+  flag:I('<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>'),
+  chat:I('<path d="M4 5h16v11H9l-5 4z"/>'),
   share:I('<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>')
 };
 function strengthBars(n){let h='<span class="sbars" aria-label="Stärke '+n+' von 10">';for(let i=1;i<=10;i++)h+=`<i class="${i<=n?'on':''}" style="height:${5+i*1.6}px"></i>`;return h+'</span>'}
@@ -2018,7 +2042,7 @@ function applyTheme(){
 /* ---------- Speicher & Profile ---------- */
 const STORE_KEY='peterSchach.v2';
 const Store={
-  data:null,
+  data:null,fresh:false,
   read(key){try{const d=JSON.parse(localStorage.getItem(key));return d&&d.profiles&&Object.keys(d.profiles).length?d:null}catch(e){return null}},
   load(){
     let d=this.read(STORE_KEY);
@@ -2028,7 +2052,7 @@ const Store={
       let old=null;try{old=JSON.parse(localStorage.getItem('peterSchach.v1'))}catch(e){}
       const p=newProfile('Alexander',{fig:'n',color:'#2B7BD8'});
       if(old&&old.prof){p.game.level=old.prof.level||1;p.game.w=old.prof.w||0;p.game.l=old.prof.l||0;p.game.d=old.prof.d||0}
-      d.profiles[p.id]=p;d.current=p.id;
+      d.profiles[p.id]=p;d.current=p.id;this.fresh=true;
     }else{
       /* Sicherung beim Start: so geht bei einem Update nichts verloren */
       try{localStorage.setItem(STORE_KEY+'.backup',JSON.stringify(d))}catch(e){}
@@ -3945,7 +3969,7 @@ const Game={
   variant:'standard',lessonCb:null,events:[],tipsSaid:{},blunderCtx:null,board:null,fwd:[],me:'w',rk:'b',fen0:START_FEN,
   /* Spielarten: Startstellung, Name und ob Rokko Taktik-Tipps gibt */
   VARIANTS:{
-    standard:{name:'Partie gegen Rokko'},family:{name:'Familienpartie'},
+    standard:{name:'Partie gegen Rokko'},family:{name:'Familienpartie'},online:{name:'Online-Partie'},
     pawns:{name:'Bauernschlacht',fen:PAWNS_FEN,plain:true},
     give:{name:'Schlagschach',fen:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1',plain:true},
     hunt:{name:'Königsjagd'},
@@ -3970,7 +3994,7 @@ const Game={
     return '4k3/8/8/8/8/8/8/3QK3 w - - 0 1';
   },
   start(opt){
-    opt=opt||{};Voice.stop();
+    opt=opt||{};Voice.stop();this.net=false;
     this.lessonCb=opt.lessonCb||null;
     const cur=P().game.current;
     if(!opt.fresh&&cur&&cur.moves&&(cur.moves.length||cur.side==='b')&&(!opt.variant||opt.variant===cur.variant)){this.restore(cur)}
@@ -4003,7 +4027,7 @@ const Game={
     this.events=cur.events||[];this.sel=-1;this.pending=null;this.hint=null;this.danger=[];this.tipsSaid={};this.startedAt=cur.started||Date.now();
     this.fwd=Array.isArray(cur.fwd)?cur.fwd.slice():[];this.endSnap=null;
   },
-  persist(){const c=P().game.current||(P().game.current={variant:this.variant,started:this.startedAt||Date.now(),level:P().game.level});c.variant=this.variant;c.side=this.me;c.fen=this.fen0;c.moves=this.played.map(m=>this.uci(m));c.events=this.events;c.fwd=this.fwd.slice(-60);save()},
+  persist(){const c=this.net?P().game.online:P().game.current||(P().game.current={variant:this.variant,started:this.startedAt||Date.now(),level:P().game.level});if(!c)return;c.variant=this.variant;c.side=this.me;c.fen=this.fen0;c.moves=this.played.map(m=>this.uci(m));c.events=this.events;c.fwd=this.fwd.slice(-60);save()},
   uci(m){return sqName(m.from)+sqName(m.to)+(m.promo||'')},
   /* ---------- Zurück und Vor ----------
      Zurückgenommene Züge landen auf einem Stapel. „Vor“ holt sie wieder.
@@ -4026,9 +4050,14 @@ const Game={
   },
   noteMove(m){const u=this.uci(m);if(this.fwd.length&&this.fwd[this.fwd.length-1]===u)this.fwd.pop();else this.fwd=[]},
   /* Wer ist wer, und wie heißt die Figur im Satz (Familienpartie: weiß/schwarz) */
-  whoOf(c){return this.family?(c==='w'?P().name:this.opp()):(c===this.me?'Du':'Ich')},
+  whoOf(c){return this.family?(c==='w'?P().name:this.opp()):this.net?(c===this.me?'Du':this.opp()):(c===this.me?'Du':'Ich')},
+  vsRokko(){return !this.family&&!this.net},
+  helps(){return this.net?Online.helps():true},
+  COLN:{w:{p:'der weiße Bauer',n:'der weiße Springer',b:'der weiße Läufer',r:'der weiße Turm',q:'die weiße Dame',k:'der weiße König'},b:{p:'der schwarze Bauer',n:'der schwarze Springer',b:'der schwarze Läufer',r:'der schwarze Turm',q:'die schwarze Dame',k:'der schwarze König'}},
+  COLA:{w:{p:'den weißen Bauern',n:'den weißen Springer',b:'den weißen Läufer',r:'den weißen Turm',q:'die weiße Dame',k:'den weißen König'},b:{p:'den schwarzen Bauern',n:'den schwarzen Springer',b:'den schwarzen Läufer',r:'den schwarzen Turm',q:'die schwarze Dame',k:'den schwarzen König'}},
   accOf(c,t){
     if(this.family)return (c==='w'?{p:'den weißen Bauern',n:'den weißen Springer',b:'den weißen Läufer',r:'den weißen Turm',q:'die weiße Dame',k:'den weißen König'}:{p:'den schwarzen Bauern',n:'den schwarzen Springer',b:'den schwarzen Läufer',r:'den schwarzen Turm',q:'die schwarze Dame',k:'den schwarzen König'})[t];
+    if(this.net)return c===this.me?ACC_DEIN[t]:this.COLA[c][t];
     return c===this.me?ACC_DEIN[t]:ACC_MEIN[t];
   },
   moveSay(m){
@@ -4049,10 +4078,10 @@ const Game={
     return t;
   },
   shortMove(m){return m.flag==='k'?'O-O':m.flag==='q'?'O-O-O':SQ(m.from)+(m.cap?'×':'–')+SQ(m.to)},
-  opp(){return P().settings.familyName||'Papa'},
+  opp(){return this.net?Online.oppName():(P().settings.familyName||'Papa')},
   /* gegnerische Figur benennen: Rokko sagt „mein“, in der Familienpartie „der schwarze“ */
-  oN(t){return this.family?{p:'der schwarze Bauer',n:'der schwarze Springer',b:'der schwarze Läufer',r:'der schwarze Turm',q:'die schwarze Dame',k:'der schwarze König'}[t]:NOM_MEIN[t]},
-  oA(t){return this.family?{p:'den schwarzen Bauern',n:'den schwarzen Springer',b:'den schwarzen Läufer',r:'den schwarzen Turm',q:'die schwarze Dame',k:'den schwarzen König'}[t]:ACC_MEIN[t]},
+  oN(t){if(this.net)return this.COLN[this.rk][t];return this.family?{p:'der schwarze Bauer',n:'der schwarze Springer',b:'der schwarze Läufer',r:'der schwarze Turm',q:'die schwarze Dame',k:'der schwarze König'}[t]:NOM_MEIN[t]},
+  oA(t){if(this.net)return this.COLA[this.rk][t];return this.family?{p:'den schwarzen Bauern',n:'den schwarzen Springer',b:'den schwarzen Läufer',r:'den schwarzen Turm',q:'die schwarze Dame',k:'den schwarzen König'}[t]:ACC_MEIN[t]},
   familySetup(){
     const cur=P().settings.familyName||'';const names=['Papa','Mama','Oma','Opa','Bruder','Schwester'];
     UI.sheet(`<h2>Familienpartie</h2><p class="muted" style="margin:0">${esc(P().name)} spielt Weiß, du spielst Schwarz. Rokko ist Schiedsrichter und hilft ${esc(P().name)}. Beide sagen ihre Züge an oder tippen sie.</p>
@@ -4066,6 +4095,7 @@ const Game={
   },
   async greet(my){
     const n=P().name;
+    if(this.net)return this.netGreet(my);
     if(this.family){await Peter.say(`Familienpartie! ${n} spielt Weiß, ${this.opp()} spielt Schwarz. Ich bin euer Schiedsrichter und helfe ${n}. ${n}, du fängst an!`,'smile');return this.autoListen(my)}
     if(this.variant==='pawns'){await Peter.say(`Bauernschlacht! Du fängst an, ${n}. Sag mir deinen Zug oder tipp ihn auf dem Handy an.`,'smile')}
     else if(this.variant==='give'){await Peter.say(`Schlagschach! Hier ist alles verdreht: Wer schlagen kann, muss schlagen. Und wer zuerst alle Figuren los ist, gewinnt! Du fängst an, ${n}.`,'smile')}
@@ -4091,7 +4121,8 @@ const Game={
       <div class="bubble"><p class="say" data-live aria-live="polite">${esc(Peter.last||'')}</p><button class="speak" id="earBtn" data-act="ear" aria-label="${Ears.available()?'Zuhören':'Nochmal vorlesen'}">${Ears.available()?ICON.mic:ICON.speaker}</button></div></div>
       <div id="soundSlot"></div>
       <div class="status">${muteBtnHTML()}<span class="turn" id="turnPill"><span class="dot"></span><span id="turnText"></span></span>
-      <span class="chip" title="${this.family?'Familienpartie':'Rokkos Stärke: '+esc(L.name)}">${this.family?ICON.parent:this.variant==='pawns'?pieceSVG('b','p','i')+' Bauernschlacht':this.variant==='give'?ICON.sword+' Schlagschach':this.variant==='hunt'?ICON.crown+' Jagd':(this.me==='b'?pieceSVG('b','k','i'):'')+strengthBars(P().game.level)}</span></div>
+      <span class="chip" title="${this.family?'Familienpartie':this.net?'Online-Partie':'Rokkos Stärke: '+esc(L.name)}">${this.family?ICON.parent:this.net?ICON.globe+' Online':this.variant==='pawns'?pieceSVG('b','p','i')+' Bauernschlacht':this.variant==='give'?ICON.sword+' Schlagschach':this.variant==='hunt'?ICON.crown+' Jagd':(this.me==='b'?pieceSVG('b','k','i'):'')+strengthBars(P().game.level)}</span></div>
+      <div class="netbar" id="netBar" ${this.net?'':'hidden'}></div>
       <div id="gboard"></div>
       <div class="tray" id="trays"></div>
       <div class="card ask" id="ask" hidden><p id="askText"></p><div class="row"><button class="big dangerbtn" data-act="askyes">${ICON.undo} Zurück</button><button class="big ghost" data-act="askno">${ICON.play} Weiter</button></div></div>
@@ -4099,13 +4130,13 @@ const Game={
       <form class="voice-row" id="moveForm" autocomplete="off"><input id="moveInput" type="text" enterkeyhint="send" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Zug sagen oder tippen" aria-label="Dein Zug"><button class="big mic" type="button" data-act="mic" aria-label="Sprechen" ${Ears.available()?'':'hidden'}>${ICON.mic}</button><button class="big go" type="submit">Los</button></form>
       <p class="hint-line" id="heard">Figur antippen, dann das Ziel. Oder deinen Zug sagen.</p>
       <div class="actions">
-        <button class="act" data-act="hint">${ICON.bulb}Tipp</button>
+        ${this.net&&!Online.helps()?'':`<button class="act" data-act="hint">${ICON.bulb}Tipp</button>`}
         <button class="act" data-act="undo" id="undoBtn">${ICON.undo}Zurück</button>
-        <button class="act" data-act="redo" id="redoBtn">${ICON.redo}Vor</button>
+        ${this.net?'':`<button class="act" data-act="redo" id="redoBtn">${ICON.redo}Vor</button>`}
         <button class="act" data-act="check">${ICON.board}Prüfen</button>
         <button class="act" data-act="more">${ICON.dots}Mehr</button>
       </div>
-      ${this.family||this.variant==='hunt'?'':`<details class="card"><summary>Rokkos Stärke</summary>
+      ${this.family||this.net||this.variant==='hunt'?'':`<details class="card"><summary>Rokkos Stärke</summary>
         <div class="level-pick" style="margin-top:10px">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="rung" data-lvl="${n}" aria-pressed="${n===P().game.level}"><b class="rn">${n}</b>${esc(LEVELS[n].name)}</button>`).join('')}</div>
         <p class="small muted" style="margin:10px 0 0">Rokko passt sich an: Nach zwei Siegen spielt er stärker, nach drei Niederlagen gemütlicher.</p>
       </details>`}
@@ -4126,12 +4157,16 @@ const Game={
       if(act==='more')this.moreSheet();
       if(act==='askyes')this.answerAsk(true);
       if(act==='askno')this.answerAsk(false);
+      if(act==='netlink')return this.netShare();
+      if(act==='netinvite')return Online.invite();
+      if(act==='netsay')return this.netPhrases();
+      if(act==='again'&&this.net)return Online.again();
       if(act==='again'){if(this.lessonCb)return;this.reset(this.variant,this.me,this.variant==='hunt'&&!this.pos.pieces('w').some(p=>p.type==='q'));this.state=this.pos.turn===this.me?'human':'peter';$('#endCard').hidden=true;this.refresh();const my=++this.flow;this.greet(my)}
       if(act==='tomap'){UI.go('map')}
       if(act==='review'){const gm=this.endSnap&&this.endSnap.summary||P().games[0];if(gm)Review.open(gm)}
     });
     $('#moveForm',el).addEventListener('submit',e=>{e.preventDefault();audioUnlock();const v=$('#moveInput').value;$('#moveInput').value='';this.handleText(v)});
-    this.refresh();
+    this.refresh();this.netBar();
     if(this.state==='over')this.showEnd(this.lastResult||{});
   },
   unmount(){Ears.stop()},
@@ -4147,7 +4182,7 @@ const Game={
     const kid=this.family?'w':this.me,oc=kid==='w'?'b':'w';
     const capK=[],capO=[];for(const m of this.played){if(m.cap)(m.color===kid?capK:capO).push(m.cap)}
     const ord='qrbnpk',srt=a=>a.sort((x,y)=>ord.indexOf(x)-ord.indexOf(y));
-    const tr=$('#trays');if(tr)tr.innerHTML=(capK.length?`<span>Du hast:</span>${srt(capK).map(c=>pieceSVG(oc,c,'i')).join('')}`:'')+(capO.length?`<span style="margin-left:auto">${this.family?esc(this.opp()):'Rokko'} hat:</span>${srt(capO).map(c=>pieceSVG(kid,c,'i')).join('')}`:'');
+    const tr=$('#trays');if(tr)tr.innerHTML=(capK.length?`<span>Du hast:</span>${srt(capK).map(c=>pieceSVG(oc,c,'i')).join('')}`:'')+(capO.length?`<span style="margin-left:auto">${this.vsRokko()?'Rokko':esc(this.opp())} hat:</span>${srt(capO).map(c=>pieceSVG(kid,c,'i')).join('')}`:'');
     const rb=$('#redoBtn');if(rb)rb.classList.toggle('off',!this.fwd.length);
     const ub=$('#undoBtn');if(ub)ub.classList.toggle('off',!this.played.length);
     const pill=$('#turnPill'),tt=$('#turnText');if(!pill)return;
@@ -4155,16 +4190,17 @@ const Game={
     if(this.state==='peter'){pill.classList.add('peter-turn');tt.textContent='Rokko überlegt …'}
     else if(this.state==='over')tt.textContent='Spiel vorbei';
     else if(this.state==='ask')tt.textContent='Zurücknehmen?';
+    else if(this.net&&this.state==='remote'){pill.classList.add('peter-turn');tt.innerHTML=`${esc(this.opp())} ist dran`+(Net.online()?'':' · nicht verbunden')}
     else if(this.sel>=0&&pos.board[this.sel]){tt.innerHTML=`${pieceSVG(pos.board[this.sel][0],pos.board[this.sel][1],'i')} ${NAME[pos.board[this.sel][1]]}: wohin?`}
     else if(this.family&&pos.turn==='b'){pill.classList.add('peter-turn');tt.innerHTML=`${esc(this.opp())} ist dran`}
     else if(this.family&&pos.turn==='w')tt.textContent=P().name+' ist dran!';
     else if(this.variant==='give'&&this.legal().some(m=>m.cap)){tt.innerHTML=`${ICON.sword} Du musst schlagen!`}
-    else if(last&&last.color===this.rk){pill.classList.add('peter-turn');tt.innerHTML=`Rokko: ${pieceSVG(this.rk,last.piece,'i')} ${last.flag==='k'?'kurze Rochade':last.flag==='q'?'lange Rochade':SQ(last.from)+' → '+SQ(last.to)}`}
+    else if(last&&last.color===this.rk){pill.classList.add('peter-turn');tt.innerHTML=`${this.vsRokko()?'Rokko':esc(this.opp())}: ${pieceSVG(this.rk,last.piece,'i')} ${last.flag==='k'?'kurze Rochade':last.flag==='q'?'lange Rochade':SQ(last.from)+' → '+SQ(last.to)}`}
     else tt.textContent='Du bist dran!';
   },
   /* ---------- Zuhören ---------- */
   autoListen(my){
-    if(my!==this.flow||this.state==='peter'||this.state==='over')return;
+    if(my!==this.flow||this.state==='peter'||this.state==='over'||this.state==='remote')return;
     if(!(P().settings.handsFree&&Ears.available()&&UI.current==='play'))return;
     /* erst zuhören, wenn Rokko wirklich fertig ist – sonst schneidet das Mikrofon ihm das Wort ab */
     Voice.idle().then(()=>setTimeout(()=>{if(my===this.flow&&this.state!=='peter'&&this.state!=='over'&&UI.current==='play'&&!Voice.busy())this.listenNow()},250));
@@ -4178,7 +4214,7 @@ const Game={
   },
   /* ---------- Eingaben ---------- */
   onSquare(i){
-    if(this.state!=='human'){if(this.state==='peter')Peter.say(pick(['Moment, ich überlege noch!','Pssst, ich denke gerade nach!']),'think');return}
+    if(this.state!=='human'){if(this.state==='remote')Peter.say(`${this.opp()} ist dran. Warte kurz.`,'smile');if(this.state==='peter')Peter.say(pick(['Moment, ich überlege noch!','Pssst, ich denke gerade nach!']),'think');return}
     const pos=this.pos,p=pos.board[i],me=pos.turn;
     const kidSide=this.family?me==='w':true;
     if(this.pending&&this.pending.type==='which'&&this.pending.froms.includes(i)){const c=this.legal().filter(m=>m.from===i&&m.to===this.pending.to);if(c.length)return this.humanMove(pickPromo(c))}
@@ -4200,7 +4236,7 @@ const Game={
       if(!this.legal().some(m=>m.from===i)){this.board.flash(i,'shake');Peter.say(this.variant==='give'&&this.legal().some(m=>m.cap)?'Diese Figur kann gerade nichts schlagen. Du musst schlagen!':`${cap1(kidSide?NOM_DEIN[p[1]]:this.oN(p[1]))} kann gerade nicht ziehen.`,'think')}
       return;
     }
-    if(p&&p[0]!==me){this.board.flash(i,'shake');sfx.nope();Peter.say(this.family?(me==='w'?`Du spielst Weiß, ${P().name}!`:`${this.opp()} spielt Schwarz und ist dran.`):pick(['Halt, das ist meine Figur!','Hihi, die gehört mir!']),'wow');return}
+    if(p&&p[0]!==me){this.board.flash(i,'shake');sfx.nope();Peter.say(this.family?(me==='w'?`Du spielst Weiß, ${P().name}!`:`${this.opp()} spielt Schwarz und ist dran.`):this.net?`Das ist eine Figur von ${this.opp()}.`:pick(['Halt, das ist meine Figur!','Hihi, die gehört mir!']),'wow');return}
     this.sel=-1;this.pending=null;this.refresh();
   },
   illegal(piece){Skills.record('move_'+piece,false,.35);this.events.push({ply:this.played.length,kind:'illegal',piece,text:`Versuchter Zug, den ${ART[piece]==='die'?'die':'der'} ${NAME[piece]} nicht kann`});this.persist()},
@@ -4214,6 +4250,7 @@ const Game={
     if(r.cmd==='new')return this.newGame();
     if(r.cmd==='check')return this.checkBoard();
     if(this.state==='over'){if(r.cmd==='yes')return this.newGame();if(r.cmd==='undo')return this.undo();return Peter.say('Sag „Neues Spiel“, dann spielen wir nochmal!')}
+    if(this.state==='remote')return Peter.say(`${this.opp()} ist dran.`,'smile');
     if(this.state!=='human')return Peter.say('Moment, ich überlege noch!','think');
     if(r.cmd==='hint')return this.giveHint();
     if(r.cmd==='undo')return this.undo();
@@ -4275,7 +4312,7 @@ const Game={
       if(!still.length&&!(m.cap&&VAL[m.cap]>=before.threat[0].value)){add('saved','Bedrohte Figur gerettet');Skills.record('protect',true,.8)}
     }
     const newHang=after.find(h=>!(h.sq===m.to&&fair)&&!(m.cap&&VAL[m.cap]>=h.value));
-    if(mateThreat){warn={text:this.family?`Uh-oh! Jetzt könnte ${this.opp()} dich mit einem einzigen Zug schachmatt setzen!`:'Uh-oh! Jetzt könnte ich dich mit einem einzigen Zug schachmatt setzen!',sqs:[mateThreat.from,mateThreat.to],fact:`Rokko könnte jetzt mit ${moveFacts(mateThreat,'peter')} mattsetzen.`};add('blunderMate','Matt in 1 für Rokko zugelassen');Skills.record('protect',false,1)}
+    if(mateThreat){warn={text:!this.vsRokko()?`Uh-oh! Jetzt könnte ${this.opp()} dich mit einem einzigen Zug schachmatt setzen!`:'Uh-oh! Jetzt könnte ich dich mit einem einzigen Zug schachmatt setzen!',sqs:[mateThreat.from,mateThreat.to],fact:`Rokko könnte jetzt mit ${moveFacts(mateThreat,'peter')} mattsetzen.`};add('blunderMate','Matt in 1 für Rokko zugelassen');Skills.record('protect',false,1)}
     else if(newHang){warn={text:`Oh oh! ${cap1(NOM_DEIN[newHang.piece])} auf ${SQ(newHang.sq)} ist in Gefahr. ${cap1(this.oN(newHang.byPiece))} auf ${SQ(newHang.by)} könnte ${PRON_A[newHang.piece]} schlagen.`,sqs:[newHang.sq,newHang.by],fact:`${NAME[newHang.piece]} auf ${SQ(newHang.sq)} kann von Rokkos ${NAME[newHang.byPiece]} auf ${SQ(newHang.by)} geschlagen werden.`};
       add('blunder',`${NAME[newHang.piece]} auf ${SQ(newHang.sq)} ungeschützt gelassen`,{piece:newHang.piece});Skills.record('protect',false,1)}
     if(before.check)Skills.record('escape',true,.5);
@@ -4288,12 +4325,13 @@ const Game={
     if(m.promo){P().stats.promos++;add('promo','Bauer umgewandelt');comment=comment||'Juhu, dein Bauer ist jetzt eine Dame!';star=true}
     /* Gabel */
     if(!pos.isMate()&&!pos.attacked(m.to,O)){const tg=Trainer.forkTargets(pos,m.to);if(tg.length>=2){add('fork','Gabel gespielt');Skills.record('fork',true,1);P().stats.forks++;comment=`Gabel! Du greifst zwei Figuren gleichzeitig an!`;mood='wow';star=true}}
-    if(pos.inCheck()&&!pos.isMate()&&!comment){comment=this.family?'Schach! Stark!':pick(['Uiii, Schach! Mein König muss weglaufen.','Schach! Stark!']);mood='wow'}
-    if(m.cap){P().stats.captures++;if(!comment&&VAL[m.cap]>=300){comment=this.family?`Stark, ${this.oA(m.cap)} geschlagen!`:`Oh nein, ${NOM_MEIN[m.cap]}! Gut geschlagen.`;mood='wow'}}
+    if(pos.inCheck()&&!pos.isMate()&&!comment){comment=!this.vsRokko()?'Schach! Stark!':pick(['Uiii, Schach! Mein König muss weglaufen.','Schach! Stark!']);mood='wow'}
+    if(m.cap){P().stats.captures++;if(!comment&&VAL[m.cap]>=300){comment=!this.vsRokko()?`Stark, ${this.oA(m.cap)} geschlagen!`:`Oh nein, ${NOM_MEIN[m.cap]}! Gut geschlagen.`;mood='wow'}}
     return{warn,comment,mood,star,ev};
   },
   async humanMove(m,src){
     if(this.family&&this.pos.turn==='b')return this.oppMove(m);
+    if(this.net&&this.pos.turn!==this.me)return;
     const my=++this.flow;Ears.stop();Voice.stop();
     const pos=this.pos;
     const pl=this.plain();
@@ -4305,19 +4343,20 @@ const Game={
     this.sel=-1;this.pending=null;this.hint=null;this.danger=[];
     this.refresh();this.board.animate(m.from,m.to);
     m.cap?sfx.capture():sfx.move();
-    const a=this.analyzeKid(m,before);
+    const a=this.net&&!this.helps()?{ev:[],warn:null,comment:null,mood:'smile',star:false}:this.analyzeKid(m,before);
     this.events.push(...a.ev);this.persist();
     if(a.star){P().stars++;Rewards.addXP(5);sfx.star();Peter.bounce();save()}
-    const st=this.status();if(st)return this.endGame(st,m,echo);
-    if(a.warn&&(this.family||P().game.level<=5)){
+    const st=this.status();if(st){if(this.net)this.netSend(m);return this.endGame(st,m,echo)}
+    if(a.warn&&(this.family||this.net||P().game.level<=5)){
       this.state='ask';this.danger=a.warn.sqs;this.refresh();sfx.bad();this.blunderCtx={flow:my,warn:a.warn};
       $('#askText').textContent='Willst du den Zug zurücknehmen?';$('#ask').hidden=false;
       Peter.show('…','worry');
-      const ai=await Brain.ask(`Das Kind hat gerade gezogen: ${moveFacts(m,'kid')}.\nGefahr: ${a.warn.fact}\nWarne es lieb und aufgeregt in ein bis zwei kurzen Sätzen, nenne die Felder, und frag dann, ob es den Zug lieber zurücknehmen möchte. Es soll Ja oder Nein sagen.`,4500,t=>/\?/.test(t));
+      const ai=this.net?null:await Brain.ask(`Das Kind hat gerade gezogen: ${moveFacts(m,'kid')}.\nGefahr: ${a.warn.fact}\nWarne es lieb und aufgeregt in ein bis zwei kurzen Sätzen, nenne die Felder, und frag dann, ob es den Zug lieber zurücknehmen möchte. Es soll Ja oder Nein sagen.`,4500,t=>/\?/.test(t));
       if(my!==this.flow||this.state!=='ask')return;
       await Peter.say((echo?echo+' ':'')+(ai?ai+' Roter Knopf heißt zurück.':a.warn.text+' Willst du den Zug lieber zurücknehmen? Dann tipp auf den roten Knopf.'),'worry');
       return this.autoListen(my);
     }
+    if(this.net)return this.netAfterMine(m,a,echo,my);
     if(this.family){await Peter.say((echo?echo+' ':'')+((a.warn?a.warn.text:a.comment)||'')+` ${this.opp()}, du bist dran.`,a.warn?'worry':a.mood||'smile');return this.autoListen(my)}
     await this.peterTurn(my,{m,echo,kidFb:a.warn?a.warn.text:a.comment,mood:a.warn?'worry':a.mood,kidFact:a.warn?a.warn.fact:a.comment});
   },
@@ -4360,6 +4399,7 @@ const Game={
       return this.autoListen(this.flow);
     }
     if(!ctx||ctx.flow!==this.flow)return;
+    if(this.net)return this.netAfterMine(this.played[this.played.length-1],{comment:'Gut, du bist mutig!',mood:'smile'},'',this.flow);
     if(this.family){this.state='human';this.refresh();await Peter.say(`Gut, du bist mutig! ${this.opp()}, du bist dran.`,'smile');return this.autoListen(this.flow)}
     await this.peterTurn(this.flow,{kidFb:'Gut, du bist mutig!',kidFact:'Das Kind wollte den Zug trotz Warnung nicht zurücknehmen. Sag kurz: gut, mutig.'});
   },
@@ -4440,12 +4480,17 @@ const Game={
     const p=P(),g=p.game,kidC=this.family?'w':this.me,res=st.winner?(st.winner===kidC?'w':'b'):'d';
     const v=this.variant;
     /* falls der letzte Zug falsch verstanden war: alles merken, damit „Zurück“ die Partie wieder öffnen kann */
-    this.endSnap=this.lessonCb?null:{g:{level:g.level,winsAt:g.winsAt,lossStreak:g.lossStreak,w:g.w,l:g.l,d:g.d},stars:p.stars,cur:JSON.parse(JSON.stringify(p.game.current||{}))};
+    this.endSnap=this.lessonCb?null:this.net?{g:{},stars:p.stars,cur:{},net:true}:{g:{level:g.level,winsAt:g.winsAt,lossStreak:g.lossStreak,w:g.w,l:g.l,d:g.d},stars:p.stars,cur:JSON.parse(JSON.stringify(p.game.current||{}))};
     let msg,title;let lvlUp=false,lvlDown=false;
     if(this.family){
       const o=this.opp();
       if(res==='w'){title='Gewonnen!';msg=(pre?pre+' ':'')+`Schachmatt! ${p.name} gewinnt gegen ${o}! Wahnsinn!`;sfx.win();UI.confetti(110);Peter.bounce();Rewards.addXP(60);p.stars+=3}
       else if(res==='b'){title=o+' gewinnt';msg=(pre?pre+' ':'')+`Schachmatt. Diesmal gewinnt ${o}. ${p.name}, du hast toll gekämpft!`;Rewards.addXP(25)}
+      else{title='Unentschieden';msg=(pre?pre+' ':'')+(st.t==='stalemate'?'Patt! Unentschieden.':'Unentschieden! '+st.why);Rewards.addXP(35)}
+    }else if(this.net){
+      const o=this.opp();
+      if(res==='w'){title='Gewonnen!';msg=(pre?pre+' ':'')+(st.t==='resign'?`${o} hat aufgegeben. Du gewinnst, ${p.name}!`:`Schachmatt! ${p.name} gewinnt gegen ${o}!`);sfx.win();UI.confetti(110);Peter.bounce();Rewards.addXP(60);p.stars+=3;p.stats.onlineWins=(p.stats.onlineWins||0)+1}
+      else if(res==='b'){title=o+' gewinnt';msg=(pre?pre+' ':'')+(st.t==='resign'?'Du hast aufgegeben.':`Schachmatt. Diesmal gewinnt ${o}.`)+' Gut gekämpft!';Rewards.addXP(25)}
       else{title='Unentschieden';msg=(pre?pre+' ':'')+(st.t==='stalemate'?'Patt! Unentschieden.':'Unentschieden! '+st.why);Rewards.addXP(35)}
     }else if(res==='w'){
       if(v==='standard'){g.w++;g.lossStreak=0;g.winsAt++;if(g.winsAt>=2&&g.level<10){g.level++;g.winsAt=0;lvlUp=true}p.stats.mates++;if(this.me==='b')p.stats.blackWins=(p.stats.blackWins||0)+1}
@@ -4466,9 +4511,9 @@ const Game={
       title='Unentschieden';msg=(pre?pre+' ':'')+(st.t==='stalemate'?(v==='hunt'?'Oh, Patt! Mein König kann nicht mehr ziehen, steht aber nicht im Schach. Das war die Patt-Falle. Probier es gleich nochmal!':'Patt! Wer dran ist, kann nicht mehr ziehen, steht aber nicht im Schach. Unentschieden!'):'Unentschieden! '+st.why);Rewards.addXP(35);
     }
     /* Partie für die Eltern-Auswertung speichern */
-    const summary={date:new Date().toISOString(),variant:this.variant,side:this.me,fen:this.fen0!==START_FEN?this.fen0:undefined,opp:this.family?this.opp():undefined,level:p.game.level,result:res,moves:this.played.map(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')),events:this.events.slice(0,60),plies:this.played.length,minutes:Math.max(1,Math.round((Date.now()-(this.startedAt||Date.now()))/60000))};
+    const summary={date:new Date().toISOString(),variant:this.variant,side:this.me,fen:this.fen0!==START_FEN?this.fen0:undefined,opp:this.family||this.net?this.opp():undefined,level:p.game.level,result:res,moves:this.played.map(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')),events:this.events.slice(0,60),plies:this.played.length,minutes:Math.max(1,Math.round((Date.now()-(this.startedAt||Date.now()))/60000))};
     p.games.unshift(summary);if(p.games.length>40)p.games.pop();if(this.endSnap)this.endSnap.summary=summary;
-    p.game.current=null;Rewards.progress('game');Skills.snapshot();save();
+    if(this.net){if(p.game.online)p.game.online.over=st.winner||'d'}else p.game.current=null;Rewards.progress('game');Skills.snapshot();save();
     this.lastResult={res,title,msg};
     this.refresh();this.showEnd(this.lastResult);
     Rewards.checkBadges();
@@ -4485,6 +4530,7 @@ const Game={
   /* ---------- Werkzeuge ---------- */
   async giveHint(){
     if(this.state!=='human')return;
+    if(this.net&&!this.helps()){const w=Online.helpWho();return Peter.say(w?`In dieser Partie hilft Rokko nur ${w}.`:'In dieser Partie spielt ihr beide ohne Rokkos Hilfe.','smile')}
     if(this.family&&this.pos.turn==='b')return Peter.say(`Tipps gibt es nur für ${P().name}. ${this.opp()}, du schaffst das allein!`,'smile');
     const m=this.variant==='pawns'?choosePawnMove(this.pos,4):this.variant==='give'?chooseGiveMove(this.pos,9):bestMove(this.pos,{depth:this.variant==='hunt'?3:2,q:4,noise:0});if(!m)return;
     this.hint=m;this.sel=m.from;this.pending={type:'from',from:m.from};this.refresh();
@@ -4506,6 +4552,7 @@ const Game={
   },
   async undo(){
     if(this.state==='ask')return this.answerAsk(true);
+    if(this.net)return this.netUndo();
     if(this.state==='peter')return Peter.say('Moment, ich überlege noch!','think');
     if(this.state==='over'){if(!this.reopen())return Peter.say('Das Spiel ist schon vorbei. Sag „Neues Spiel“, dann spielen wir nochmal!')}
     if(this.state!=='human'||!this.played.length)return Peter.say('Da gibt es noch nichts zurückzunehmen.');
@@ -4521,6 +4568,7 @@ const Game={
     this.autoListen(this.flow);
   },
   async redo(){
+    if(this.net)return Peter.say('In der Online-Partie gibt es kein Vor.');
     if(this.state==='ask'||this.state==='peter')return Peter.say('Moment, gleich!','think');
     if(this.state==='over')return;
     if(!this.fwd.length)return Peter.say('Da gibt es nichts zum Vorspulen. Vor geht nur, wenn du vorher zurück getippt hast.');
@@ -4553,7 +4601,7 @@ const Game={
       <div class="cbstep"><button class="big ghost" data-prev aria-label="Einen Zug zurück">${ICON.back}</button><button class="big ghost" data-say aria-label="Vorlesen">${ICON.speaker}</button><button class="big ghost" data-next aria-label="Einen Zug vor">${ICON.next}</button></div>
       <p class="cbply" id="cbPly"></p>
       ${mv.length?`<div class="plylist">${chips}</div>`:''}
-      <div class="row"><button class="big go" data-ok>${ICON.check} Stimmt so</button><button class="big sunbtn" data-here hidden>${ICON.undo} Ab hier weiter</button></div>`,(sh,close)=>{
+      <div class="row"><button class="big go" data-ok>${ICON.check} Stimmt so</button>${this.net?'':`<button class="big sunbtn" data-here hidden>${ICON.undo} Ab hier weiter</button>`}</div>`,(sh,close)=>{
       const b=new Board($('#cbBoard',sh),{names:'edge',flip:this.me==='b'});
       const label=()=>ply?`Zug ${Math.ceil(ply/2)} · ${this.whoOf(mv[ply-1].color)}: ${this.moveSay(mv[ply-1])}`:'Anfangsstellung';
       const show=speak=>{
@@ -4561,7 +4609,7 @@ const Game={
         $('#cbPly',sh).textContent=label()+(ply===last?' · jetzt':'');
         $$('.plychip',sh).forEach(c=>c.setAttribute('aria-pressed',String(+c.dataset.ply===ply)));
         const cur=$(`.plychip[data-ply="${ply}"]`,sh);if(cur&&cur.scrollIntoView)try{cur.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}
-        $('[data-ok]',sh).hidden=ply!==last;$('[data-here]',sh).hidden=ply===last;
+        $('[data-ok]',sh).hidden=ply!==last&&!this.net;const hb=$('[data-here]',sh);if(hb)hb.hidden=ply===last;
         if(speak)Voice.speak(ply?`Zug ${Math.ceil(ply/2)}. ${this.fwdText(m)}`:'So fängt die Partie an.',{interrupt:true});
       };
       show(false);
@@ -4579,13 +4627,14 @@ const Game={
     });
     if(opt.resume){
       const lm=this.played[this.played.length-1];
-      const turn=this.family?(this.pos.turn==='w'?`${P().name} ist dran.`:`${this.opp()} ist dran.`):(this.pos.turn===this.me?'Du bist dran.':'Ich bin dran.');
+      const turn=this.family?(this.pos.turn==='w'?`${P().name} ist dran.`:`${this.opp()} ist dran.`):this.net?(this.pos.turn===this.me?'Du bist dran.':`${this.opp()} ist dran.`):(this.pos.turn===this.me?'Du bist dran.':'Ich bin dran.');
       Peter.say(`Da sind wir wieder! Schau mal, ob dein Brett genauso aussieht wie auf dem Handy. ${lm?'Der letzte Zug war: '+this.fwdText(lm):''} ${turn}`,'smile');
     }else Peter.say(pick(['Vergleich mal das Handy mit deinem Brett.','Schau mal: Sieht dein Brett genauso aus?']),'think');
   },
   afterCheck(opt){
     const my=++this.flow;
     if(this.state==='over')return;
+    if(this.net){if(this.state==='human')this.autoListen(my);return}
     if(!this.family&&this.pos.turn===this.rk)return Peter.say('Super, dann überlege ich jetzt meinen Zug.','smile').then(()=>{if(my===this.flow)this.peterTurn(my,{})});
     if(opt.resume){const who=this.family?(this.pos.turn==='w'?P().name+', du bist':this.opp()+', du bist'):'Du bist';return Peter.say(`Prima! Weiter geht's. ${who} dran.`,'smile',{interrupt:true}).then(()=>this.autoListen(my))}
     this.autoListen(my);
@@ -4618,6 +4667,7 @@ const Game={
         <button class="act ${s.names?'on':''}" data-m="names">${ICON.grid}Feldnamen</button>
         <button class="act" data-m="sound">${ICON.wrench}Ton reparieren</button>
         <button class="act" data-m="new">${ICON.plus}Neues Spiel</button>
+        ${this.net?`<button class="act" data-m="say">${ICON.chat}Etwas sagen</button><button class="act" data-m="link">${ICON.share}Zug als Link</button><button class="act" data-m="paste">${ICON.link}Link einfügen</button><button class="act" data-m="resign">${ICON.flag}Aufgeben</button>`:''}
       </div>`,(sh,close)=>{
       sh.onclick=e=>{
         audioUnlock();
@@ -4626,11 +4676,17 @@ const Game={
         if(m==='hands'){s.handsFree=!s.handsFree;save();b.classList.toggle('on',s.handsFree);UI.toast(ICON.ear,s.handsFree?'Rokko hört nach jedem Zug zu.':'Zuhören nur auf Knopfdruck.');if(s.handsFree){close();this.autoListen(this.flow)}else Ears.stop()}
         if(m==='names'){s.names=!s.names;save();b.classList.toggle('on',s.names);this.board&&this.board.setNames(s.names?true:'edge')}
         if(m==='sound'){close();repairAudio()}
+        if(m==='say'){close();return this.netPhrases()}
+        if(m==='link'){close();return this.netShare()}
+        if(m==='paste'){close();return Online.pasteSheet()}
+        if(m==='resign'){close();return this.netResign()}
+        if(m==='new'&&this.net){close();if(this.state==='over')return Online.again();return UI.confirm('Neue Partie?',`Dann gibst du die Partie gegen ${this.opp()} auf.`,'Ja, neu','Weiterspielen',{yesIcon:'plus',noIcon:'play'}).then(y=>{if(y){Online.resign();this.endGame({t:'resign',winner:this.rk},null,'');setTimeout(()=>Online.again(),1500)}})}
         if(m==='new'){close();if(!this.played.length||this.state==='over')return this.newGame();UI.confirm('Neues Spiel?','Die jetzige Partie wird beendet.','Ja, neu','Weiterspielen',{yesIcon:'plus',noIcon:'play'}).then(y=>{if(y)this.newGame()})}
       };
     });
   },
   newGame(){
+    if(this.net)return this.state==='over'?Online.again():this.moreSheet();
     if(this.lessonCb)return Peter.say('Spiel diese Partie zu Ende, dann geht es auf der Karte weiter.');
     this.flow++;Voice.stop();
     if(this.played.length&&this.state!=='over'){const p=P();p.games.unshift({date:new Date().toISOString(),variant:this.variant,side:this.me,fen:this.fen0!==START_FEN?this.fen0:undefined,level:p.game.level,result:'x',moves:this.played.map(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')),events:this.events.slice(0,60),plies:this.played.length,minutes:Math.max(1,Math.round((Date.now()-(this.startedAt||Date.now()))/60000))});if(p.games.length>40)p.games.pop()}
@@ -4644,7 +4700,532 @@ const Game={
     const g=P().game;if(n===g.level)return;g.level=n;g.winsAt=0;g.lossStreak=0;save();
     $$('.rung').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.lvl===n)));
     Peter.say(`Alles klar, ich spiele jetzt ${LEVELS[n].say}.`,'smile',{interrupt:true});
+  },
+  /* ===================== Online-Partie ===================== */
+  startNet(opt){
+    opt=opt||{};Voice.stop();Ears.stop();
+    const cur=P().game.online;if(!cur)return;
+    this.lessonCb=null;this.net=true;this.restore(cur);this.family=false;this.netGid=cur.net.gid;
+    this.lastResult=null;this.endSnap=null;this._tbWait=null;this._wasOnline=Net.online();
+    this.state=cur.over?'over':this.pos.turn===this.me?'human':'remote';
+    if(cur.over){const w=cur.over;this.lastResult={title:w==='d'?'Unentschieden':w===this.me?'Gewonnen!':this.opp()+' gewinnt'}}
+    UI.go('play');
+    Online.connect();
+    const my=++this.flow;
+    if(cur.over)return;
+    if(opt.resumed)return this.resumeTalk(my);
+    if(!this.played.length)setTimeout(()=>{if(my===this.flow)this.greet(my)},250);
+    else{
+      const lm=this.played[this.played.length-1];
+      Peter.say(`Weiter geht's gegen ${this.opp()}! ${lm&&lm.color===this.rk?this.opp()+' hat zuletzt gezogen: '+this.moveSay(lm)+'. ':''}${this.state==='human'?'Du bist dran.':this.opp()+' ist dran.'}`,'smile').then(()=>this.autoListen(my));
+    }
+  },
+  async netGreet(my){
+    const o=this.opp(),hw=Online.helpWho(),n=P().name;
+    let t=`Online-Partie gegen ${o}! Du spielst ${this.me==='w'?'Weiß':'Schwarz'}.`;
+    t+=hw===n?' Ich helfe dir.':hw?` Ich helfe ${o}. Du spielst ganz allein.`:' Heute spielt ihr beide ohne meine Hilfe.';
+    if(!Net.online())t+=Online.role()==='host'?` Sobald ${o} den Link öffnet, seid ihr verbunden.`:' Ich verbinde euch gerade.';
+    t+=this.pos.turn===this.me?' Du fängst an!':` ${o} fängt an.`;
+    await Peter.say(t,'smile');
+    this.autoListen(my);
+  },
+  netSend(m){Online.sendMove(this.uci(m),this.played.length-1)},
+  async netAfterMine(m,a,echo,my){
+    this.netSend(m);
+    this.state='remote';this.refresh();this.netBar();
+    const o=this.opp();
+    const txt=[echo,this.helps()?(a&&a.comment)||'':'',`Jetzt ist ${o} dran.`].filter(Boolean).join(' ');
+    if(!Net.online()){this.netBar();return Peter.say(`${txt} Ihr seid gerade nicht verbunden. Du kannst ${o} deinen Zug als Link schicken.`,'think')}
+    await Peter.say(txt,(a&&a.mood)||'smile');
+  },
+  /* Zug vom Gegner kommt an */
+  netMove(u,via){
+    const s=P().game.online;if(!s||s.over)return;
+    if(this.net&&this.pos&&this.netGid===s.net.gid){
+      if(this.state==='over')return;
+      if(this.pos.turn!==this.rk){Online.onOpen();return}
+      const m=this.legal().find(x=>this.uci(x)===u);if(!m){Online.onOpen();return}
+      if(this.state==='ask'){$('#ask')&&($('#ask').hidden=true);this.blunderCtx=null}
+      return this.remoteMove(m);
+    }
+    /* Online-Partie läuft gerade nicht auf dem Bildschirm: Zug merken und kurz Bescheid sagen */
+    if(!NetGame.check(s.moves.concat([u])))return;
+    s.moves.push(u);save();
+    UI.toast(ICON.globe,`${Online.oppName(s)} hat gezogen. Du bist dran!`);
+  },
+  async remoteMove(m,quiet){
+    const my=++this.flow;Ears.stop();if(!quiet)Voice.stop();
+    const pos=this.pos;this.noteMove(m);
+    m.color=pos.turn;pos.make(m);this.played.push(m);this.keys.push(pos.key());
+    this.sel=-1;this.pending=null;this.hint=null;this.danger=[];
+    const check=pos.inCheck(),st=this.status(),help=this.helps();let warn=null,look=false;
+    if(!st&&help){const h=threatsAgainst(pos,this.me).find(h=>h.value>=300);if(h)warn=h;else{const f=Trainer.freeCaptures(pos).filter(x=>VAL[x.cap]>=300);if(f.length)look=true}}
+    if(warn)this.danger=[warn.sq,warn.by];
+    this.state='human';
+    this.refresh();if(this.board&&document.body.contains(this.board.el))this.board.animate(m.from,m.to);this.persist();this.netBar();
+    if(quiet)return;
+    m.cap?sfx.capture():sfx.move();if(check)sfx.check();haptic('light');
+    const o=this.opp(),n=P().name,desc=`${o}: ${this.moveSay(m)}.`;
+    if(st)return this.endGame(st,m,desc);
+    const parts=[desc];
+    if(check)parts.push(help?`Schach, ${n}! Rette deinen König!`:'Schach!');
+    else if(warn)parts.push(`Pass auf, ${n}! ${cap1(this.oN(warn.byPiece))} greift ${ACC_DEIN[warn.piece]} auf ${SQ(warn.sq)} an.`);
+    else if(look)parts.push(`${n}, schau mal ganz genau hin. Kannst du etwas schlagen?`);
+    else parts.push(help?`${n}, du bist dran.`:'Du bist dran.');
+    if(!this.tipsSaid.netboard){this.tipsSaid.netboard=1;parts.push('Mach den Zug auch auf deinem Brett.')}
+    await Peter.say(parts.join(' '),check||warn?'worry':look?'think':'smile');
+    this.autoListen(my);
+  },
+  /* mehrere Züge auf einmal (Link geöffnet oder nach einer Unterbrechung) */
+  netCatchUp(list,via,over){
+    const s=P().game.online;if(!s)return;
+    const shown=this.net&&this.pos&&this.netGid===s.net.gid;
+    if(!shown){
+      s.moves=s.moves.concat(list);if(over)s.over=over;save();
+      if(list.length)UI.toast(ICON.globe,`${Online.oppName(s)} hat gezogen.`);return;
+    }
+    for(let i=0;i<list.length;i++){
+      const m=this.legal().find(x=>this.uci(x)===list[i]);if(!m)break;
+      if(i<list.length-1||m&&this.pos.turn!==this.rk){m.color=this.pos.turn;this.pos.make(m);this.played.push(m);this.keys.push(this.pos.key());continue}
+      return this.remoteMove(m);
+    }
+    this.state=this.pos.turn===this.me?'human':'remote';this.persist();this.refresh();this.netBar();
+  },
+  /* Stände passten nicht zusammen: Stand des Gastgebers übernehmen und das Brett prüfen lassen */
+  netReplace(list){
+    const s=P().game.online;if(!s)return;s.moves=list.slice();save();
+    if(!(this.net&&this.netGid===s.net.gid))return;
+    this.restore(s);this.state=this.pos.turn===this.me?'human':'remote';this.refresh();this.netBar();
+    Peter.say(`Ich habe die Partie mit ${this.opp()} abgeglichen.`,'think').then(()=>this.checkBoard({}));
+  },
+  netReload(kind){
+    const s=P().game.online;if(!s)return;
+    if(UI.current==='play'&&this.net||UI.current==='home'||UI.current==='playhub')this.startNet({});
+    else UI.toast(ICON.globe,`Neue Partie gegen ${Online.oppName(s)}!`);
+  },
+  netNames(){this.refresh();this.netBar()},
+  netNote(t){if(UI.current==='play'&&this.net)Peter.say(t,'smile');else UI.toast(ICON.globe,t)},
+  netSay(t){const o=this.opp();sfx.star();if(UI.current==='play'&&this.net)Peter.say(`${o} sagt: ${t}`,'smile');else UI.toast(ICON.chat,`${o}: ${t}`)},
+  netStatus(st){
+    this.netBar();this.refresh();
+    if(!this.net||UI.current!=='play')return;
+    clearTimeout(this._lostT);
+    if(st==='online'&&!this._wasOnline){this._wasOnline=true;sfx.star();Peter.say(`${this.opp()} ist da! Ihr seid verbunden.`,'wow').then(()=>this.autoListen(this.flow))}
+    else if(st!=='online'&&this._wasOnline){this._lostT=setTimeout(()=>{if(!Net.online()&&this.net&&this.state!=='over'){this._wasOnline=false;Peter.say(`Die Verbindung zu ${this.opp()} ist weg. Ich versuche es weiter.`,'worry')}},8000)}
+  },
+  netBar(){
+    const el=$('#netBar');if(!el)return;el.hidden=!this.net;if(!this.net)return;
+    const s=P().game.online;if(!s)return;
+    const o=esc(this.opp()),st=Net.status,role=s.net.role,hw=Online.helpWho(s);
+    const txt=st==='online'?`Verbunden mit ${o}`:st==='waiting'?(role==='host'?`Warte auf ${o} …`:`${o} ist gerade nicht da`):st==='connecting'?'Verbinde …':'Nicht verbunden';
+    const myLast=this.played.length&&this.played[this.played.length-1].color===this.me&&this.state==='remote';
+    const btns=[];
+    if(st!=='online'&&role==='host'&&!this.played.length)btns.push(`<button class="netb" data-act="netinvite">${ICON.share}Einladung nochmal</button>`);
+    if(st!=='online'&&myLast)btns.push(`<button class="netb hot" data-act="netlink">${ICON.share}Zug als Link</button>`);
+    if(st==='online')btns.push(`<button class="netb" data-act="netsay">${ICON.chat}Etwas sagen</button>`);
+    el.innerHTML=`<span class="netdot ${st}" aria-hidden="true"></span><span class="nettxt"><b>${txt}</b><span>${hw?'Rokko hilft '+esc(hw===P().name?'dir':hw):'Ohne Rokkos Hilfe'}</span></span>${btns.join('')}`;
+  },
+  netShare(){
+    const s=P().game.online;if(!s)return;
+    const o=this.opp();
+    Online.share(this.played.length?`Mein Zug in unserer Schachpartie! Tipp auf den Link, dann siehst du ihn.`:`${P().name} lädt dich zu einer Schachpartie ein!`,NetGame.link(s)).then(ok=>{if(ok)this.netNote(`Gut! Wenn ${o} antwortet, öffne den Link, den du zurückbekommst.`)});
+  },
+  netPhrases(){
+    const P_=Online.PHRASES;
+    UI.sheet(`<div style="display:flex;align-items:center;gap:10px"><h2 style="flex:1">${esc(this.opp())} etwas sagen</h2><button class="iconbtn" data-x aria-label="Schließen">${ICON.close}</button></div>
+      <div class="phrases">${Object.keys(P_).map(k=>`<button class="big ghost" data-k="${k}">${ICON.chat} ${esc(P_[k])}</button>`).join('')}</div>`,(sh,close)=>{
+      sh.onclick=e=>{if(e.target.closest('[data-x]'))return close();const b=e.target.closest('[data-k]');if(!b)return;Online.say(b.dataset.k);sfx.tap();close();UI.toast(ICON.chat,'Gesendet: '+P_[b.dataset.k])};
+    });
+  },
+  netUndo(){
+    if(this.state==='over')return Peter.say('Die Partie ist schon vorbei.');
+    if(this.state!=='human'&&this.state!=='remote')return;
+    const L=this.played.length,last=this.played[L-1];
+    let k=0;if(last&&last.color===this.me)k=1;else if(L>=2&&this.played[L-2].color===this.me)k=2;
+    if(!k)return Peter.say('Da gibt es noch nichts zurückzunehmen.');
+    if(!Net.online())return Peter.say(`Zurücknehmen geht nur, wenn ihr verbunden seid. Dann frage ich ${this.opp()} für dich.`,'think');
+    this._tbWait=L-k;Online.askTakeback(L-k);
+    Peter.say(`Ich frage ${this.opp()}, ob du zurücknehmen darfst.`,'think');
+  },
+  netTakebackAsk(n){
+    const k=this.played.length-n;
+    if(!this.net||this.state==='over'||k<1||k>2){Online.answerTakeback(n,false);return}
+    const o=this.opp(),what=k===1?'den letzten Zug':'die letzten zwei Züge';
+    Voice.speak(`${o} möchte ${what} zurücknehmen. Ist das in Ordnung?`,{interrupt:true});
+    UI.confirm('Zurücknehmen?',`${o} möchte ${what} zurücknehmen.`,'Ja, erlauben','Nein',{yesIcon:'check'}).then(ok=>{
+      Online.answerTakeback(n,ok);
+      if(ok)this.netRewind(n,`Gut, ${o} nimmt zurück.`);
+    });
+  },
+  netTakebackAnswer(n,ok){
+    if(this._tbWait!==n)return;this._tbWait=null;
+    if(!ok)return Peter.say(`${this.opp()} sagt nein. Der Zug bleibt stehen.`,'think');
+    this.netRewind(n,'Zurück!');
+  },
+  netRewind(n,pre){
+    const k=this.played.length-n;if(k<=0)return;
+    this.flow++;const my=this.flow;Ears.stop();Voice.stop();
+    $('#ask')&&($('#ask').hidden=true);this.blunderCtx=null;
+    const undone=this.back(k);this.fwd=[];
+    this.events.push({ply:this.played.length,kind:'takeback',text:'Zug zurückgenommen (online)'});this.persist();
+    this.state=this.pos.turn===this.me?'human':'remote';this.refresh();this.netBar();
+    Peter.say(`${pre} ${undone.map(m=>this.backText(m)).join(' ')} ${this.state==='human'?'Du bist dran.':this.opp()+' ist dran.'}`,'smile').then(()=>this.autoListen(my));
+  },
+  netResign(){
+    if(this.state==='over')return;
+    UI.confirm('Aufgeben?',`Dann gewinnt ${this.opp()} diese Partie.`,'Ja, aufgeben','Weiterspielen',{yesIcon:'flag',noIcon:'play'}).then(y=>{if(!y)return;Online.resign();this.endGame({t:'resign',winner:this.rk},null,'')});
+  },
+  netResigned(){
+    const s=P().game.online;if(!s||s.over)return;
+    if(this.net&&this.netGid===s.net.gid&&this.pos&&this.state!=='over')return this.endGame({t:'resign',winner:this.me},null,'');
+    s.over=s.net.role==='host'?s.net.hostSide:(s.net.hostSide==='w'?'b':'w');save();
+    UI.toast(ICON.flag,`${Online.oppName(s)} hat aufgegeben. Du gewinnst!`);
+  },
+  netAgainAsk(){
+    const o=this.opp();
+    Voice.speak(`${o} möchte nochmal spielen!`,{interrupt:true});
+    UI.confirm('Nochmal spielen?',`${o} möchte eine neue Partie. Die Farben werden getauscht.`,'Ja, los','Nein',{yesIcon:'play'}).then(y=>{if(y)Online.newRound();else Net.send({t:'again-no'})});
   }
+};
+
+/* ===================================================================
+   Rokko-Schach · Online-Partie gegen jemanden, der nicht im Raum ist (z. B. Opa)
+
+   Zwei Wege, die Züge zu übertragen:
+   1. Live: direkt von Gerät zu Gerät (WebRTC über PeerJS). Ein Vermittlungsserver
+      bringt die Geräte nur zusammen, die Züge laufen danach direkt.
+   2. Per Link: Klappt die Verbindung nicht, schickt man seinen Zug als Link
+      (WhatsApp, Mail). Der Link enthält die ganze Partie.
+
+   Rokkos Hilfe bekommt immer nur EINE Seite (festgelegt beim Einladen).
+   Rokko zieht in der Online-Partie nie selbst: So spielt nie Computer gegen Computer.
+   =================================================================== */
+
+/* Partie als kleines Objekt, das in Links und beim Verbinden ausgetauscht wird */
+const NetGame={
+  /* Speicherplatz der Online-Partie: getrennt von der Partie gegen Rokko */
+  slot(){return P().game.online||null},
+  newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)},
+  newCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<6;i++)s+=A[Math.floor(Math.random()*A.length)];return s},
+  /* Beschreibung der Partie, unabhängig davon, wer sie liest */
+  toD(s){const n=s.net;return{v:1,g:n.gid,c:n.code,hn:n.hostName,gn:n.guestName||'',on:n.oppLabel||'',hs:n.hostSide,a:n.help,m:s.moves.slice(),o:s.over||null}},
+  /* Seite und Hilfe aus Sicht dieses Geräts */
+  fromD(d,role,myName){
+    const side=role==='host'?d.hs:(d.hs==='w'?'b':'w');
+    return{variant:'online',side,fen:START_FEN,moves:(d.m||[]).slice(),events:[],fwd:[],started:Date.now(),over:d.o||null,
+      net:{gid:d.g,code:d.c,role,hostName:d.hn||'',guestName:role==='guest'?(myName||d.gn||d.on||''):(d.gn||''),oppLabel:d.on||'',hostSide:d.hs,help:d.a||'host'}};
+  },
+  encode(d){const s=JSON.stringify(d);return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},
+  decode(t){try{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const d=JSON.parse(decodeURIComponent(escape(atob(t))));return d&&d.v===1&&d.g&&d.hs?d:null}catch(e){return null}},
+  /* Link finden: in einer Adresse oder einem eingefügten Text */
+  parse(text){const m=String(text||'').match(/#rokko=([A-Za-z0-9_-]+)/);return m?this.decode(m[1]):null},
+  base(){
+    try{if(/^https?:$/.test(location.protocol)&&!/localhost|127\.0\.0\.1/.test(location.host)||window.ROKKO_LINK_BASE_LOCAL)return location.origin+location.pathname}catch(e){}
+    return window.ROKKO_LINK_BASE||'https://2f6kgp6fj4-web.github.io/peter-schach/';
+  },
+  link(s){return this.base()+'#rokko='+this.encode(this.toD(s))},
+  /* Züge prüfen: gibt die Stellung nach allen Zügen zurück oder null */
+  check(moves){const p=new Pos(START_FEN);for(const u of moves){const m=p.legal().find(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')===u);if(!m)return null;p.make(m)}return p}
+};
+
+/* Live-Verbindung über PeerJS */
+const Net={
+  LIB:'https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js',
+  peer:null,conn:null,role:null,code:null,status:'off',queue:[],lastSeen:0,timer:null,retry:null,want:false,libP:null,onMsg:null,onStatus:null,
+  cfg(){return Object.assign({debug:0,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'}]}},window.ROKKO_PEER_CFG||{})},
+  load(){
+    if(window.Peer)return Promise.resolve(true);
+    if(this.libP)return this.libP;
+    this.libP=new Promise(res=>{const s=document.createElement('script');s.src=window.ROKKO_PEER_LIB||this.LIB;s.async=true;
+      s.onload=()=>res(!!window.Peer);s.onerror=()=>{this.libP=null;Diag.log('Online','Verbindungs-Bibliothek nicht geladen (offline?)');res(false)};document.head.appendChild(s)});
+    return this.libP;
+  },
+  pid(code){return 'rokkoschach-'+String(code).toLowerCase()},
+  set(st){if(this.status===st)return;this.status=st;try{this.onStatus&&this.onStatus(st)}catch(e){}},
+  /* Gastgeber: wartet unter seinem Code auf den Gast */
+  async host(code){
+    this.stop();this.want=true;this.role='host';this.code=code;this.set('connecting');
+    if(!await this.load()||!this.want)return this.set('off');
+    const mk=()=>{
+      if(!this.want)return;
+      let p;try{p=new window.Peer(this.pid(code),this.cfg())}catch(e){Diag.log('Online','Peer-Fehler: '+e);return this.later(mk,5000)}
+      this.peer=p;
+      p.on('open',()=>{if(this.peer===p&&this.status!=='online')this.set('waiting')});
+      p.on('connection',c=>{if(this.peer!==p)return;if(this.conn&&this.conn!==c)try{this.conn.close()}catch(e){};this.bind(c)});
+      p.on('disconnected',()=>{if(this.peer===p&&this.want&&!p.destroyed)setTimeout(()=>{try{if(this.peer===p&&!p.destroyed)p.reconnect()}catch(e){}},2000)});
+      p.on('error',e=>{
+        const t=e&&e.type;Diag.log('Online','Gastgeber: '+(t||e));
+        if(this.peer!==p)return;
+        /* Code noch vom letzten Mal belegt (App neu gestartet): kurz warten und nochmal */
+        if(t==='unavailable-id'||t==='network'||t==='server-error'||t==='socket-error'||t==='socket-closed'){try{p.destroy()}catch(x){}this.peer=null;if(this.status!=='online')this.set('connecting');this.later(mk,t==='unavailable-id'?5000:4000)}
+      });
+    };
+    mk();this.tick();
+  },
+  /* Gast: verbindet sich mit dem Code des Gastgebers, immer wieder, bis es klappt */
+  async join(code){
+    this.stop();this.want=true;this.role='guest';this.code=code;this.set('connecting');
+    if(!await this.load()||!this.want)return this.set('off');
+    const mk=()=>{
+      if(!this.want)return;
+      let p;try{p=new window.Peer(this.cfg())}catch(e){return this.later(mk,5000)}
+      this.peer=p;
+      p.on('open',()=>{if(this.peer===p)this.dial()});
+      p.on('disconnected',()=>{if(this.peer===p&&this.want&&!p.destroyed)setTimeout(()=>{try{if(this.peer===p&&!p.destroyed)p.reconnect()}catch(e){}},2000)});
+      p.on('error',e=>{
+        const t=e&&e.type;if(this.peer!==p)return;
+        if(t==='peer-unavailable'){if(this.status!=='online')this.set('waiting');this.later(()=>this.dial(),4000);return}
+        Diag.log('Online','Gast: '+(t||e));
+        if(t==='network'||t==='server-error'||t==='socket-error'||t==='socket-closed'){try{p.destroy()}catch(x){}this.peer=null;this.set('connecting');this.later(mk,4000)}
+      });
+    };
+    mk();this.tick();
+  },
+  dial(){
+    if(!this.want||!this.peer||this.peer.destroyed||this.role!=='guest')return;
+    if(this.conn&&this.conn.open)return;
+    let c;try{c=this.peer.connect(this.pid(this.code),{reliable:true})}catch(e){return this.later(()=>this.dial(),4000)}
+    if(!c)return this.later(()=>this.dial(),4000);
+    this.bind(c);
+    setTimeout(()=>{if(this.want&&!c.open&&this.conn===c){try{c.close()}catch(e){}this.conn=null;this.dial()}},9000);
+  },
+  bind(c){
+    this.conn=c;
+    c.on('open',()=>{if(this.conn!==c)return;this.lastSeen=Date.now();this.set('online');const q=this.queue.splice(0);this.raw({t:'hi'});q.forEach(m=>this.raw(m));try{Online.onOpen()}catch(e){}});
+    c.on('data',d=>{if(this.conn!==c)return;this.lastSeen=Date.now();if(!d||typeof d!=='object')return;if(d.t==='ping'){this.raw({t:'pong'});return}if(d.t==='pong'||d.t==='hi')return;try{this.onMsg&&this.onMsg(d)}catch(e){Diag.log('Online','Nachricht: '+e)}});
+    c.on('close',()=>{if(this.conn!==c)return;this.conn=null;this.lost()});
+    c.on('error',e=>{Diag.log('Online','Verbindung: '+(e&&e.type||e))});
+  },
+  lost(){
+    if(!this.want)return;
+    this.set(this.role==='host'?'waiting':'connecting');
+    if(this.role==='guest')this.later(()=>this.dial(),1500);
+  },
+  /* Lebenszeichen: merkt auch Abbrüche, die WebRTC nicht sofort meldet */
+  tick(){
+    clearInterval(this.timer);
+    this.timer=setInterval(()=>{
+      if(!this.want)return;
+      if(this.conn&&this.conn.open){this.raw({t:'ping'});if(Date.now()-this.lastSeen>15000){try{this.conn.close()}catch(e){}this.conn=null;this.lost()}}
+    },4000);
+  },
+  later(fn,ms){clearTimeout(this.retry);this.retry=setTimeout(()=>{if(this.want)fn()},ms)},
+  raw(m){try{if(this.conn&&this.conn.open){this.conn.send(m);return true}}catch(e){}return false},
+  send(m){if(this.raw(m))return true;this.queue.push(m);if(this.queue.length>30)this.queue.shift();return false},
+  online(){return this.status==='online'},
+  stop(){
+    this.want=false;clearInterval(this.timer);clearTimeout(this.retry);this.queue=[];
+    try{this.conn&&this.conn.close()}catch(e){}this.conn=null;
+    try{this.peer&&this.peer.destroy()}catch(e){}this.peer=null;
+    this.set('off');
+  }
+};
+
+/* Ablauf: einladen, beitreten, abgleichen */
+const Online={
+  PHRASES:{nice:'Guter Zug!',think:'Ich überlege noch.',hurry:'Du bist dran!',hello:'Hallo! Schön, dass wir spielen.',thanks:'Danke für die Partie!'},
+  slot(){return NetGame.slot()},
+  role(){const s=this.slot();return s?s.net.role:null},
+  myName(){return P().name},
+  oppName(s){s=s||this.slot();if(!s)return 'Mitspieler';const n=s.net;return (n.role==='host'?(n.oppLabel||n.guestName):n.hostName)||'Mitspieler'},
+  helpSide(s){s=s||this.slot();return s?s.net.help:'none'},
+  helps(s){s=s||this.slot();return !!s&&s.net.help===s.net.role},
+  helpWho(s){s=s||this.slot();if(!s||s.net.help==='none')return null;return s.net.help===s.net.role?this.myName():this.oppName(s)},
+  active(){const s=this.slot();return !!s&&!s.over},
+  /* ---------- Einladen ---------- */
+  setupSheet(){
+    const s=this.slot();
+    if(s&&!s.over&&s.moves.length){
+      return UI.confirm('Online-Partie läuft noch',`Gegen ${this.oppName(s)} läuft schon eine Partie. Weiterspielen oder eine neue anfangen?`,'Weiterspielen','Neue Partie',{yesIcon:'play',noIcon:'plus'}).then(y=>{if(y)this.resume();else this.setupSheet2()});
+    }
+    this.setupSheet2();
+  },
+  setupSheet2(){
+    const n=P().name,names=['Opa','Oma','Papa','Mama','Freund','Freundin'];
+    let opp=P().settings.onlineOpp||'Opa',side='w',help='host';
+    Voice.speak(`Mit wem willst du online spielen, ${n}?`,{interrupt:true});
+    UI.sheet(`<div style="display:flex;align-items:center;gap:10px"><h2 style="flex:1">Online spielen</h2><button class="iconbtn" data-x aria-label="Schließen">${ICON.close}</button></div>
+      <p class="small muted" style="margin:0">Für jemanden, der nicht im Raum ist. Er oder sie bekommt einen Link und spielt auf dem eigenen Handy, Tablet oder Computer mit.</p>
+      <h3 class="osub">Gegen wen?</h3>
+      <div class="namechips">${names.map(x=>`<button class="chip ${x===opp?'on':''}" data-n="${x}">${x}</button>`).join('')}</div>
+      <input class="field" id="onIn" maxlength="16" placeholder="Oder Name eingeben" value="${names.includes(opp)?'':esc(opp)}">
+      <h3 class="osub">${esc(n)} spielt</h3>
+      <div class="seg two" role="group" aria-label="Farbe"><button class="segb" data-s="w" aria-pressed="true">${pieceSVG('w','k','i')} Weiß</button><button class="segb" data-s="b" aria-pressed="false">${pieceSVG('b','k','i')} Schwarz</button></div>
+      <h3 class="osub">Rokko hilft</h3>
+      <div class="seg" role="group" aria-label="Rokkos Hilfe"><button class="segb" data-h="host" aria-pressed="true">${esc(n)}</button><button class="segb" data-h="guest" aria-pressed="false" id="helpOpp">${esc(opp)}</button><button class="segb" data-h="none" aria-pressed="false">Niemand</button></div>
+      <p class="small muted" style="margin:0">Rokko hilft immer nur einer Seite und zieht nie selbst. So spielt nie der Computer gegen den Computer.</p>
+      <button class="big go wide" data-ok>${ICON.share} Einladung schicken</button>`,(sh,close)=>{
+      const setOpp=x=>{opp=x;$('#helpOpp',sh).textContent=x||'Mitspieler'};
+      $('#onIn',sh).addEventListener('input',e=>{const t=e.target.value.trim();if(t){$$('[data-n]',sh).forEach(c=>c.classList.remove('on'));setOpp(t)}});
+      sh.onclick=e=>{
+        audioUnlock();
+        if(e.target.closest('[data-x]'))return close();
+        const c=e.target.closest('[data-n]');if(c){$('#onIn',sh).value='';$$('[data-n]',sh).forEach(x=>x.classList.toggle('on',x===c));setOpp(c.dataset.n);sfx.tap()}
+        const sb=e.target.closest('[data-s]');if(sb){side=sb.dataset.s;$$('[data-s]',sh).forEach(x=>x.setAttribute('aria-pressed',String(x===sb)));sfx.tap()}
+        const hb=e.target.closest('[data-h]');if(hb){help=hb.dataset.h;$$('[data-h]',sh).forEach(x=>x.setAttribute('aria-pressed',String(x===hb)));sfx.tap()}
+        if(e.target.closest('[data-ok]')){
+          const t=$('#onIn',sh).value.trim();if(t)opp=t;
+          P().settings.onlineOpp=opp;save();close();this.create({opp,side,help});
+        }
+      };
+    });
+  },
+  create(o){
+    const s={variant:'online',side:o.side,fen:START_FEN,moves:[],events:[],fwd:[],started:Date.now(),over:null,
+      net:{gid:NetGame.newId(),code:NetGame.newCode(),role:'host',hostName:P().name,guestName:'',oppLabel:o.opp,hostSide:o.side,help:o.help}};
+    P().game.online=s;save();
+    Game.startNet({});
+    setTimeout(()=>this.invite(),400);
+  },
+  async invite(){
+    const s=this.slot();if(!s)return;
+    const ok=await this.share(`${P().name} lädt dich zu einer Schachpartie ein! Tipp auf den Link, dann spielen wir zusammen.`,NetGame.link(s));
+    if(ok)Game.netNote&&Game.netNote(`Einladung geschickt. Sobald ${this.oppName(s)} den Link öffnet, geht es los.`);
+  },
+  /* Teilen: iPhone-App, Teilen-Fenster des Browsers oder Zwischenablage */
+  async share(text,url){
+    (window.__shares=window.__shares||[]).push({text,url});
+    if(Native.ok){Native.post({type:'shareText',text,url});return true}
+    if(navigator.share){try{await navigator.share({title:'Schach mit Rokko',text,url});return true}catch(e){if(e&&e.name==='AbortError')return false}}
+    try{await navigator.clipboard.writeText(text+'\n'+url);UI.toast(ICON.link,'Link kopiert. Füge ihn in eine Nachricht ein.');return true}catch(e){}
+    UI.sheet(`<h2>Link zum Verschicken</h2><p class="small muted" style="margin:0">Markiere den Link, kopiere ihn und schick ihn per Nachricht.</p><textarea class="field" rows="4" readonly>${esc(text+'\n'+url)}</textarea><button class="big go wide" data-x>Fertig</button>`,(sh,close)=>{const ta=$('textarea',sh);ta.focus();ta.select();sh.onclick=e=>{if(e.target.closest('[data-x]'))close()}});
+    return true;
+  },
+  /* ---------- Link öffnen (Einladung oder Zug per Link) ---------- */
+  fromLocation(){
+    const d=NetGame.parse(location.hash);if(!d)return false;
+    try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+    this.incoming(d,true);return true;
+  },
+  /* eingefügter Link (z. B. in der iPhone-App, die Links aus WhatsApp nicht selbst öffnen kann) */
+  pasteSheet(){
+    UI.sheet(`<h2>Link einfügen</h2><p class="small muted" style="margin:0">Hast du eine Einladung oder einen Zug als Link bekommen? Kopiere den Link und füge ihn hier ein.</p>
+      <textarea class="field" id="pasteIn" rows="3" placeholder="https://…#rokko=…"></textarea><div class="row"><button class="big go" data-ok>${ICON.check} Öffnen</button><button class="big ghost" data-x>Abbrechen</button></div>`,(sh,close)=>{
+      sh.onclick=e=>{if(e.target.closest('[data-x]'))return close();if(e.target.closest('[data-ok]')){const d=NetGame.parse($('#pasteIn',sh).value);if(!d){UI.toast(ICON.close,'Das ist kein Rokko-Link.');return}close();this.incoming(d,false)}};
+    });
+  },
+  incoming(d,atBoot){
+    /* gehört die Partie einem anderen Spieler auf diesem Gerät? Dann zu ihm wechseln */
+    for(const id in Store.data.profiles){const o=Store.data.profiles[id].game.online;if(o&&o.net&&o.net.gid===d.g&&id!==Store.data.current){Store.data.current=id;save();break}}
+    const s=this.slot();
+    if(s&&s.net.gid===d.g){this.merge(d,'link');$('#splash').hidden=true;return this.resume()}
+    /* Eine Einladung, die ich selbst verschickt habe, aber für eine ältere Partie: ignorieren */
+    if(s&&s.net.role==='host'&&d.c===s.net.code){$('#splash').hidden=true;return this.resume()}
+    this.joinScreen(d,atBoot);
+  },
+  joinScreen(d,atBoot){
+    const fresh=Store.fresh,list=Object.values(Store.data.profiles);
+    const label=d.on||'';
+    const el=$('#splash');el.hidden=false;
+    el.innerHTML=`<div class="splash-in">
+      <div class="peter" data-mood="wow">${peterSVG(P().outfit)}</div>
+      <h1>Einladung von ${esc(d.hn||'jemandem')}</h1>
+      <p class="muted" style="margin:0">${esc(d.hn||'Jemand')} möchte mit dir Schach spielen. ${esc(d.hn||'Er')} spielt ${d.hs==='w'?'Weiß':'Schwarz'}, du spielst ${d.hs==='w'?'Schwarz':'Weiß'}.${d.a==='guest'?' Rokko hilft dir.':d.a==='host'?` Rokko hilft ${esc(d.hn||'deinem Gegner')}.`:''}</p>
+      ${!fresh&&list.length>1?`<p class="small muted" style="margin:0">Wer spielt?</p><div class="namechips">${list.map(x=>`<button class="chip ${x.id===Store.data.current?'on':''}" data-pid="${x.id}">${esc(x.name)}</button>`).join('')}<button class="chip" data-pid="new">Jemand anderes</button></div>`:''}
+      <label class="small" style="width:min(320px,100%);text-align:left" ${!fresh&&list.length>1?'hidden':''} id="joinNameL">Wie heißt du?<input class="field" id="joinName" maxlength="16" value="${esc(fresh?(label||''):(list.length===1?P().name:''))}" placeholder="Dein Name"></label>
+      <button class="big go wide" data-join style="min-height:62px;font-size:1.25rem">${ICON.play} Mitspielen</button>
+      <button class="big ghost" data-no style="min-height:44px">Nicht jetzt</button>
+    </div>`;
+    let pid=Store.data.current;
+    el.onclick=e=>{
+      audioUnlock();
+      const c=e.target.closest('[data-pid]');
+      if(c){pid=c.dataset.pid;$$('[data-pid]',el).forEach(x=>x.classList.toggle('on',x===c));$('#joinNameL',el).hidden=pid!=='new';if(pid==='new')$('#joinName',el).focus();sfx.tap();return}
+      if(e.target.closest('[data-no]')){el.hidden=true;if(atBoot)splash();return}
+      if(e.target.closest('[data-join]')){
+        const name=$('#joinName',el).value.trim();
+        /* erstes Öffnen auf diesem Gerät: den automatisch angelegten Spieler umbenennen */
+        if(fresh){if(!name){$('#joinName',el).focus();return}const p=P();p.name=name;p.adult=true;Store.fresh=false}
+        else if(pid==='new'){if(!name){$('#joinName',el).focus();return}const p=newProfile(name,{fig:'k',color:'#7454FF'});p.adult=true;Store.data.profiles[p.id]=p;Store.data.current=p.id}
+        else if(list.length===1){if(name&&name!==P().name){const p=newProfile(name,{fig:'k',color:'#7454FF'});p.adult=true;Store.data.profiles[p.id]=p;Store.data.current=p.id}}
+        else Store.data.current=pid;
+        save();Voice.pickVoice();applyTheme();
+        const s=this.slot();
+        const go=()=>{P().game.online=NetGame.fromD(d,'guest',P().name);save();el.hidden=true;Rewards.touchDay();Voice.speak('Hallo!');Game.startNet({});};
+        if(s&&!s.over&&s.moves.length&&s.net.gid!==d.g)return UI.confirm('Neue Einladung annehmen?',`Die Online-Partie gegen ${this.oppName(s)} endet dann.`,'Ja, annehmen','Nein',{yesIcon:'check'}).then(y=>{if(y)go()});
+        go();
+      }
+    };
+  },
+  resume(){
+    const s=this.slot();if(!s)return;
+    if(Game.net&&Game.pos&&Game.netGid===s.net.gid&&Game.state!=='idle'){UI.go('play');return}
+    Game.startNet({resumed:s.moves.length>0&&!s.over});
+  },
+  /* ---------- Verbindung ---------- */
+  connect(){
+    const s=this.slot();if(!s||s.left){Net.stop();return}
+    Net.onMsg=m=>this.onMsg(m);
+    Net.onStatus=st=>{try{Game.netStatus&&Game.netStatus(st)}catch(e){}};
+    if(Net.want&&Net.code===s.net.code&&Net.role===s.net.role)return;
+    if(s.net.role==='host')Net.host(s.net.code);else Net.join(s.net.code);
+  },
+  disconnect(){Net.stop()},
+  onOpen(){const s=this.slot();if(!s)return;Net.send({t:'hello',name:P().name,d:NetGame.toD(s)})},
+  sendMove(u,ply){const s=this.slot();if(!s)return false;return Net.send({t:'move',g:s.net.gid,n:ply,u})},
+  onMsg(m){
+    const s=this.slot();
+    if(m.t==='hello'){
+      const d=m.d;if(!d)return;
+      if(!s||s.net.gid!==d.g){
+        /* der Gastgeber hat eine neue Partie angefangen (z. B. Nochmal spielen): übernehmen */
+        if(this.role()==='guest'&&d.c===(s&&s.net.code)){const keep=s.net.guestName;P().game.online=NetGame.fromD(d,'guest',keep);save();return Game.netReload('new')}
+        if(this.role()==='host'&&s)Net.send({t:'hello',name:P().name,d:NetGame.toD(s)});
+        return;
+      }
+      if(s.net.role==='host'&&m.name&&s.net.guestName!==m.name){s.net.guestName=m.name;save();Game.netNames&&Game.netNames()}
+      if(s.net.role==='guest'&&m.name&&s.net.hostName!==m.name){s.net.hostName=m.name;save();Game.netNames&&Game.netNames()}
+      this.merge(d,'live');return;
+    }
+    if(!s||m.g&&m.g!==s.net.gid)return;
+    if(m.t==='move'){
+      if(m.n===s.moves.length){Game.netMove(m.u,'live');return}
+      if(m.n<s.moves.length&&s.moves[m.n]===m.u)return; /* schon da */
+      Net.send({t:'hello',name:P().name,d:NetGame.toD(s)});return;
+    }
+    if(m.t==='tb?')return Game.netTakebackAsk(m.n);
+    if(m.t==='tb')return Game.netTakebackAnswer(m.n,m.ok);
+    if(m.t==='say'){const txt=this.PHRASES[m.k];if(txt)Game.netSay(txt);return}
+    if(m.t==='resign')return Game.netResigned();
+    if(m.t==='again?')return Game.netAgainAsk();
+    if(m.t==='again-no')return Game.netNote(`${this.oppName()} möchte gerade keine neue Partie.`);
+  },
+  /* Zwei Stände zusammenführen: der längere gewinnt, wenn der kürzere darin steckt.
+     Passen sie nicht zusammen (z. B. nach Zurücknehmen), gilt der Stand des Gastgebers. */
+  merge(d,via){
+    const s=this.slot();if(!s||s.net.gid!==d.g)return;
+    if(s.net.role==='host'&&d.gn&&!s.net.guestName){s.net.guestName=d.gn;save()}
+    const a=s.moves,b=d.m||[];
+    const prefix=(x,y)=>x.every((u,i)=>y[i]===u);
+    if(b.length>a.length&&prefix(a,b)){if(!NetGame.check(b))return;Game.netCatchUp(b.slice(a.length),via);return}
+    if(a.length>b.length&&prefix(b,a)){if(via==='live')Net.send({t:'hello',name:P().name,d:NetGame.toD(s)});return}
+    if(a.length===b.length&&prefix(a,b)){if(d.o&&!s.over)Game.netCatchUp([],via,d.o);return}
+    /* verschieden */
+    if(s.net.role==='guest'&&NetGame.check(b)){Game.netReplace(b)}
+    else if(via==='live')Net.send({t:'hello',name:P().name,d:NetGame.toD(s)});
+  },
+  /* ---------- Aktionen ---------- */
+  say(k){Net.send({t:'say',k})},
+  resign(){const s=this.slot();if(!s)return;Net.send({t:'resign',g:s.net.gid})},
+  askTakeback(n){const s=this.slot();if(!s)return false;return Net.send({t:'tb?',g:s.net.gid,n})},
+  answerTakeback(n,ok){const s=this.slot();if(!s)return;Net.send({t:'tb',g:s.net.gid,n,ok})},
+  /* Nochmal spielen: der Gastgeber legt die neue Partie an (Farben getauscht) */
+  again(){
+    const s=this.slot();if(!s)return;
+    if(s.net.role==='guest'){Net.send({t:'again?'});Game.netNote(`Ich frage ${this.oppName(s)}, ob ihr nochmal spielt.`);return}
+    this.newRound();
+  },
+  newRound(){
+    const s=this.slot();if(!s)return;
+    const n=s.net,hs=n.hostSide==='w'?'b':'w';
+    P().game.online={variant:'online',side:hs,fen:START_FEN,moves:[],events:[],fwd:[],started:Date.now(),over:null,
+      net:{gid:NetGame.newId(),code:n.code,role:'host',hostName:P().name,guestName:n.guestName,oppLabel:n.oppLabel,hostSide:hs,help:n.help}};
+    save();
+    Net.send({t:'hello',name:P().name,d:NetGame.toD(P().game.online)});
+    Game.netReload('new');
+    if(!Net.online())setTimeout(()=>this.invite(),600);
+  },
+  leave(){Net.stop();const s=this.slot();if(s){s.left=true;save()}}
 };
 
 /* ===================================================================
@@ -4983,19 +5564,25 @@ UI.screens.map={
 /* ---------- Spielen ---------- */
 UI.screens.playhub={
   render(){
-    const g=P().game,cur=g.current&&g.current.moves&&g.current.moves.length?g.current:null;
+    const g=P().game,cur=g.current&&g.current.moves&&g.current.moves.length?g.current:null,on=g.online&&!g.online.left?g.online:null;
     const vname=c=>(c.side==='b'?'Partie mit Schwarz':(Game.VARIANTS[c.variant]||Game.VARIANTS.standard).name);
     const mini=(fen,side)=>{const p=new Pos(fen);let h='<span class="mboard">';for(let r=7;r>=0;r--)for(let f=0;f<8;f++){const i=r*16+f,pc=p.board[i];h+=`<i class="${(r+f)%2?'l':'d'}">${pc?pieceSVG(pc[0],pc[1],'i'):''}</i>`}return h+'</span>'};
     return `<div class="view">
       ${topbarHTML('Spielen am echten Brett')}
       <div class="talkrow"><button class="peter" data-live data-mood="smile">${peterSVG(P().outfit)}</button>
       <div class="bubble"><p class="say" data-live>Stell dein Schachbrett auf und leg das Handy daneben. Ich sage dir meine Züge!</p></div></div>
+      ${on&&!on.over?`<button class="hero" data-act="onresume" style="--wc:#2675D0"><span class="hero-txt"><span class="eyebrow">Online-Partie</span><h2>Gegen ${esc(Online.oppName(on))} weiterspielen</h2><span class="cta">${ICON.globe} Weiter</span></span></button>`:''}
+      ${on&&on.over?`<button class="hero" data-act="onagain" style="--wc:#2675D0"><span class="hero-txt"><span class="eyebrow">Online</span><h2>Nochmal gegen ${esc(Online.oppName(on))}</h2><span class="cta">${ICON.globe} Neue Partie</span></span></button>`:''}
       ${cur?`<button class="hero" data-act="resume" style="--wc:#0E8C7E"><span class="hero-txt"><span class="eyebrow">Angefangene Partie</span><h2>${esc(vname(cur))} weiterspielen</h2><span class="cta">${ICON.play} Weiter</span></span></button>`:''}
       <div class="modes">
         <button class="mode" data-act="standard" style="--mc:#0E8C7E"><span class="mart">${peterSVG(P().outfit)}</span><span class="mtx"><b>Gegen Rokko</b><span>Du spielst Weiß · Stärke ${g.level} von 10</span></span>${ICON.next}</button>
         <button class="mode" data-act="black" style="--mc:#14232C"><span class="mart dark">${friendSVG('k','b')}</span><span class="mtx"><b>Mit Schwarz</b><span>Rokko fängt an, du spielst Schwarz</span></span>${ICON.next}</button>
         <button class="mode" data-act="family" style="--mc:#7A5CFF"><span class="mart fam">${ICON.parent}</span><span class="mtx"><b>Familienpartie</b><span>Gegen ${esc(P().settings.familyName||'Mama oder Papa')} · Rokko hilft dir</span></span>${ICON.next}</button>
       </div>
+      <div class="modes">
+        <button class="mode" data-act="online" style="--mc:#2675D0"><span class="mart">${ICON.globe}</span><span class="mtx"><b>Online spielen</b><span>Gegen ${esc(P().settings.onlineOpp||'Opa oder Oma')} auf einem anderen Gerät</span></span>${ICON.next}</button>
+      </div>
+      <button class="big ghost wide" data-act="paste" style="min-height:48px;font-size:1rem">${ICON.link} Link von deinem Mitspieler einfügen</button>
       <h2 class="sect">${ICON.sparkle}Mehr Spielarten</h2>
       <div class="modes">
         <button class="mode" data-act="pawns" style="--mc:#C2501B"><span class="mart">${friendSVG('p','w')}</span><span class="mtx"><b>Bauernschlacht</b><span>Nur Bauern: Wer zuerst hinten ist, gewinnt</span></span>${ICON.next}</button>
@@ -5043,6 +5630,10 @@ UI.screens.playhub={
       if(act==='mini')this.miniSheet();
       if(act==='family')Game.familySetup();
       if(act==='pduel')PuzzleDuel.setup();
+      if(act==='online')Online.setupSheet();
+      if(act==='onresume')Online.resume();
+      if(act==='onagain'){Online.connect();Online.again()}
+      if(act==='paste')Online.pasteSheet();
     });
   }
 };
@@ -5603,6 +6194,8 @@ function boot(){
   UI.go('home');
   setTimeout(()=>Pause.check(),800);
   setTimeout(()=>Rewards.checkBadges(),1500);
+  /* läuft eine Online-Partie? Dann im Hintergrund verbinden, damit Züge vom Gegner ankommen */
+  setTimeout(()=>{if(NetGame.slot()&&!Game.net)Online.connect()},1500);
 }
 function trackTime(){
   setInterval(()=>{
@@ -5692,7 +6285,8 @@ window.addEventListener('pageshow',e=>{if(e.persisted)Alive.beat()});
   /* bei jeder Berührung: Ton freigeben und Bildschirm wach halten (iOS verliert beides gern unterwegs) */
   let lastTouch=0;
   document.addEventListener('pointerdown',()=>{audioUnlock();const n=Date.now();if(n-lastTouch>3000){lastTouch=n;Awake.on()}},true);
-  splash();
+  /* Einladung oder Zug per Link geöffnet? */
+  if(!Online.fromLocation())splash();
 })();
 
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});

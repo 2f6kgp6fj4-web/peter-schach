@@ -36,13 +36,22 @@
 
   <h2>Verbindungen ins Internet</h2>
   <ul>
-    <li><strong>iPhone-App:</strong> keine. Das Spiel ist vollständig in der App enthalten.</li>
+    <li><strong>iPhone-App:</strong> keine, außer bei einer Online-Partie (siehe unten). Das Spiel ist vollständig in der App enthalten.</li>
     <li><strong>Web-Version:</strong> Beim Aufruf lädt der Browser das Spiel von GitHub Pages (GitHub, Inc.). Dabei verarbeitet GitHub technisch die IP-Adresse, wie bei jedem Webseitenaufruf.</li>
     <li><strong>Natürliche Stimme (nur Web-Version, freiwillig):</strong> Tippen Eltern auf „Stimme laden“, lädt der Browser einmalig ein Sprachmodell von externen Servern (jsDelivr und Hugging Face). Danach läuft die Stimme offline auf dem Gerät.</li>
   </ul>
 
+  <h2>Online-Partie</h2>
+  <p>Die Online-Partie ist freiwillig und startet nur, wenn jemand eine Einladung verschickt oder einen Einladungslink öffnet. Dann gilt:</p>
+  <ul>
+    <li><strong>Verbindung:</strong> Die beiden Geräte verbinden sich direkt miteinander (WebRTC). Damit sie sich finden, nutzt das Spiel den öffentlichen Vermittlungsdienst von PeerJS (peerjs.com) und Adressdienste (STUN) von Google und Cloudflare. Diese Dienste sehen technisch die IP-Adressen der Geräte und einen zufälligen Partie-Code, aber keine Züge und keine Namen. Die Bibliothek dafür lädt der Browser von jsDelivr.</li>
+    <li><strong>Was übertragen wird:</strong> nur an den Mitspieler: die Vornamen, die Züge, die Einstellungen der Partie und kurze, fest vorgegebene Sätze wie „Guter Zug!“. Es gibt keinen freien Chat, keine Bilder und keine Sprachaufnahmen.</li>
+    <li><strong>Zug per Link:</strong> Klappt die direkte Verbindung nicht, kann man seinen Zug als Link schicken. Der Link enthält die Partie (Vornamen und Züge). Wohin er geht, entscheidet der Nutzer im Teilen-Menü, zum Beispiel per Nachricht.</li>
+    <li><strong>Wer mitspielen kann:</strong> nur, wer den Einladungslink bekommt. Es gibt keine Suche nach fremden Spielern.</li>
+  </ul>
+
   <h2>Kinder</h2>
-  <p>Das Spiel richtet sich an Kinder ab fünf Jahren. Einstellungen und Auswertungen sind durch eine Rechenaufgabe für Eltern geschützt. Es gibt keine Chats, keine Kontakte zu anderen Nutzern und keine Links nach außen im Kinderbereich.</p>
+  <p>Das Spiel richtet sich an Kinder ab fünf Jahren. Einstellungen und Auswertungen sind durch eine Rechenaufgabe für Eltern geschützt. Es gibt keine Chats und keine Links nach außen im Kinderbereich. Kontakt zu anderen Menschen gibt es nur bei der Online-Partie, und nur mit jemandem, den die Familie selbst per Link einlädt.</p>
 
   <h2>Löschen</h2>
   <p>Den Spielstand löschen Eltern im Elternbereich unter „Fortschritt zurücksetzen“ oder indem sie die App beziehungsweise die Website-Daten im Browser löschen.</p>
