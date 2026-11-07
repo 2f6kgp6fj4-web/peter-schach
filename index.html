@@ -5013,6 +5013,15 @@ const Net={
   raw(m){try{if(this.conn&&this.conn.open){this.conn.send(m);return true}}catch(e){}return false},
   send(m){if(this.raw(m))return true;this.queue.push(m);if(this.queue.length>30)this.queue.shift();return false},
   online(){return this.status==='online'},
+  /* App kommt aus dem Hintergrund (Bildschirm war aus): sofort neu verbinden statt auf das Lebenszeichen zu warten */
+  wake(){
+    if(!this.want)return;
+    if(this.conn&&this.conn.open){this.raw({t:'ping'});return}
+    const p=this.peer;
+    if(!p||p.destroyed){if(this.role==='host')this.host(this.code);else this.join(this.code);return}
+    if(p.disconnected){try{p.reconnect()}catch(e){}}
+    if(this.role==='guest')setTimeout(()=>this.dial(),600);
+  },
   stop(){
     this.want=false;clearInterval(this.timer);clearTimeout(this.retry);this.queue=[];
     try{this.conn&&this.conn.close()}catch(e){}this.conn=null;
@@ -5227,6 +5236,9 @@ const Online={
   },
   leave(){Net.stop();const s=this.slot();if(s){s.left=true;save()}}
 };
+
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>Net.wake(),300)});
+window.addEventListener('online',()=>setTimeout(()=>Net.wake(),500));
 
 /* ===================================================================
    Rokko-Schach · Ansichten: Start, Karte, Spielen, Training, Album, Eltern
@@ -5582,7 +5594,7 @@ UI.screens.playhub={
       <div class="modes">
         <button class="mode" data-act="online" style="--mc:#2675D0"><span class="mart">${ICON.globe}</span><span class="mtx"><b>Online spielen</b><span>Gegen ${esc(P().settings.onlineOpp||'Opa oder Oma')} auf einem anderen Gerät</span></span>${ICON.next}</button>
       </div>
-      <button class="big ghost wide" data-act="paste" style="min-height:48px;font-size:1rem">${ICON.link} Link von deinem Mitspieler einfügen</button>
+      <button class="big ghost wide" data-act="paste" style="min-height:48px;font-size:1rem">${ICON.link} Link vom Mitspieler einfügen</button>
       <h2 class="sect">${ICON.sparkle}Mehr Spielarten</h2>
       <div class="modes">
         <button class="mode" data-act="pawns" style="--mc:#C2501B"><span class="mart">${friendSVG('p','w')}</span><span class="mtx"><b>Bauernschlacht</b><span>Nur Bauern: Wer zuerst hinten ist, gewinnt</span></span>${ICON.next}</button>
@@ -6162,9 +6174,11 @@ function splash(chosen){
   const d=Store.data,list=Object.values(d.profiles),p=P(),lead=playerLeader(list);
   const el=$('#splash');el.hidden=false;
   const rg=list.length>1&&!chosen?null:runningGame();
+  const onl=list.length>1&&!chosen?null:(()=>{const o=NetGame.slot();return o&&!o.over&&!o.left?o:null})();
   el.innerHTML=`<div class="splash-in">
     <div class="peter" data-mood="smile">${peterSVG(p.outfit)}</div>
     <h1>Schach mit Rokko</h1>
+    ${!rg&&onl&&list.length<=1?`<button class="big go wide" data-online style="min-height:62px;font-size:1.2rem;background:#2675D0;border-color:#2675D0">${ICON.globe} Online-Partie gegen ${esc(Online.oppName(onl))}</button>`:''}
     ${rg?`<div class="resume"><div class="resume-board" id="resumeBoard" aria-hidden="true"></div>
         <button class="big go wide" data-resume style="min-height:66px;font-size:1.3rem">${ICON.play} Partie weiterspielen</button></div>
         <button class="big ghost" data-go style="min-height:48px;font-size:1.05rem">${ICON.home} Zum Start</button>`
@@ -6177,12 +6191,13 @@ function splash(chosen){
   if(rg){try{const g=new Pos(rg.variant==='pawns'?PAWNS_FEN:START_FEN);for(const u of rg.moves){const m=g.legal().find(x=>sqName(x.from)+sqName(x.to)+(x.promo||'')===u);if(!m)break;g.make(m)}
     const b=new Board($('#resumeBoard',el),{names:false});b.setPos(g)}catch(e){}}
   el.onclick=e=>{
-    const b=e.target.closest('[data-p],[data-go],[data-other],[data-resume]');if(!b)return;
+    const b=e.target.closest('[data-p],[data-go],[data-other],[data-resume],[data-online]');if(!b)return;
     audioUnlock();Awake.on();
-    if(b.dataset.p){d.current=b.dataset.p;if(runningGame()){save();splash(true);return}}
+    if(b.dataset.p){d.current=b.dataset.p;const o=NetGame.slot();if(runningGame()||o&&!o.over&&!o.left){save();splash(true);return}}
     if(b.hasAttribute('data-other')){el.hidden=true;Profiles.create(false);boot();return}
     save();Voice.pickVoice();applyTheme();
     sfx.star();
+    if(b.hasAttribute('data-online')){el.hidden=true;Rewards.touchDay();Voice.speak('Hallo!');Online.resume();return}
     if(b.hasAttribute('data-resume')){el.hidden=true;Rewards.touchDay();Game.start({variant:rg.variant,resumed:true});return}
     /* iOS gibt die Stimme nur nach einem Tippen frei: sofort ein kurzes Wort sprechen */
     Voice.speak('Hallo!');
